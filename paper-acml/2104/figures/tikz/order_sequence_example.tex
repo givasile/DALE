@@ -1,0 +1,140 @@
+\begin{tikzpicture}[> = latex]
+
+	\begin{scope}[every node/.style={rectangle,thick,draw}]%,label distance=-20px}]
+		\node (x0) at (0,1.0) {$\initialinstance$};
+		
+%		\node (A) at (2,0) {$\action_3$};
+		\node (C)[label=above:{\tiny $\costs_3 = \overbrace{15}^{\baseCosts_3} \cdot \overbrace{1.0}^{\consequentialCosts_3}$}] at (1.3,2) {$\action_3^1(\initialinstance)$};
+		\node (CC)[label=above:{\tiny $\costs_1 = \overbrace{10}^{\baseCosts_1} \cdot \overbrace{0.75}^{\consequentialCosts_1}$}] at (3.3,2) {$\action_1^2(\state_1)$};
+% \node (CC)[label=above:{\tiny $\costs_1 = \overbrace{10}^{\baseCosts_1} \cdot \overbrace{\frac{.5+1}{2}=0.75}^{\consequentialCosts_1}$}] at (3.3,2) {$\action_1^2(\state_1)$};
+        \node (xT1)[label=above:{\tiny $\costs_2 = \overbrace{5}^{\baseCosts_2} \cdot \overbrace{1.0}^{\consequentialCosts_2}$}] at (5.3,2) {$\action_2^3(\state_2)$};
+
+		\node (B)[label=below:{\tiny $\costs_2 = \underbrace{5}_{\baseCosts_2} \cdot \underbrace{0.5}_{\consequentialCosts_2}$}] at (1.3,0) {$\action_2^1(\initialinstance)$};
+		\node (CCC)[label=below:{\tiny $\costs_3 = \underbrace{15}_{\baseCosts_3} \cdot \underbrace{1.0}_{\consequentialCosts_3}$}] at (3.3,0) {$\action_3^2(\state'_1)$};
+        \node (xT2)[label=below:{\tiny $\costs_1 = \underbrace{10}_{\baseCosts_1} \cdot \underbrace{0.5}_{\consequentialCosts_1}$}] at (5.3,0) {$\action_1^3(\state'_2)$};
+
+		\node (xT) at (6.6,1.0) {$\finalsolution$};
+		
+
+
+	\end{scope}
+
+	
+	\begin{scope}[
+% 		every node/.style={fill=white,circle},
+		every edge/.style={very thick}]
+		
+		\draw [->,draw=red!60, very thick,double] (x0) |- node[below, align=center, pos=0.7](dummy1){$\initialinstance$} (C);
+		\draw [->,draw=red!60, very thick,double] (C) -- node[below, align=center]{$\state_1$} (CC);
+		\draw [->,draw=red!60, very thick,double] (CC) -- node[below, align=center]{$\state_2$} (xT1);
+		\draw [->,draw=red!60, very thick, double] (xT1) -| node[below, align=center, pos=0.3](dummy2){$\finalsolution$} (xT);
+		
+		\draw [->,draw=blue!60, very thick,double] (x0) |- node[above, align=center, pos=0.7](dummy3){$\initialinstance$} (B);
+% 		\draw (x0) -- (B) (x) edge[->] (n3.south) (x) edge["EXAMPLE"] (y);
+	    \draw [->,draw=blue!60, very thick,double] (B) -- node[above, align=center]{$\state'_1$} (CCC);
+		\draw [->,draw=blue!60, very thick,double] (CCC) -- node[above, align=center]{$\state'_2$} (xT2);
+		\draw [->,draw=blue!60, very thick, double] (xT2) -| node[above, align=center, pos=0.3](dummy4){$\finalsolution$} (xT);
+% 		\path [->] (AA) edge[draw=blue!60] node {\small $\totalCosts=27$} (xT);
+
+
+% 		\path [->] (BB) edge[draw=red!60] node {\small $\totalCosts=34$} (xT);
+		
+% 		\draw [->] (x0) edge[draw=black!40,dashed] node[above, align=center] {\scriptsize $\langle \action_i^t, \dots \rangle$} (xT);
+		
+% 		\node (res)[align=center] at (7.5,1) {$\totalCosts_{\sequence_1} = 27.5$\\$\totalCosts_{\sequence_2} = 22.5$};
+
+	\end{scope}
+	
+	
+
+  \begin{scope}[on background layer]
+    % \node (bk1) [fill=red!10,rounded corners, draw=black!50, dashed, inner xsep=25pt, inner ysep=2pt] [fit=(C) (CC) (xT1) ] {};
+
+    % \node (bk2) [fill=blue!10,rounded corners, draw=black!50, dashed, inner xsep=25pt, inner ysep=2pt] [fit=(B) (CCC) (xT2) ] {};
+    
+    % \node (bk2) [back group] [fit=(p4) (p5)] {};
+    % \node (bk3) [back group] [fit=(p6) (p7)] {};
+    % \node [draw, thick, green!50!black, fill=green!75!black!25, rounded corners, fit=(p1), inner xsep=15pt, inner ysep=10pt] {};
+  \end{scope}
+  
+    \node [left=0.0ex of dummy1] {$\sequence_1$};
+    \node [left=0.0ex of dummy3] {$\sequence_2$};
+  
+\draw [decorate,
+	decoration = {brace,amplitude=5pt,mirror,raise=11pt}] (C.west) --  (xT1.east) node[midway,yshift=-2.1em] {\tiny Cost of $\sequence_1$: $\totalCosts_{\sequence_1}=\costs_3+\costs_1+\costs_2=27.5$};
+	
+\draw [decorate,
+	decoration = {brace,amplitude=5pt,raise=11pt}] (B.west) --  (xT2.east) node[midway,yshift=2.1em] {\tiny Cost of $\sequence_2$: $\totalCosts_{\sequence_2}=\costs_2+\costs_3+\costs_1=22.5$};
+	
+\end{tikzpicture}
+
+
+
+
+
+
+
+
+% \begin{tikzpicture}[> = latex]
+
+% 	\begin{scope}[every node/.style={rectangle,thick,draw}]%,label distance=-20px}]
+% 		\node (x0) at (0,1.0) {$\initialinstance$};
+		
+% %		\node (A) at (2,0) {$\action_3$};
+% 		\node (C)[label=above:{$\costs_3 = \overbrace{15}^{\baseCosts_3} \cdot \overbrace{1.0}^{\consequentialCosts_3}$}] at (1.5,2) {$\action_3^1(\initialinstance)=\state_1$};
+% 		\node (CC)[label=above:{$\costs_1 = \overbrace{10}^{\baseCosts_1} \cdot \overbrace{0.75}^{\consequentialCosts_1}$}] at (4,2) {$\action_1^2(\state_1) = \state_2$};
+% % 		\node (BB)[label={$10$}] at (10.0,2) {$\action_2^3$};
+
+% 		\node (B)[label=below:{$\costs_2 = \underbrace{5}_{\baseCosts_2} \cdot \underbrace{0.5}_{\consequentialCosts_2}$}] at (1.5,0) {$\action_2^1(\initialinstance)=\state_1$};
+% 		\node (CCC)[label=below:{$\costs_3 = \underbrace{15}_{\baseCosts_3} \cdot \underbrace{1.0}_{\consequentialCosts_3}$}] at (4.0,0) {$\action_3^2(\state_1)=\state_2$};
+% % 		\node (AA)[label={$7$}] at (10.0,0) {$\action_1^3$};
+% %		\node (CC) at (6,0) {$\action_3$};
+		
+% %		\node (X) at (1,1) {$\action_x$};
+% %		\node (XX) at (2.5,1) {$\action_y$};
+% %		\node (XXX) at (4.0,1) {$\action_z$};
+		
+% %		\node (AAA) at (6,2) {$\action_1$};
+% %		\node (BBB) at (6,0) {$\action_2$};
+
+
+% 		\node (xT)[align=center] at (5.5,1.0) {$\action_2^3(\state_2)=\finalsolution$\\$\action_1^3(\state_2)=\finalsolution$};
+% % 		\node (xTT) at (7.5,1) {$\finalsolution$};
+% 	\end{scope}
+
+	
+% 	\begin{scope}[
+% % 		every node/.style={fill=white,circle},
+% 		every edge/.style={very thick}]
+% 		\draw [->,draw=blue!60, very thick] (x0) |- node[below, align=center]{} (B);
+% % 		\draw (x0) -- (B) (x) edge[->] (n3.south) (x) edge["EXAMPLE"] (y);
+% 	    \draw [->,draw=blue!60, very thick] (B) -- node[below, align=center]{} (CCC);
+% 		\draw [->,draw=blue!60, very thick] (CCC) -| node[right, align=center]{$\costs_1 = \underbrace{10}_{\baseCosts_1} \cdot \underbrace{0.5}_{\consequentialCosts_1}$} (xT);
+% % 		\path [->] (AA) edge[draw=blue!60] node {\small $\totalCosts=27$} (xT);
+
+% 		\draw [->,draw=red!60, very thick] (x0) |- node[above, align=center]{} (C);
+% 		\draw [->,draw=red!60, very thick] (C) -- node[above, align=center]{} (CC);
+% 		\draw [->,draw=red!60, very thick] (CC) -| node[right, align=center]{$\costs_2 = \overbrace{5}^{\baseCosts_2} \cdot \overbrace{1.0}^{\consequentialCosts_2}$} (xT);
+% % 		\path [->] (BB) edge[draw=red!60] node {\small $\totalCosts=34$} (xT);
+		
+% 		\draw [->] (x0) edge[draw=black!40,dashed] node[above, align=center] {\scriptsize $\langle \action_i^t, \dots \rangle$} (xT);
+		
+% 		\node (res)[align=center] at (7.5,1) {$\totalCosts_{\sequence_1} = 27.5$\\$\totalCosts_{\sequence_2} = 22.5$};
+% % 		\draw [->] (xT) -- node[fill=white]{$=$} (xTT);
+		
+% %		\path [->] (x0) edge[draw=blue!60] node {} (B);
+% %		\path [->] (B) edge[draw=blue!60, bend left=60] node {} (A);
+% %		\path [->] (A) edge[draw=blue!60, bend right=60] node {} (xT);
+% %		
+% %		\path [->] (x0) edge[draw=orange!60, bend left=60] node {} (B);
+% %		\path [->] (B) edge[draw=orange!60] node {} (C);
+% %		\path [->] (C) edge[draw=orange!60, bend left=60] node {} (A);
+% %		\path [->] (A) edge[draw=orange!60] node {} (xT);
+		
+% %		\path [->] (B) edge[draw=blue!60, bend left=60] node {} (A);
+% %
+% %		\path [->] (B) edge[draw=orange!60] node {} (C);
+% %		\path [->] (C) edge[draw=orange!60] node {} (A);
+% 	\end{scope}
+	
+% \end{tikzpicture}

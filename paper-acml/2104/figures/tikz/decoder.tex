@@ -1,0 +1,169 @@
+\begin{tikzpicture}[>=latex]
+	\matrix[mymat,anchor=west,nodes={draw}]%,row 2/.style={nodes=draw}]
+	at (0,0) 
+	(genoAction)
+	{
+		0.70 & 0.45 & 0.02 \\ 
+		%0.12 & 0.80 & 0.69 & 0.73 \\
+	};
+	\matrix[mymat,right=-1.0ex of genoAction,nodes={draw}]%,row 2/.style={nodes=draw}]
+	(genoValues)
+	{
+		0.12 & 0.80 & 0.68 \\
+	};
+	
+	\matrix[mymat,style={text height=1.5ex},below=5.5ex of genoAction,nodes={draw}]%,row 2/.style={nodes=draw}]
+	(phenoAction)
+	{
+		3 & 2 & 1 \lvert -1\\ 
+	};
+	\matrix[mymat,below=5.5ex of genoValues,nodes={draw}]%,row 2/.style={nodes=draw}]
+	(phenoValues)
+	{
+		20.4 & 3 & 40 & \\
+	};
+	
+	\node[above=0pt of genoAction-1-1.north]
+	(a1) {$\actionspart_1$};
+	\node[above=0pt of genoAction-1-2.north]
+	(a2) {$\actionspart_2$};
+	\node[above=0pt of genoAction-1-3.north]
+	(a3) {$\actionspart_3$};
+	
+	\node[above=0pt of a2]
+	(actionsLabel) {Actions $\actionspart$};
+	
+	
+	\node[below=-9pt of phenoAction-1-1.south]
+	() {\tiny $t=1$};	
+	\node[below=-9pt of phenoAction-1-2.south]
+	() {\tiny $t=2$};	
+	\node[below=-9pt of phenoAction-1-3.south]
+	() {\tiny $t=3$};	
+	
+	\node[below=0pt of phenoAction-1-1.south]
+	(aa1) {$\action_3$};
+	\node[below=0pt of phenoAction-1-2.south]
+	(aa2) {$\action_2$};
+	\node[below=0pt of phenoAction-1-3.south]
+	(aa3) {\tiny $\actionspart_1 > 0.5$};
+	
+	\node[above=0pt of genoValues-1-1.north]
+	(v1) {$\valuespart_{3+1}$};
+	\node[above=0pt of genoValues-1-2.north]
+	(v2) {$\valuespart_{3+2}$};
+	\node[above=0pt of genoValues-1-3.north]
+	(v3) {$\valuespart_{3+3}$};
+	
+	\node[above=0pt of v2]
+	(valuesLabel) {Values $\valuespart$};
+	
+	
+	\node[below=0pt of phenoValues-1-1.south]
+	(vv1) {$\Value_1$};
+	\node[below=0pt of phenoValues-1-2.south]
+	(vv2) {$\Value_2$};
+	\node[below=0pt of phenoValues-1-3.south]
+	(vv3) {$\Value_3$};
+	
+	
+	\node[left=0pt of genoAction] 
+	(genotypeLabel) {Genotype $\genotype$};
+	\node[left=0pt of phenoAction] 
+	(phenotypeLabel) {Phenotype $\phenotype$};
+
+    % \path (genoAction-1-2.south) -- node (argsortLab) {\small \texttt{argsort}} (phenoAction-1-2.north);
+    % \node[below=0pt of genoAction-1-2.south]
+    % (argsortLab) {\small \texttt{argsort}};
+    
+    % \path (genotypeLabel.south) -- node[right=0pt of genotypeLabel] (argsortLab) {\small $\texttt{argsort}(\actionspart)$} (phenotypeLabel.north);
+    \path (genoAction-1-2.south) -- node (argsortLab) {\small $\texttt{argsort}(\actionspart)$} (phenoAction-1-2.north);
+    
+	%\node%[right=35pt of argsortLab] 
+    \path (genoValues-1-2.south) -- node (interpolateLab) {$\texttt{Interp}(\valuespart)$} (phenoValues-1-2.north);
+	
+
+	
+	\node[below=30pt of phenotypeLabel]
+	(sequenceLabel) {Sequence $\sequence$};
+	
+	\node[right=0pt of sequenceLabel]
+	(langle) {$= \langle$};
+	\node[right=10pt of langle]
+	(action3) {$(\action_3,$};
+	\node[right=10pt of action3]
+	(value3) {$40),$};
+	\node[right=40pt of value3]
+	(action2) {$(\action_2,$};
+	\node[right=10pt of action2]
+	(value3) {$3)$};
+	\node[right=10pt of value3]
+	(rangle) {$\rangle$};
+	
+
+	%	\node[below=10pt of phenoAction-1-3.south]
+	%		(actionNan) {$\action_{\emptyset}$};
+	
+	
+	\begin{scope}%[shorten <= -2pt]
+		%		\draw[->]
+		%		(genotypeLabel.west) -- (phenotypeLabel.west);
+		
+% 		\draw[->]
+% 		(genoAction-1-3.south) -- (phenoAction-1-1.north);
+% 		\draw[->]
+% 		(genoAction-1-2.south) -- (phenoAction-1-2.north);
+% 		\draw[->]
+% 		(genoAction-1-1.south) -- (phenoAction-1-3.north);
+		
+		\draw[->]
+		(genoValues-1-1.south) -- (phenoValues-1-1.north);
+		\draw[->]
+		(genoValues-1-2.south) -- (interpolateLab) -- (phenoValues-1-2.north);
+		\draw[->]
+		(genoValues-1-3.south) -- (phenoValues-1-3.north);
+
+%         % NEW
+		\draw[->]
+		(genoAction-1-3.south) -- (argsortLab) -- (phenoAction-1-1.north);	
+		\draw[->]
+		(genoAction-1-2.south)  -- (argsortLab) -- (phenoAction-1-2.north);
+		\draw[->]
+		(genoAction-1-1.south)  -- (argsortLab) -- (phenoAction-1-3.north);
+		
+% 		\draw[*->]
+% 		(genoValues-1-1.south) -- (phenoValues-1-1.north);
+% 		\draw[*->]
+% 		(genoValues-1-2.south) -- (phenoValues-1-2.north);
+% 		\draw[*->]
+% 		(genoValues-1-3.south) -- (phenoValues-1-3.north);
+		
+% 		\draw[*->,dashed,line width=0.7pt]
+% 		(phenoValues-1-3.south) to[out=-90,in=90] (action2Value.north);
+% 		\draw[*->,dashed,line width=0.7pt]
+% 		(phenoValues-1-2.south) to[out=-90,in=90] (action1Value.north);
+		
+
+	\end{scope}
+	
+    \node[right=10pt of genoValues-1-3, rotate=-90] (decoderLabel) {$\decoder(\genotype) = \phenotype$};
+    
+	\begin{scope}
+% 		every node/.style={fill=white,circle},]
+% 		every edge/.style={draw=black!60,dashed,very thick}]
+    \draw[<->]
+    (aa1.south) |- ++(0,-5mm) -| (vv3.south) node[pos=0.25, fill=white] {\scriptsize $(\action_3,40)$};
+    \draw[<->]
+    (aa2.south) |- ++(0,-3mm) -| (vv2.south) node[above, pos=0.25] {\scriptsize $(\action_2,3)$};
+    \end{scope}
+    
+% 	\draw[->]
+% 	(phenoAction-1-1.south) -- (action3.north);
+
+	
+% 	\node[style={draw=red, thick, dotted, inner sep=0.5em}, fit=(genoAction-1-1) (genoValues-1-3)] {};
+% 	\node[style={draw=blue, thick, dotted, inner sep=0.5em}, fit=(phenoAction-1-1) (phenoValues-1-3)] {};
+	%		\node[style={draw=orange, thick, dotted, inner sep=0.5em}, fit=(actionsLabel)(phenoAction-1-1) (phenoAction-1-3)] {};
+	%		\node[style={draw=green, thick, dotted, inner sep=0.5em}, fit=(valuesLabel)(phenoValues-1-1) (phenoValues-1-3)] {};
+	
+\end{tikzpicture}

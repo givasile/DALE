@@ -1,0 +1,30 @@
+This paper introduced DALE, an efficient and robust-to-OOD
+approximation for ALE, the state-of-the-art method for feature effect
+analysis. First, we explored the advantages of ALE over the other two
+renowned feature effect methods, PDP and MPlots. However, ALE's
+approximation scales poorly in big and high-dimensional datasets and
+suffers from OOD sampling in cases with limited samples. For
+addressing these deficiencies, we proposed DALE, a fast and
+on-distribution alternative. We presented the method and discussed the
+advantages over the typical ALE approximation. We proved that under
+some hypotheses, our proposal is an unbiased estimator of ALE and we
+presented a method for quantifying the uncertainty of the explanation,
+i.e. the standard error of the approximation. The experiments verify
+the aforementioned claims. DALE significantly improves the efficiency
+of ALE's approximation by orders of magnitude and secures that local
+effect estimations come from on-distribution samples. The latter leads
+to more accurate feature effect plots when the bins are wide and the
+black-box function changes away from the data generating distribution.
+
+The computational efficiency of DALE delivers a substantial margin for
+future extensions. A significant advantage of our proposal is that
+effects are computed once on the training set points and can be reused
+in different-size bins. The decision for the bin density, i.e. the
+resolution of the plot, can be taken afterwards. Therefore, DALE
+permits creating feature effect plots at different resolutions with
+near-zero computational overhead, which can be embedded into a
+multiresolution feature effect plots framework.
+
+In conclusion, we propose DALE as a fast and accurate alternative for
+estimating feature effect in cases where the ML model is
+differentiable and an auto-differentiable framework is accessible.

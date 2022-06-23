@@ -1,0 +1,76 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{dodgerblue}{RGB}{30,144,255}
+\definecolor{lightgray204}{RGB}{204,204,204}
+
+\begin{axis}[
+legend cell align={left},
+legend style={
+  fill opacity=0.8,
+  draw opacity=1,
+  text opacity=1,
+  at={(0.03,0.97)},
+  anchor=north west,
+  draw=lightgray204
+},
+tick align=outside,
+tick pos=left,
+title={DALE vs ALE: Light setup},
+x grid style={darkgray176},
+xlabel={\(\displaystyle D\)},
+xmin=0.25, xmax=104.75,
+xtick style={color=black},
+y grid style={darkgray176},
+ylabel={time (seconds)},
+ymin=-0.131140862051234, ymax=2.99683744304994,
+ytick style={color=black}
+]
+\addplot [semithick, red, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+5 0.0118236541748047
+10 0.0110399723052979
+15 0.0141679048538208
+20 0.0121772289276123
+25 0.0137112140655518
+50 0.0146358013153076
+100 0.0155208110809326
+};
+\addlegendentry{$f(x)$}
+\addplot [semithick, blue, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+5 0.0307250022888184
+10 0.0338666439056396
+15 0.0361539125442505
+20 0.0303496122360229
+25 0.0321464538574219
+50 0.0336906909942627
+100 0.0372809171676636
+};
+\addlegendentry{$\mathbf{J}$}
+\addplot [semithick, dodgerblue, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+5 0.127132534980774
+10 0.264535903930664
+15 0.394240617752075
+20 0.51231861114502
+25 0.672989368438721
+50 1.30030632019043
+100 2.85465669631958
+};
+\addlegendentry{$\hat{f}_{\mathtt{ALE}}$}
+\addplot [semithick, black, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+5 0.0349620580673218
+10 0.0408366918563843
+15 0.0389609336853027
+20 0.0452711582183838
+25 0.0536262989044189
+50 0.0669845342636108
+100 0.0886013507843018
+};
+\addlegendentry{$\hat{f}_{\mathtt{DALE}}$}
+\end{axis}
+
+\end{tikzpicture}

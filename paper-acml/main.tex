@@ -1,0 +1,274 @@
+%\documentclass[wcp,gray]{jmlr} % test grayscale version
+\documentclass[wcp]{jmlr}
+
+% givasile packages
+\usepackage{bbm}
+\usepackage{multirow}
+\usepackage{xfrac}
+\usepackage[T1]{fontenc}
+
+\usepackage{enumitem}
+\usepackage{epstopdf}
+
+\usepackage{bm}
+\usepackage{csquotes}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\newcommand{\dale}{f_{\mathtt{DALE}}}
+\newcommand{\ale}{f_{\mathtt{ALE}}}
+\newcommand{\alep}{\hat{f}_{\mathtt{ALE}}}
+\newcommand{\xc}{\mathbf{x}_c}
+\newcommand{\Xcb}{\mathcal{X}_c}
+\newcommand{\Xs}{\mathcal{X}_s}
+\newcommand{\Xb}{\mathcal{X}}
+\newcommand{\xci}{\mathbf{x}^i_{\mathbf{c}}}
+\newcommand{\xb}{\mathbf{x}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Jac}{\mathbf{J}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\B}{\mathbb{B}}
+\newcommand\todo[1]{\textcolor{red}{#1}}
+\usepackage{microtype}
+
+\usepackage{tikz}
+\usetikzlibrary{matrix,positioning,arrows.meta,arrows,fit,backgrounds,decorations.pathreplacing}
+
+\tikzset{
+  mymat/.style={
+    matrix of math nodes,
+    text height=2.5ex,
+    text depth=0.75ex,
+    text width=6.00ex,
+    align=center,
+    column sep=-\pgflinewidth,
+    nodes={minimum height=5.0ex}
+  },
+  mymats/.style={
+    mymat,
+    nodes={draw,fill=#1}
+  },
+  mymat2/.style={
+    matrix of math nodes,
+    text height=1.0ex,
+    text depth=0.0ex,
+    minimum width=5ex,
+%     text width=7.00ex,
+    align=center,
+    column sep=-\pgflinewidth
+  },
+}
+
+\usetikzlibrary{shapes.geometric, arrows, backgrounds, scopes}
+\usepackage{pgfplots}
+\pgfplotsset{width=6.75cm, compat=newest}
+\usepackage[utf8]{inputenc}
+\DeclareUnicodeCharacter{2212}{−}
+\usepgfplotslibrary{groupplots,dateplot}
+\usetikzlibrary{patterns,shapes.arrows}
+
+
+% The following packages will be automatically loaded:
+% amsmath, amssymb, natbib, graphicx, url, algorithm2e
+
+%\usepackage{rotating}% for sideways figures and tables
+\usepackage{longtable}% for long tables
+
+% The booktabs package is used by this sample document
+% (it provides \toprule, \midrule and \bottomrule).
+% Remove the next line if you don't require it.
+\usepackage{booktabs}
+% The siunitx package is used by this sample document
+% to align numbers in a column by their decimal point.
+% Remove the next line if you don't require it.
+%\usepackage[load-configurations=version-1]{siunitx} % newer version
+%\usepackage{siunitx}
+%\usepackage{natbib}
+
+% Do not comment the following commands:
+\pagenumbering{gobble}
+\newcommand{\cs}[1]{\texttt{\char`\\#1}}
+\makeatletter
+\let\Ginclude@graphics\@org@Ginclude@graphics
+\makeatother
+
+\jmlrvolume{}
+\jmlryear{2022}
+\jmlrworkshop{ACML 2022}
+
+\title[DALE:~Differential Accumulated Local Effects]{DALE:~Differential Accumulated Local Effects for efficient and accurate global model explanations}
+
+ % Use \Name{Author Name} to specify the name.
+ % If the surname contains spaces, enclose the surname
+ % in braces, e.g. \Name{John {Smith Jones}} similarly
+ % if the name has a "von" part, e.g \Name{Jane {de Winter}}.
+ % If the first letter in the forenames is a diacritic
+ % enclose the diacritic in braces, e.g. \Name{{\'E}louise Smith}
+
+ % Two authors with the same address
+ % \author{\Name{Author Name1} \Email{abc@sample.com}\and
+ %  \Name{Author Name2} \Email{xyz@sample.com}\\
+ %  \addr Address}
+
+ % Three or more authors with the same address:
+ % \author{\Name{Author Name1} \Email{an1@sample.com}\\
+ %  \Name{Author Name2} \Email{an2@sample.com}\\
+ %  \Name{Author Name3} \Email{an3@sample.com}\\
+ %  \Name{Author Name4} \Email{an4@sample.com}\\
+ %  \Name{Author Name5} \Email{an5@sample.com}\\
+ %  \Name{Author Name6} \Email{an6@sample.com}\\
+ %  \Name{Author Name7} \Email{an7@sample.com}\\
+ %  \Name{Author Name8} \Email{an8@sample.com}\\
+ %  \Name{Author Name9} \Email{an9@sample.com}\\
+ %  \Name{Author Name10} \Email{an10@sample.com}\\
+ %  \Name{Author Name11} \Email{an11@sample.com}\\
+ %  \Name{Author Name12} \Email{an12@sample.com}\\
+ %  \Name{Author Name13} \Email{an13@sample.com}\\
+ %  \Name{Author Name14} \Email{an14@sample.com}\\
+ %  \addr Address}
+
+
+ % Authors with different addresses:
+ %  \author{\Name{Author Name1} \Email{abc@sample.com}\\
+ %  \addr Address 1
+ %  \AND
+ %  \Name{Author Name2} \Email{xyz@sample.com}\\
+ %  \addr Address 2
+ % }
+
+% \editors{Emtiyaz Khan and Mehmet Gonen}
+
+\begin{document}
+
+\maketitle
+
+\begin{abstract}
+  Accumulated Local Effect (ALE) is a method for the accurate
+  estimation of feature effects, overcoming fundamental failure modes
+  of previously-existed methods, such as Partial Dependence Plots
+  (PDP). The \textit{approximation} method for ALE, however, faces two
+  crucial weaknesses. Firstly, it does not scale well in cases where
+  the input has high dimensionality and, secondly, it is vulnerable to
+  out-of-distribution sampling in cases with limited training
+  examples. In this paper we propose a novel ALE approximation, called
+  Differential Accumulated Local Effects (DALE), which overcomes these
+  issues. Our proposal has significant computational
+  advantages. Specifically, the computational complexity for computing
+  the feature effect for all attributes using DALE is similar to what
+  ALE requires for a single attribute. DALE, therefore, makes feature
+  effect applicable to high-dimensional Machine Learning scenarios
+  with near-zero computational overhead. Furthermore, unlike ALE, it
+  calculates the feature effect using only the training examples
+  resolving misleading estimations due to out-of-distribution
+  sampling. Experiments using both synthetic and real datasets
+  demonstrate the value of the proposed approach. Code to reproduce
+  these experiments is provided in the submission and will become
+  publicly available upon acceptance.
+\end{abstract}
+\begin{keywords}
+Feature Effect; Explainable AI; Differentiable Models; Neural-Networks
+\end{keywords}
+
+\section{Introduction}
+\input{./chapters/1-introduction.tex}
+\label{sec:1-introduction}
+
+\section{Related Work}
+\input{./chapters/2-related.tex}
+\label{sec:2-related}
+
+\section{Background}
+\input{./chapters/3-background.tex}
+\label{sec:3-feature-effect}
+
+\section{Differential Accumulated Local Effects (DALE)}
+
+In this section, we present DALE.~First, we formulate the expression
+for the first and second-order DALE and, then, we explain its
+computational benefits and its robustness to OOD sampling. Finally, we
+quantify the standard error of the DALE estimation.
+
+\subsection{Method presentation}
+\label{sec:4-1-DALE}
+\input{./chapters/4-1-DALE.tex}
+
+\subsection{Computational Benefit}
+\label{sec:4-2-computational}
+\input{./chapters/4-2-computational.tex}
+
+\subsection{Robustness to out-of-distribution sampling}
+\label{sec:4-3-robustness}
+\input{./chapters/4-3-robustness.tex}
+
+\subsection{Bias and variance}
+\label{sec:4-4-std}
+\input{./chapters/4-4-std.tex}
+
+% \subsection{Limitations of DALE}
+% \label{sec:3-5-limitations}
+% \input{./chapters/3-5-limitations.tex}
+
+\section{Experiments}
+
+This section presents the experimental evaluation of DALE using two
+synthetic and one real dataset. The experiments aim to compare DALE
+(\(f_{\mathtt{DALE}}\)) with ALE approximation
+(\(\hat{f}_{\mathtt{ALE}}\)) from the perspectives of both efficiency
+and accuracy.
+
+The first synthetic example (Case 1) is designed to compare the
+approximations in terms of efficiency. For this reason, we generate
+synthetic datasets of varying dimensionality to illustrate the
+substantial computational benefits of DALE. The efficiency is
+evaluated by measuring the execution time.
+
+The second synthetic example (Case 2) is designed to compare the
+approximations in terms of accuracy. More specifically, the example
+shows that DALE succeeds in estimating the correct effect when ALE
+approximation fails due to OOD sampling. Firstly, we compute the
+ground-truth ALE (\(f_{\mathtt{ALE}}\)) directly from
+Eq.~\eqref{eq:ALE}\footnote{This is feasible in the synthetic example,
+  since we generate artificial data points from a known generating
+  distribution \(p(\mathcal{X}) \) and we define a mapping
+  \( f: \xb \rightarrow y \) which has a known closed-form.} and,
+then, we evaluate the divergence of the two approximations from the
+ground-truth using the Mean Squared Error, i.e.,
+\(\text{MSE}_{\mathtt{<approx>}} = \E[(\ale -
+f_{\mathtt{<approx>}})^2] \), and its normalized version, i.e.,
+\(\text{NMSE}_{\mathtt{<approx>}} = \frac{\E[(\ale -
+  f_{\mathtt{<approx>}})^2]}{\text{Var}[\ale]}\).
+
+In the last part, we choose the Bike-Sharing dataset to compare DALE
+and ALE approximation. We choose this dataset for two
+reasons. Firstly, it is the dataset utilised in the original ALE
+paper, so it is a proper choice for unbiased comparisons. Secondly, it
+contains enough training points to approximate the feature effect
+accurately. Therefore, we want to check that \(f_{\mathtt{DALE}}\) and
+\(\hat{f}_{\mathtt{ALE}}\) provide similar effects using dense
+bins. We also experiment with how both methods behave when using fewer
+samples and larger bins. Code to reproduce the experiments is provided
+in the supporting material, and it will become publicly available upon
+acceptance of the paper.
+
+\subsection{Synthetic Datasets}
+\input{./chapters/5-1-artificial-experiments.tex}
+\label{sec:5-1-artificial-experiments}
+
+\subsection{Real dataset}
+\input{./chapters/5-2-real-datasets.tex}
+\label{sec:5-2-real-datasets}
+
+\section{Conclusion and Future Work}
+\input{./chapters/6-conclusion.tex}
+
+
+% \acks{Acknowledgements should go at the end, before appendices and
+% references. You can uncomment this for the camera-ready version on
+% paper acceptance.}
+
+%\bibliographystyle{plain}
+\bibliography{bibliography.bib}
+
+% \appendix
+\end{document}

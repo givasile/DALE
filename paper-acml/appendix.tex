@@ -1,0 +1,400 @@
+\documentclass[runningheads, envcountsame, a4paper]{llncs}
+
+%%%% ADDITIONAL
+\usepackage[T1]{fontenc}
+
+% % Enable that parameters of \cref{}, \ref{}, \cite{}, ... are linked so that a reader can click on the number an jump to the target in the document
+\usepackage{hyperref}
+% Enable hyperref without colors and without bookmarks
+\hypersetup{hidelinks,
+  colorlinks=true,
+  allcolors=black,
+  pdfstartview=Fit,
+  breaklinks=true}
+%
+\usepackage[pdftex,dvipsnames]{xcolor}  % Coloured text etc.
+\usepackage{cite}
+\usepackage{enumitem}
+
+\usepackage[pdftex]{graphicx}
+\usepackage{epstopdf}
+\usepackage[caption = false]{subfig}
+
+\usepackage{amsmath, bm}
+\usepackage{amssymb}
+% \usepackage{amsthm}
+% \usepackage{mathtools}
+\usepackage{csquotes}
+\usepackage{algorithm}
+\usepackage{algorithmic}
+
+\newcommand{\xc}{\mathbf{x}_c}
+\newcommand{\Xc}{\mathcal{X}_c}
+\newcommand{\Xcb}{\mathcal{X}_c}
+\newcommand{\Xs}{\mathcal{X}_s}
+\newcommand{\Xb}{\mathcal{X}}
+\newcommand{\xci}{\mathbf{x}^i_{\mathbf{c}}}
+\newcommand{\xb}{\mathbf{x}}
+\newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}}
+\newcommand{\Jac}{\mathbf{J}}
+\newcommand{\N}{\mathbb{N}}
+\newcommand{\B}{\mathbb{B}}
+
+\usepackage{microtype}
+
+\usepackage{tikz}
+\usetikzlibrary{matrix,positioning,arrows.meta,arrows,fit,backgrounds,decorations.pathreplacing}
+
+\tikzset{
+  mymat/.style={
+    matrix of math nodes,
+    text height=2.5ex,
+    text depth=0.75ex,
+    text width=6.00ex,
+    align=center,
+    column sep=-\pgflinewidth,
+    nodes={minimum height=5.0ex}
+  },
+  mymats/.style={
+    mymat,
+    nodes={draw,fill=#1}
+  },
+  mymat2/.style={
+    matrix of math nodes,
+    text height=1.0ex,
+    text depth=0.0ex,
+    minimum width=5ex,
+%     text width=7.00ex,
+    align=center,
+    column sep=-\pgflinewidth
+  },
+}
+
+\usetikzlibrary{shapes.geometric, arrows, backgrounds, scopes}
+\usepackage{pgfplots}
+\pgfplotsset{width=6.75cm, compat=newest}
+\usepackage[utf8]{inputenc}
+\DeclareUnicodeCharacter{2212}{−}
+\usepgfplotslibrary{groupplots,dateplot}
+\usetikzlibrary{patterns,shapes.arrows}
+
+\begin{document}
+
+\section{Notation List}
+\label{sec:not-list}
+%
+We set the following notation rules:We refer to random variables
+(r.v.) using uppercase and calligraphic font \( \mathcal{X}\), whereas
+to simple variables with plain lowercase \( x \). Bold \( \xb \)
+denotes a vector variable, \( \mathcal{X}_s \) the r.v. of the feature
+of interest and \( \Xcb \) the rest of the features so that
+\( \Xb = (\Xs, \Xcb ) \) represents the input space. The black-box
+function is notated as \( f \) and the feature effect of the \(s\)-th
+feature as \(f_{\mathtt{<method>}}(x_s)\), where \(\mathtt{<method>}\)
+is the name of the feature effect method. The extensive list of
+symbols used in the paper is:
+%
+\begin{itemize}
+\item \( s \), index of the feature of interest
+\item \( \mathcal{X}_s \), feature of interest as a r.v.
+\item \( \mathcal{X}_c = (\mathcal{X}_{/s}, )\), the rest of the features in as a r.v.
+\item \( \mathcal{X} = (\mathcal{X}_s, \mathcal{X}_c)\), all input features as r.v.
+\item \( x_s \), feature of interest
+\item \( \xc \), the rest of the features
+\item \( \xb = (x_s, \xc) \), all the input features
+\item \( \mathbf{X} \), training set
+\item \( f(\cdot) : \R^D \rightarrow \R \), black box function
+\item \( D \), dimensionality of the input
+\item \( N \), number of training examples
+\item \( \xb^i \), \(i\)-th training example
+\item \( x^i_s \), \(s\)-th feature of the i-th training example
+\item \( \xci \), the rest of the features of the i-th training example
+\item \( f_{\mathtt{ALE}}^{s}(x) : \R \rightarrow \R\), feature effect computed by ALE for the \(s\)-th feature \(s\)
+\item \( f_{\mathtt{DALE}}^{s}(x) : \R \rightarrow \R\), feature effect computed by DALE for the \(s\)-th feature \(s\)
+\item \( \hat{f}_{\mathtt{ALE}}^{s}(x) : \R \rightarrow \R\), unnormalized feature effect computed by ALE for the \(s\)-th feature \(s\)
+\item \( f_s(\xb) = \frac{\partial f(x_s, \xc)}{\partial x_s} \), the partial derivative of the \( s \)-th feature
+\item \( z_{k-1}\), the left limit of the \( k\)-th bin
+\item \( z_k\), the right limit of the \( k \)-th bin
+\item \( \mathcal{S}_k = \{ \xb^i : x^i_s \in [z_{k-1}, z_k) \}\), the set of training points that belong to the \( k\)-th bin
+\item \( k_x \) the index of the bin that \( x \) belongs to
+\item \( \hat{\mu}_k^s\), \(\mathtt{DALE}\) approximation of the mean value inside a bin, equals \( \frac{1}{|\mathcal{S}_k|} \sum_{i: x^i\in \mathcal{S}_k} f_s(\xb^i) \)
+\item \( (\hat{\sigma}_k^s)^2\), \(\mathtt{DALE}\) approximation of the variance inside a bin, equals \( \frac{1}{|\mathcal{S}_k|-1} \sum_{i: x^i\in \mathcal{S}_k} (f_s(\xb^i) - \hat{\mu}_k^s)^2 \)
+
+\end{itemize}
+
+\section{Derivation of equations in the Background section}
+
+In this section, we present the derivations for obtaining the feature
+effect at the Background.
+
+
+\subsubsection*{Example Definition.}The black-box function and the
+generating distribution are:
+
+\begin{equation}
+  \label{eq:black-box}
+  f(x_1, x_2) =
+  \begin{cases}
+    1 - x_1 - x_2 \: \: \:  ,\text{if} \: x_1 + x_2  \leq 1 \\
+    0 \quad \quad \quad \quad \quad \:, \text{otherwise}
+  \end{cases}
+\end{equation}
+
+\begin{equation}
+  \label{eq:generative}
+  p(\mathcal{X}_1 = x_1, \mathcal{X}_2=x_2) =
+  \begin{cases}
+    1 & x_1 \in [0,1], x_2=x_1 \\
+    0 & \text{otherwise}
+  \end{cases}
+\end{equation}
+
+\begin{equation}
+  \label{eq:marginal}
+  p(\mathcal{X}_1 = x_1) =
+  \begin{cases}
+    1 & 0 \leq x_1 \leq 1 \\
+    0 & \text{otherwise}
+  \end{cases}
+\end{equation}
+
+\begin{equation}
+  \label{eq:marginal}
+  p(\mathcal{X}_2 = x_2) =
+  \begin{cases}
+    1 & 0 \leq x_2 \leq 1 \\
+    0 & \text{otherwise}
+  \end{cases}
+\end{equation}
+
+\begin{equation}
+  \label{eq:marginal}
+  p(\mathcal{X}_2 = x_2|\mathcal{X}_1 = x_1) = \delta(x_2-x_1)
+\end{equation}
+
+
+\subsubsection*{PDPlots.}
+
+The feature effect computed by PDP plots is:
+
+\begin{equation}
+  \label{eq:example-1-pdp}
+  \begin{split}
+    f_{\mathtt{PDP}}(x_1) &= \\
+    & = \mathbb{\E}_{\mathcal{X}_2}[f(x_1,\mathcal{X}_2)] \\
+    & = \int_{x_2} f(x_1, x_2) p(x_2) \partial x_2 \\
+    & = \int_{0}^{1-x_1} (1 - x_1 - x_2) \partial x_2 + \int_{1-x_1}^1 0 \partial x_2 \\
+    & = \int_{0}^{1-x_1} 1 \partial x_2 + \int_{0}^{1-x_1} -x_1 \partial x_2 + \int_{0}^{1-x_1} -x_2 \partial x_2 \\
+    & = (1 - x_1) -x_1(1-x_1) - \frac{{(1-x_1)}^2}{2} \\
+    & = (1 - x_1)^2 - \frac{{(1-x_1)}^2}{2} \\
+    & = \frac{{(1-x_1)}^2}{2}
+  \end{split}
+\end{equation}
+
+%
+Due to symmetry:
+
+\begin{equation}
+y = f_{\mathtt{PDP}}(x_2) = \frac{{(1-x_2)}^2}{2}
+\end{equation}
+
+\subsubsection*{MPlots.}
+
+The feature effect computed by PDP plots is:
+
+\begin{equation}
+  \label{eq:example-1-MPlots}
+  \begin{split}
+    f_{\mathtt{MP}}(x_1) &= \\
+    & = \mathbb{\E}_{\mathcal{X}_2|\mathcal{X}_1=x_1}[f(x_1,\mathcal{X}_2)] \\
+    & = \int_{x_2} f(x_1,x_2) p(x_2|x_1) \partial x_2 \\
+    & =   f(x_1, x_1) = \\
+  & = \begin{cases}
+    1 - 2x_1, & x_1 \leq 0.5 \\
+    0, & \text{otherwise}
+\end{cases}
+  \end{split}
+\end{equation}
+%
+Due to symmetry:
+
+\begin{equation}
+  y = f_{\mathtt{MP}}(x_2) =
+  \begin{cases}
+    1 - 2x_2 & x_2 \leq 0.5 \\
+    0, &\text{otherwise}
+  \end{cases}
+\end{equation}
+
+\subsubsection*{ALE}
+
+The feature effect computed by ALE is:
+
+\begin{equation}
+  \label{eq:example-1-ale}
+  \begin{split}
+    \hat{f}_{\mathtt{ALE}}(x_1) &= \\
+    & = \int_{z_0}^{x_1} \mathbb{E}_{\mathcal{X}_2|\mathcal{X}_1=z} \left [\frac{\partial f}{\partial z}(z, \mathcal{X}_2) \right ] \partial z \\
+    & = \int_{z_0}^{x_1} \int_{x_2} \frac{\partial f}{\partial z}(z,x_2) p(x_2|z)  \partial x_2 \partial z = \\
+    & = \int_{z_0}^{x_1} \frac{\partial f}{\partial z}(z,z) \partial z = \\
+    & = \begin{cases}
+      \int_{z_0}^{x_1} -1 \partial z & x_1 \leq 0.5 \\
+      \int_{z_0}^{0.5} -1 \partial z + \int_{.5}^{x_1} 0 \partial z & x_1 > 0.5
+    \end{cases} \\
+    & = \begin{cases}
+      -x_1 & x_1 \leq 0.5 \\
+      -0.5 & x_1 > 0.5
+    \end{cases}
+  \end{split}
+\end{equation}
+
+The normalization constant is:
+
+\begin{equation}
+  \label{eq:constant}
+  \begin{split}
+    c & = - \mathbb{E}[\hat{f}_{ALE}(x_1)] \\
+    & = - \int_{-\infty}^{\infty} \hat{f}_{ALE}(x_1) \\
+    & = - \int_{0}^{0.5} - z \partial z - \int_{0.5}^{1} -0.5 \partial z \\
+    & = \frac{0.25}{2} + 0.25 = 0.375
+  \end{split}
+\end{equation}
+
+Therefore, the normalized feature effect is:
+
+\begin{gather}
+y = f_{ALE}(x_1) =
+\begin{cases}
+0.375 - x_1 & 0 \leq x_1 \leq 0.5\\
+- 0.125 &  0.5 < x_1 \leq 1
+\end{cases}
+\end{gather}
+
+Due to symmetry:
+
+\begin{gather}
+y = f_{ALE}(x_2) =
+\begin{cases}
+0.375 - x_2 & 0 \leq x_2 \leq 0.5\\
+- 0.125 &  0.5 < x_2 \leq 1
+\end{cases}
+\end{gather}
+
+\section{First-order and Second-order DALE approximation}
+
+In the main part of the paper, we presented the first order ALE approximation as
+
+\begin{align}
+  f_{\mathtt{DALE}}^s(x) = \Delta x \sum_{k=1}^{k_x} \frac{1}{|\mathcal{S}_k|}
+  \sum_{i:\xb^i \in \mathcal{S}_k} [f_s(\xb^i)]
+\end{align}
+%
+For keeping the equation compact, we ommit a small detail about the
+manipulation of the last bin. In reality, we take complete
+\( \Delta x \) steps until the \( k_x - 1 \) bin, i.e. the one that
+prepends the bin where \( x \) lies in. In the last bin, instead of a
+complete \( \Delta x \) step, we move only until the position \( x
+\). Therefore, the exact first-order DALE approximation is
+
+\begin{equation}
+  \begin{split}
+  f_{\mathtt{DALE}}^s(x) &= \Delta x \sum_{k=1}^{k_x-1} \frac{1}{|\mathcal{S}_k|}
+  \sum_{i:\xb^i \in \mathcal{S}_k} [f_s(\xb^i)]\\
+  & + (x-z_{(k_x-1)}) \frac{1}{|\mathcal{S}_{k_x}|} \sum_{i:\xb^i \in
+    \mathcal{S}_{k_x}} [f_s(\xb^i)]
+  \end{split}
+  \label{eq:DALE_first_order_complete}
+\end{equation}
+
+\noindent
+Following a similar line of thought we define the complete second-order DALE approximation as
+
+\begin{multline}
+  f_{\mathtt{DALE}}^{l,m}(x_l, x_m) = \Delta x_l\sum_{p=1}^{p_x-1} \Delta x_m\sum_{q=1}^{q_x-1} \frac{1}{|\mathcal{S}_{k,q}|} \sum_{i:\xb^i \in \mathcal{S}_{k,q}}f_{l,m}(\xb^i)\\
+  + (x_l-z_{(p_x-1)})(x_m-z_{(q_x-1)}) \frac{1}{|\mathcal{S}_{p_x,q_x}|} \sum_{i:\xb^i \in \mathcal{S}_{p_x,q_x}}f_{l,m}(\xb^i)
+ \label{eq:DALE_second_order_complete}
+\end{multline}
+
+\section{Second-order ALE definition}
+
+The second-order ALE plot definintion is
+
+\begin{equation}
+  f_{\mathtt{ALE}}^{l,m}(x_l, x_m) = c + \int_{x_{l, min}}^{x_l} \int_{x_{m, min}}^{x_m} \mathbb{E}_{\Xc|X_l=z_l,
+      X_m=z_m}[f_{l,m}(\xb)] \partial z_l \partial z_m
+  \label{eq:ALE2}
+\end{equation}
+
+\noindent
+
+where
+\( f_{l,m}(\xb) = \dfrac{\partial^2f(x)}{\partial x_l \partial x_m} \).
+
+\section{DALE variance inside each bin}
+
+In this section, we show that the variance of the local effect
+estimation inside a bin, i.e. \(\mathrm{Var}[\hat{\mu}_k^s]\) equals
+with \(\frac{(\sigma_k^s)^2}{|\mathcal{S}_k|}\), where
+\((\sigma_k^s)^2 = \mathrm{Var}[f_s(\mathbf{x})]\).
+
+\begin{equation}
+  \begin{split}
+  \mathrm{Var}[\hat{\mu}_k^s] &= \mathrm{Var} [\frac{1}{|\mathcal{S}_k|} \sum_{i: x^i\in \mathcal{S}_k} f_s(\xb^i)] \\
+                              &= \frac{1}{|\mathcal{S}_k|^2} \sum_{i: x^i\in \mathcal{S}_k} \mathrm{Var}[f_s(\xb^i)] \\
+                              &= \frac{|\mathcal{S}_k|}{|\mathcal{S}_k|^2} \mathrm{Var}[f_s(\xb)] \\
+  &= \frac{(\sigma_k^s)^2}{|\mathcal{S}_k|}  \\
+  \end{split}
+\end{equation}
+
+% \section{DALE variance}
+% \label{sec:dale-variance}
+
+% In this section we show that the variance of the approximation
+% \( \mathrm{Var}[f^s_{\mathtt{DALE}}(x)] \) equals with
+% \( (\Delta x)^2 \sum_k^{k_x} \dfrac{(\sigma_k^s)^2}{|\mathcal{S}_k|}
+% \) and can be approximated by
+% \((\Delta x)^2 \sum_k^{k_x}
+% \dfrac{(\hat{\sigma}_k^s)^2}{|\mathcal{S}_k|}\). We observe that the
+% variance at the \( k \)-th bin is a sum of all the previous bins.
+
+% \begin{equation}
+%   \begin{split}
+%   \mathrm{Var}[f^s_{\mathtt{DALE}}(x)] &= \mathrm{Var} [\Delta x \sum_k^{k_x} \hat{\mu}_k^s] \\
+%                                       &= (\Delta x)^2 \sum_k^{k_x} \mathrm{Var}[\hat{\mu}_k^s] \\
+%                                       &= (\Delta x)^2 \sum_k^{k_x} \dfrac{(\sigma_k^s)^2}{|\mathcal{S}_k|}\\
+%                                       &\approx (\Delta x)^2 \sum_k^{k_x}  \dfrac{(\hat{\sigma}_k^s)^2}{|\mathcal{S}_k|}
+%   \end{split}
+% \end{equation}
+
+% \noindent
+% Therefore, the standard deviation is
+
+% \begin{equation}
+%   \mathrm{Std}[f^s_{\mathtt{DALE}}(x)] = \sqrt{\mathrm{Var}[f^s_{\mathtt{DALE}}(x)]} = \Delta x \sqrt{\sum_k^{k_x}  \dfrac{(\hat{\sigma}_k^s)^2}{|\mathcal{S}_k|}}
+% \end{equation}
+
+
+\section{Attributes description in the bike-sharing dataset}
+
+In the final experiment, we use 11 features from the bike-sharing
+dataset. In the following list we quickly explain each one;
+
+\begin{itemize}
+\item \( X_{\mathtt{year}}\): (0 = 2011, 1 = 2012)
+\item \( X_{\mathtt{month}}\): (1=January, ..., 12=December)
+\item \( X_{\mathtt{hour}}\): (0, ..., 23)
+\item \( X_{\mathtt{holiday}}\): (0 = non-holiday, 1 = holiday)
+\item \( X_{\mathtt{weekday}}\): (0 = Sunday, ..., 6 = Saturday)
+\item \( X_{\mathtt{workingday}}\): (0 = non-workingday, 1 = workingday)
+\item \( X_{\mathtt{weather-situation}}\): (1 = best weather situation, ..., 4 = worst weather situation)
+\item \( X_{\mathtt{temp}}\): temperature in Celsius
+\item \( X_{\mathtt{atemp}}\): feeling temperature in Celsius
+\item \( X_{\mathtt{hum}}\): humidity
+\( X_{\mathtt{windspeed}}\): windspeed
+\end{itemize}
+
+The target value we want to predict are the bike rentals counts
+\( Y_{\mathtt{count}}\).
+
+\end{document}

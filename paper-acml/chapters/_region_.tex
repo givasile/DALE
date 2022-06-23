@@ -1,0 +1,135 @@
+\message{ !name(5-2-real-datasets.tex)}
+\message{ !name(5-2-real-datasets.tex) !offset(-2) }
+In this section, we test our approximation on the Bike-Sharing
+Dataset~\cite{BikeSharing}.~\footnote{It is dataset drawn from the
+  Capital Bikeshare system (Washington D.C., USA) over the period
+  2011-2012. The dataset can be found
+  \href{https://archive.ics.uci.edu/ml/machine-learning-databases/00275/Bike-Sharing-Dataset.zip}{here}}
+The Bike-Sharing Dataset is chosen as the main illustration example in
+the original ALE paper, therefore we considered it appropriate for
+comparisons. The dataset contains the bike rentals for almost every
+hour over the period 2011 and 2012. The dataset contains 14 features,
+which we denote as \( X_{\mathtt{<feature\_name>}} \). We select the
+11 features that are relevant to the prediction task. Most of the
+features are measurements of the environmental conditions, e.g.
+\(X_{\mathtt{month}}\), \(X_{\mathtt{hour}}\),
+\(X_{\mathtt{temperature}}\), \(X_{\mathtt{humidity}}\),
+\(X_{\mathtt{windspeed}}\), while some others inform us about the
+day-type, e.g. whether we refer to a working-day
+\(X_{\mathtt{workingday}}\). The target value \( Y_{\mathtt{count}}\)
+is the bike rentals per hour, which has mean value
+\(\mu_{\mathtt{count}} = 189\) and standard deviation
+\(\sigma_{\mathtt{count}} = 181\). We train a deep fully-connected
+Neural Network with 6 hidden layers and \(711681\) parameters. We
+train the model for \(20\) epochs, using the Adam optimizer with
+learning rate 0.01. The model achieves a mean absolute error on the
+test of about \(38\) counts.
+
+\paragraph{Efficiency} For comparing the efficiency, we measure the
+execution time of DALE and ALE for a variable number of features. We
+present the results in Table~\ref{tab:bike-sharing-efficiency}. We
+confirm that DALE can compute the feature effect for all features in
+almost constant time wrt \(D\). In contrast, ALE scales linearly wrt
+\(D\) which leads to an execution time of over \(10\) seconds even for
+our dataset with 14 features.
+
+\begin{table}
+  \centering
+  \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c}
+    \multicolumn{12}{c}{Efficiency} \\
+    \hline\hline
+    & \multicolumn{11}{|c}{Number of Features} \\
+    \hline
+    & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
+    \hline
+    \( \dale \) & 1.17 & 1.19 & 1.22 & 1.24 & 1.27 & 1.30 & 1.36 & 1.32 & 1.33 & 1.37 & 1.39 \\
+    \hline
+    \( \alep \) & 0.85 & 1.78 & 2.69 & 3.66 & 4.64 & 5.64 & 6.85 & 7.73 & 8.86 & 9.9 & 10.9 \\
+    \hline
+  \end{tabular}
+  \caption{Evaluation of the divergence between DALE and ALE
+    estimation on the Bike Sharing dataset.}
+  \label{tab:bike-sharing-efficiency}
+\end{table}
+
+\paragraph{Accuracy}
+
+In the case of the bike-sharing, it is infeasible to compute the
+ground-truth ALE.~Firstly, we have lack of knowledge about the
+data-generating distribution and, secondly, the dimensionality of the
+problem \(D=14\) is prohibiting for applying numerical integration on
+eq.~\eqref{eq:ALE}. However, exploiting that the dataset is very
+dense, we can treat DALE and ALE approximation as ground truth effect.
+
+Afterwards, to simulate the case of sparse dataset and recompute the
+effect with we can artificially
+
+
+contains enough samples, we can split the axis of each feature
+in dense bins, i.e. large \(K\),
+
+and treat the ALE apporoximation as the ground truth
+effect.
+
+In Table~\ref{tab:bike-sharing} we present the MSE between ALE
+and DALE and in Figure~\ref{fig:bike-sharing-comparison} (a), (b),
+(c), we illustrate the approximations in three features. In all cases,
+DALE provides almost identical estimates to ALE, i.e., NMSE less than
+\(10^{-3}\). Therefore, we can confirm that in cases of dense samples,
+DALE is a much faster and equally-accurate alternative to ALE
+approximation.
+
+\begin{figure}[h]
+  \begin{center}
+    \begin{tabular}{cccc}
+      \resizebox{.22\columnwidth}{!}{\input{./images/bike-dataset-fe-1.tex}}&
+      \resizebox{.22\columnwidth}{!}{\input{./images/bike-dataset-fe-2.tex}}&
+      \resizebox{.22\columnwidth}{!}{\input{./images/bike-dataset-fe-7.tex}}%
+      \resizebox{.22\columnwidth}{!}{\input{./images/bike-dataset-fe-8.tex}}\\
+      (a) & (b) & (c) & (d)
+    \end{tabular}
+  \end{center}
+  \caption{Plot (a): DALE vs ALE execution time on the bike-sharing
+    dataset. Plots (b), (c), (d): DALE vs ALE approximation for
+    features
+    \(X_{\mathtt{month}}, X_{\mathtt{hour}}, X_{\mathtt{atemp}}\)}
+  \label{fig:bike-sharing-comparison}
+\end{figure}
+
+\begin{table}
+  \centering
+  \begin{tabular}{c|c|c|c|c}
+    \multicolumn{5}{c}{Accuracy} \\
+    \hline \hline
+    & & \multicolumn{3}{|c}{Number of bins} \\
+    \hline
+    & & 100 & 50 & 25 \\
+    \hline
+    \hline
+    \multirow{3}{*}{\(X_3\)} & \(\mathtt{NMSE}\) & - & - & - \\
+    & \(\mathtt{MSE}\) & - & - & - \\
+    & \(\mathtt{VAR}\) & - & - & - \\
+    \hline
+    \multirow{3}{*}{\(X_6\)} & \(\mathtt{NMSE}\) & - & - & - \\
+    & \(\mathtt{MSE}\) & - & - & - \\
+    & \(\mathtt{VAR}\) & - & - & - \\
+    \hline
+  \end{tabular}
+  \caption{Evaluation of the divergence between DALE and ALE
+    estimation on the Bike Sharing dataset.}
+  \label{tab:bike-sharing-accuracy}
+\end{table}
+
+
+% We draw the feature effect plots using K = 100 bins for both
+% ALE and DALE.~In Figure~\ref{fig:bike-sharing}, we illustrate
+% some of the effects. In almost all cases, both approximations provide
+% similar feature effect plots. This confirms our claim that, in cases
+% of enough training samples, both methods lead to almost identical
+% estimations. This is the case in the bike-sharing dataset where the
+% examples cover sufficiently the axis of each attribute. In terms of
+% computational speed, DALE approximations is more than \(10\) times
+% faster compared to ALE, confirming the notable speed-up even in cases
+% with low-dimensional input space.
+
+\message{ !name(5-2-real-datasets.tex) !offset(-135) }

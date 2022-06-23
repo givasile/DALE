@@ -1,0 +1,114 @@
+As briefly discussed in Section~\ref{sec:3-feature-effect}, in most
+cases it is infeasible to compute ALE analytically. Therefore,
+~\cite{Apley2020} proposed the following approximation that is based
+on the instances of the training set:
+
+\begin{align}
+  \hat{f}_{\mathtt{ALE}}(x_s) &= \sum_{k=1}^{k_x} \frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} [f(z_k,\xci) - f(z_{k-1}, \xci)]
+  \label{eq:ALE_appr}
+\end{align}
+%
+We denote as \( \xb^i \) the \(i\)-th example of the training set and
+as \(x_s^i\) its \(s\)-th feature. \(k_x\) is the index of the bin
+\(x_s\) belongs to, i.e. \(k_x: z_{k_x-1} \leq x_s < z_{k_x} \) and
+\(\mathcal{S}_k\) is the set of points that lie in the \(k\)-th bin,
+i.e.  \( \mathcal{S}_k = \{ \xb^i : z_{k-1} \leq x^i_s < z_{k} \} \).
+For understanding Eq.~\eqref{eq:ALE_appr} better, we split it in three
+levels: Instance effect is the effect computed on the \(i\)-th
+example, i.e.  \(\Delta f_i = f(z_k,\xci) - f(z_{k-1}, \xci)\), local
+effect is the effect computed on the \(k\)-th bin, i.e.
+\(\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \Delta
+f_i \), and global effect is ALE approximation
+\(\hat{f}_{\mathtt{ALE}}(x_s)\). The approximation splits the axis
+into \( K \) equally-sized bins and computes a single local effect in
+each bin. The local effect is estimated by averaging the instance
+effects of the instances that lie in each bin. Then, the global effect
+is the accumulation of the local effects. In ALE approximation, the
+number of bins (hyperparameter \(K\)), has two important consequences;
+(a) defines the resolution of the ALE plot and (b) affects the
+instance effects, which are computed at the bin limits.
+
+This approach has some weaknesses. Firstly, it is computationally
+demanding since it evaluates \(f\) for \(2 \cdot N \cdot D\)
+artificial samples, where \(N\) is the number of samples in the
+dataset and \(D\) is the number of features.  Secondly, it is
+vulnerable to OOD sampling when the bin's length becomes large.
+Finally, artificial samples generation makes the whole computation
+usable only for a predefined bin length; altering the bin size for
+assessing the feature effect at a different resolution, requires all
+computations to be repeated from scratch.
+
+\subsubsection{First-order DALE.}
+%
+To address these drawbacks, we propose Differential Accumulated
+Feature Effect (DALE) that exploits the partial derivatives without
+altering the data points. The following formula describes the
+first-order DALE approximation:
+%
+\begin{equation}
+  f_{\mathtt{DALE}}(x_s) = \Delta x \sum_{k=1}^{k_x} \frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} [f_s(\xb^i)] = \Delta x \sum_{k=1}^{k_x} \hat{\mu}_k
+ \label{eq:DALE}
+\end{equation}
+%
+where \(\Delta x\) is the bin size and \(f_s\) the partial derivative
+wrt \(x_s\), i.e.
+\(f_s(\xb^i) = \frac{\partial f(\xb^i)}{\partial x_s}\). We use
+\(\hat{\mu}_k^s = \frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in
+  \mathcal{S}_k} [f_s(\xb^i)]\) to indicate the estimated local effect
+at the \(k\)-th bin.
+
+DALE uses only the dataset samples and doesn't perturb any feature,
+securing that we estimate the local effect from on-distribution
+(observed) data points. In Eq.~(\ref{eq:DALE}), the estimation of the
+local effect at each training sample is independent from the bin
+size. In contrast with ALE approximation, the number of the bins
+(hyperparameter K) affects only the resolution of the plot and
+\textbf{not} the instance effects. Finally, DALE enables computing the
+local effects \( f_s(\xb^i) \) for \(s = \{1, \ldots, D \}\), and
+\(i = \{1, \ldots, N \}\) once, and reusing them to produce ALE plots
+of different resolutions.  Therefore, the user may experiment with
+feature effect plots at many different resolutions, with near-zero
+computational cost.
+
+\subsubsection{Second-order DALE.}
+
+ALE~\cite{Apley2020} also provide a formula for approximating the
+combined effect of a pair of attributes \(x_l, x_m\):\footnote{For
+  completness, we provide the second-order ALE definition in the
+  helping material.}
+
+\begin{equation}
+  \label{eq:ALE2approx}
+  \hat{f}_{\mathtt{ALE}}(x_l, x_m) =
+  \sum_{p=1}^{p_x}
+  \sum_{q=1}^{q_x} \frac{1}{|\mathcal{S}_{p,q}|}
+  \sum_{i:\xb^i \in \mathcal{S}_{p,q}} \Delta^2 f_i
+\end{equation}
+%
+where
+\( \Delta^2 f_i = [f(z_p, z_q, \xc) - f(z_{p-1}, z_q, \xc)] - [f(z_p,
+z_{q-1}, \xc) - f(z_{p-1}, z_{q-1}, \xc)] \). As before, instead of
+evaluating the second-order derivative at the limits of the grid, we
+propose accessing the second-order derivatives on the data points. The
+following formula describes the second-order DALE approximation:
+
+\begin{equation}
+  f_{\mathtt{DALE}}(x_l, x_m)
+  = \Delta x_l \Delta x_m \sum_{p=1}^{p_x} \sum_{q=1}^{q_x}
+  \frac{1}{|\mathcal{S}_{p,q}|} \sum_{i:\xb^i \in \mathcal{S}_{p,q}}f_{l,m}(\xb^i)
+  = \Delta x_l \Delta x_m \sum_{p=1}^{p_x} \sum_{q=1}^{q_x} \hat{\mu}_{p,q}^s
+  \label{eq:DALE-2}
+\end{equation}
+%
+where \( f_{l,m}(\xb) \) is the second-order derivative evaluated at
+\(\xb^i\), i.e.
+\( f_{l,m}(\xb) = \dfrac{\partial^2f(x)}{\partial x_l \partial x_m}
+\), and \(\Delta x_l\), \(\Delta x_m\) correspond to the bin step for
+features \(x_l\) and \(x_m\), respectively. As in the first-order
+description, we use
+\( \hat{\mu}_{p,q}^s = \frac{1}{|\mathcal{S}_{p,q}|} \sum_{i:\xb^i \in
+  \mathcal{S}_{p,q}}f_{l,m}(\xb^i)\) to express the local effect at
+the bin \( (p, q) \). DALE second-order approximation has the same
+advantages over ALE as in the first-order case; it is faster,
+protected from OOD sampling and permits multi-resolution plots, with
+near-zero additional cost.

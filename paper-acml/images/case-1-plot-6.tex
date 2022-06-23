@@ -1,0 +1,77 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{green01270}{RGB}{0,127,0}
+\definecolor{lightgray204}{RGB}{204,204,204}
+\definecolor{purple}{RGB}{128,0,128}
+
+\begin{axis}[
+legend cell align={left},
+legend style={
+  fill opacity=0.8,
+  draw opacity=1,
+  text opacity=1,
+  at={(0.03,0.97)},
+  anchor=north west,
+  draw=lightgray204
+},
+tick align=outside,
+tick pos=left,
+title={Execution time DALE: \(\displaystyle N=10^3\)},
+x grid style={darkgray176},
+xlabel={\(\displaystyle D\)},
+xmin=0.25, xmax=104.75,
+xtick style={color=black},
+y grid style={darkgray176},
+ylabel={time (seconds)},
+ymin=0.0445653210494129, ymax=0.312711131950527,
+ytick style={color=black}
+]
+\addplot [semithick, red, dashed, mark=square*, mark size=3, mark options={solid}]
+table {%
+5 0.0567537546157837
+10 0.0685902833938599
+15 0.0642098188400269
+20 0.0725626945495605
+25 0.0678497552871704
+50 0.088062047958374
+100 0.113367915153503
+};
+\addlegendentry{$L=3$}
+\addplot [semithick, green01270, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+5 0.116896510124207
+10 0.124809384346008
+15 0.127277135848999
+20 0.131840586662292
+25 0.134345889091492
+50 0.150314569473267
+100 0.171453237533569
+};
+\addlegendentry{$L=5$}
+\addplot [semithick, blue, dashed, mark=diamond*, mark size=3, mark options={solid}]
+table {%
+5 0.208409428596497
+10 0.205777525901794
+15 0.212119460105896
+20 0.218204021453857
+25 0.220425486564636
+50 0.236039161682129
+100 0.267152309417725
+};
+\addlegendentry{$L=8$}
+\addplot [semithick, purple, dashed, mark=x, mark size=3, mark options={solid}]
+table {%
+5 0.230000019073486
+10 0.235000014305115
+15 0.240000009536743
+20 0.247859835624695
+25 0.249285697937012
+50 0.276461362838745
+100 0.300522685050964
+};
+\addlegendentry{$L=10$}
+\end{axis}
+
+\end{tikzpicture}
