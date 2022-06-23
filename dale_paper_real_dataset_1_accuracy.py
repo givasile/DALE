@@ -264,3 +264,7 @@ for pcg in [100]:
     err_dale_nmse_list.append(err_dale_nmse)
     err_dale_mse_list.append(err_dale_mse)
     err_dale_var_list.append(err_dale_var)
+
+
+print(err_ale_nmse)
+print(err_dale_nmse)
