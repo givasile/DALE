@@ -1,9 +1,17 @@
-\begin{thebibliography}{16}
+\begin{thebibliography}{17}
 \providecommand{\natexlab}[1]{#1}
 \providecommand{\url}[1]{\texttt{#1}}
 \expandafter\ifx\csname urlstyle\endcsname\relax
   \providecommand{\doi}[1]{doi: #1}\else
   \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Adadi and Berrada(2018)]{Adadi2018}
+Amina Adadi and Mohammed Berrada.
+\newblock {Peeking Inside the Black-Box: A Survey on Explainable Artificial
+  Intelligence (XAI)}.
+\newblock \emph{IEEE Access}, 6:\penalty0 52138--52160, sep 2018.
+\newblock ISSN 21693536.
+\newblock \doi{10.1109/ACCESS.2018.2870052}.
 
 \bibitem[Apley and Zhu(2020)]{Apley2020}
 Daniel~W. Apley and Jingyu Zhu.

@@ -96,7 +96,7 @@
 \jmlryear{2022}
 \jmlrworkshop{ACML 2022}
 
-\title[DALE:~Differential Accumulated Local Effects]{DALE:~Differential Accumulated Local Effects for efficient and accurate global model explanations}
+\title[DALE:~Differential Accumulated Local Effects]{DALE:~Differential Accumulated Local Effects for efficient and accurate global explanations}
 
  % Use \Name{Author Name} to specify the name.
  % If the surname contains spaces, enclose the surname
@@ -143,30 +143,35 @@
 \maketitle
 
 \begin{abstract}
-  Accumulated Local Effect (ALE) is a method for the accurate
-  estimation of feature effects, overcoming fundamental failure modes
-  of previously-existed methods, such as Partial Dependence Plots
-  (PDP). The \textit{approximation} method for ALE, however, faces two
-  crucial weaknesses. Firstly, it does not scale well in cases where
-  the input has high dimensionality and, secondly, it is vulnerable to
-  out-of-distribution sampling in cases with limited training
-  examples. In this paper we propose a novel ALE approximation, called
-  Differential Accumulated Local Effects (DALE), which overcomes these
-  issues. Our proposal has significant computational
+  Accumulated Local Effect (ALE) is a method for accurately estimating
+  feature effects, overcoming fundamental failure modes of
+  previously-existed methods, such as Partial Dependence
+  Plots. However, the \textit{approximation} method for ALE faces two
+  weaknesses. Firstly, it does not scale well in cases where the input
+  has high dimensionality, and, secondly, it is vulnerable to
+  out-of-distribution (OOD) sampling in cases with limited training
+  examples. In this paper, we propose a novel ALE approximation,
+  called Differential Accumulated Local Effects (DALE), a fast and
+  accurate alternative for estimating feature effects in cases where
+  the ML model is differentiable and an auto-differentiable framework
+  is accessible. Our proposal has significant computational
   advantages. Specifically, the computational complexity for computing
   the feature effect for all attributes using DALE is similar to what
   ALE requires for a single attribute. DALE, therefore, makes feature
-  effect applicable to high-dimensional Machine Learning scenarios
-  with near-zero computational overhead. Furthermore, unlike ALE, it
-  calculates the feature effect using only the training examples
-  resolving misleading estimations due to out-of-distribution
-  sampling. Experiments using both synthetic and real datasets
-  demonstrate the value of the proposed approach. Code to reproduce
-  these experiments is provided in the submission and will become
-  publicly available upon acceptance.
+  effect estimation applicable to high-dimensional Machine Learning
+  scenarios with near-zero computational overhead. Furthermore, unlike
+  ALE, our proposal does not create artificial points for calculating
+  the feature effect. The approximation is exclusively based on the
+  training examples, resolving misleading estimations due to OOD
+  sampling. Finally, we formally prove that, under some hypotheses,
+  DALE is an unbiased estimator of ALE and we present a method for
+  quantifying the uncertainty of the explanation. Experiments using
+  both synthetic and real datasets demonstrate the value of the
+  proposed approach. Code to reproduce these experiments is provided
+  in the submission and will become publiclyavailable upon acceptance.
 \end{abstract}
 \begin{keywords}
-Feature Effect; Explainable AI; Differentiable Models; Neural-Networks
+Feature Effect;~Explainable AI;~Differentiable Models;~Neural Networks
 \end{keywords}
 
 \section{Introduction}

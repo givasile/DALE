@@ -4,45 +4,45 @@ The top-level auxiliary file: main.aux
 The style file: plainnat.bst
 Database file #1: bibliography.bib
 Warning--empty journal in Hoffman2018
-You've used 16 entries,
+You've used 17 entries,
             2773 wiz_defined-function locations,
-            741 strings with 9202 characters,
-and the built_in function-call counts, 8844 in all, are:
-= -- 848
-> -- 523
-< -- 11
-+ -- 176
-- -- 159
-* -- 774
-:= -- 1372
-add.period$ -- 82
-call.type$ -- 16
-change.case$ -- 101
-chr.to.int$ -- 15
-cite$ -- 33
-duplicate$ -- 365
-empty$ -- 643
-format.name$ -- 183
-if$ -- 1853
+            749 strings with 9397 characters,
+and the built_in function-call counts, 9360 in all, are:
+= -- 902
+> -- 544
+< -- 12
++ -- 183
+- -- 165
+* -- 817
+:= -- 1450
+add.period$ -- 87
+call.type$ -- 17
+change.case$ -- 106
+chr.to.int$ -- 16
+cite$ -- 35
+duplicate$ -- 385
+empty$ -- 686
+format.name$ -- 192
+if$ -- 1962
 int.to.chr$ -- 2
 int.to.str$ -- 1
-missing$ -- 16
-newline$ -- 122
-num.names$ -- 64
-pop$ -- 155
+missing$ -- 17
+newline$ -- 129
+num.names$ -- 68
+pop$ -- 161
 preamble$ -- 1
-purify$ -- 85
+purify$ -- 89
 quote$ -- 0
-skip$ -- 293
+skip$ -- 308
 stack$ -- 0
-substring$ -- 352
-swap$ -- 59
+substring$ -- 391
+swap$ -- 61
 text.length$ -- 6
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 176
+type$ -- 187
 warning$ -- 1
-while$ -- 75
+while$ -- 80
 width$ -- 0
-write$ -- 282
+write$ -- 299
 (There was 1 warning)

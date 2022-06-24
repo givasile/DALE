@@ -1,4 +1,5 @@
-This section introduces the reader to three popular feature effect methods; PDPlots, MPlots and ALE. We also design a toy example illustrating that ALE overpasses the weaknesses of PDPlots and MPlots.
+This section introduces the reader to three popular feature effect
+methods; PDPlots, MPlots and ALE.
 
 \paragraph*{Notation.} We refer to random variables (r.v.) using
 uppercase and calligraphic font \( \mathcal{X}\), whereas to simple
@@ -9,24 +10,35 @@ interest and \( \Xcb \) the rest of the features so that
 function is notated as \( f \) and the feature effect of the \(s\)-th
 feature as \(f_{\mathtt{<method>}}(x_s)\), where \(\mathtt{<method>}\)
 is the name of the feature effect method.\footnote{An extensive list
-  of all symbols used in the paper is provided in the Appendix.}
+  of all symbols used in the paper is provided in the helping material.}
 
-PDPlots formulate the feature effect of the \(s\)-th attribute as an expectation over the marginal distribution \(\mathcal{X}_c\), i.e., \(f_{\mathtt{PDP}}(x_s) = \mathbb{\E}_{\mathcal{X}_c}[f(x_s,\mathcal{X}_c)]\). In contrast, MPlots formulate it as an expectation over the conditional \(\mathcal{X}_c|\mathcal{X}_s\), i.e., \(f_{\mathtt{MP}}(x_s) = \E_{\mathcal{X}_c|\mathcal{X}_s = x_s}[f(x_s, \mathcal{X}_c)]\).
-
-ALE computes the global effect at \(x_s\) as an integration of local effects. The local effects are measured as the expected change on the output \( \frac{\partial f(x_s, \mathcal{X}_c)}{\partial x_s} \) over the conditional distribution \( \Xcb|\mathcal{X}_s\). The formula that defines ALE is presented below:
-
-% \begin{equation}\label{eq:example-1-pdp-definition} % f_{\mathtt{PDP}}(x_s) = \mathbb{\E}_{\mathcal{X}_c}[f(x_s,\mathcal{X}_c)] % = \int_{\xc} p(\xc)f(x_s, \xc) \partial \xc
-% \end{equation} % %
-% \begin{equation} \label{eq:example-1-mplots-definition} % f_{\mathtt{MP}}(x_s) = \E_{\mathcal{X}_c|\mathcal{X}_s = x_s}[f(x_s, \mathcal{X}_c)] % = \int_{\xc} p(\xc|x_s) f(x_s, \xc) \partial \xc
-% \end{equation}
+\paragraph{Feature Effect Methods.} PDPlots formulate the feature
+effect of the \(s\)-th attribute as an expectation over the marginal
+distribution \(\mathcal{X}_c\), i.e.,
+\(f_{\mathtt{PDP}}(x_s) =
+\mathbb{\E}_{\mathcal{X}_c}[f(x_s,\mathcal{X}_c)]\). MPlots formulate
+it as an expectation over the conditional
+\(\mathcal{X}_c|\mathcal{X}_s\), i.e.,
+\(f_{\mathtt{MP}}(x_s) = \E_{\mathcal{X}_c|\mathcal{X}_s = x_s}[f(x_s,
+\mathcal{X}_c)]\). ALE computes the global effect at \(x_s\) as an
+integration of local effects. The local effects are measured as the
+expected change on the output
+\( \frac{\partial f(x_s, \mathcal{X}_c)}{\partial x_s} \) over the
+conditional distribution \( \Xcb|\mathcal{X}_s\). The formula that
+defines ALE is presented below:
 
 \begin{gather}
-  \label{eq:ALE} f_{\mathtt{ALE}}(x_s) = c + \int_{-\infty}^{x_s} \mathbb{E}_{\Xcb|\mathcal{X}_s=z}\left[\frac{\partial f(z, \mathcal{X}_c)}{\partial z}\right] \partial z % = \int_{-\infty}^{x} \int_{\xc} p(\xc|x_s=z)f_s(\xb) \partial \xc \partial z
+  \label{eq:ALE} f_{\mathtt{ALE}}(x_s) = c + \int_{-\infty}^{x_s} \mathbb{E}_{\Xcb|\mathcal{X}_s=z}\left[\frac{\partial f(z, \mathcal{X}_c)}{\partial z}\right] \partial z
 \end{gather}
 %
-The constant \(c\) is used for centering the ALE plot. When we refer to the normalized ALE plot we use \(f_{\mathtt{ALE}}\), whereas for the unnormalized we use \(\Tilde{f}_{\mathtt{ALE}}\).
-
-For illustrating the differences between the methods, we provide a toy example. We select a bivariate black-box function \(f\) with correlated features; the first feature \( x_1 \) follows a uniform distribution \( x_1 \sim \mathcal{U}(0,1)\) and the second feature gets the value of \(x_1\) in a deterministic way, i.e., \( x_2 = x_1 \). The black-box function is the following piece-wise linear mapping:
+The constant \(c\) is used for centering the ALE plot. For
+illustrating the differences between the methods and the superiority
+of ALE, we provide a toy example. We select a bivariate black-box
+function \(f\) with correlated features; the first feature \( x_1 \)
+follows a uniform distribution \( x_1 \sim \mathcal{U}(0,1)\) and the
+second feature gets the value of \(x_1\) in a deterministic way, i.e.,
+\( x_2 = x_1 \). The black-box function is the following piece-wise
+linear mapping:
 %
 \begin{equation} \label{eq:example-1-mapping} f(x_1, x_2) =
   \begin{cases} 1 - x_1 - x_2 & x_1 + x_2 \leq 1 \\ 0 & \text{otherwise}
@@ -34,7 +46,13 @@ For illustrating the differences between the methods, we provide a toy example. 
 \end{equation}
 \noindent
 
-Due to the piece-wise linear form, it is easy to isolate the effect of \(x_1\); In the linear region, i.e., \(0 \leq x_1 \leq 0.5\), it contributes \(-x_1\) and in the constant region, i.e., \(0.5 < x_1 \leq 1 \), the output does not depend on \(x_1\). The closed-form solution for each method is presented below:~\footnote{Detailed derivations can be found in the hepling material.}~\footnote{ Due to symmetry, for each method, the effect for \(x_2\) is the same with the effect of \(x_1\)}
+Due to the piece-wise linear form, it is easy to isolate the effect of
+\(x_1\); Insider the region \(0 \leq x_1 \leq 0.5\), the effect is
+linear, i.e., \(-x_1\), and outside it is constant, i.e. the effect
+does not depend on \(x_1\). The closed-form solution for each method
+is presented below:~\footnote{Detailed derivations can be found in the
+  hepling material.}~\footnote{ Due to symmetry, for each method, the
+  effect for \(x_2\) is the same with the effect of \(x_1\)}
 %
 \begin{equation}\label{eq:example-1-pdp} f_{\mathtt{PDP}}(x_1) = \mathbb{\E}_{\mathcal{X}_2}[f(x_1,\mathcal{X}_2)] = \frac{{(1-x_1)}^2}{2}, \: \forall x_1 \in [0,1]
 \end{equation}
@@ -52,6 +70,6 @@ Due to the piece-wise linear form, it is easy to isolate the effect of \(x_1\); 
   \end{split}
 \end{align}
 
-The effect computed in Eqs.~\eqref{eq:example-1-pdp},~\eqref{eq:example-1-mplots} helps us understand that PDPlots and MPlots provide misleading results in cases of correlated features. PDPlots integrate over unrealistic instances due to the use of the marginal distribution \( p(\mathcal{X}_1) \). Therefore, they incorrectly result in a quadratic effect in the region \(x_1 \in [0, 1]\). MPlots resolve this issue using the conditional distribution \( \mathcal{X}_2|\mathcal{X}_1 \) but suffer from computing combined effects. In the linear subregion, the effect is overestimated as \( -2x_1 \) which is the combined effect of both \( x_1 \) and \( x_2 \). As emerges from Eq.~\eqref{eq:example-1-ale}, ALE resolves both issues and provides the correct effect.
+The effect computed in Eqs.~\eqref{eq:example-1-pdp},~\eqref{eq:example-1-mplots} helps us understand that PDPlots and MPlots provide misleading results in cases of correlated features. PDPlots integrate over unrealistic instances due to the use of the marginal distribution \( p(\mathcal{X}_1) \). Therefore, they incorrectly result in a quadratic effect in the region \(x_1 \in [0, 1]\). MPlots resolve this issue using the conditional distribution \( \mathcal{X}_2|\mathcal{X}_1 \) but suffer from computing combined effects. In the linear subregion, the effect is overestimated as \( -2x_1 \) which is the combined effect of both \( x_1 \) and \( x_2 \). As Eq.~\eqref{eq:example-1-ale} shows, ALE resolves both issues and provides the correct effect.
 
-In real scenarios, we cannot obtain a solution directly from Eq.~\eqref{eq:ALE}. Therefore,~\cite{Apley2020} proposed a solution by splitting the \(x_s\) axis into bins, computing the local effects inside each bin with a Monte Carlo approximation, and, finally, averaging the bin effects. As we discuss extensively in Sections~\ref{sec:4-2-computational} and~\ref{sec:4-3-robustness}, this approximation does not scale well to high-dimensional datasets and is vulnerable to OOD sampling (b). The following section presents DALE, a novel approximation for resolving both issues.
+In real scenarios, we cannot obtain a solution directly from Eq.~\eqref{eq:ALE}. Therefore,~\cite{Apley2020} proposed a solution by splitting the \(x_s\) axis into bins, computing the local effects inside each bin with a Monte Carlo approximation, and, finally, averaging the bin effects. As we discuss extensively in Sections~\ref{sec:4-2-computational} and~\ref{sec:4-3-robustness}, this approximation does not scale well to high-dimensional datasets and is vulnerable to OOD sampling. The following section presents DALE, a novel approximation for resolving both issues.
