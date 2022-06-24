@@ -117,7 +117,7 @@ def plot_f(model, samples, nof_points, samples_range, savefig):
     plt.ylabel("$x_2$")
     plt.legend()
     if savefig:
-        tplt.save("./paper-acml/images/case-2-f-gt.tex")
+        tplt.save("./../paper/images/case-2-f-gt.tex")
     plt.show(block=False)
 
 
@@ -134,7 +134,7 @@ def create_gt_effect(s):
 def plot_effect(K, savefig):
     plt.figure()
     plt.title("Effect Estimation: K = " + str(K))
-    x = np.linspace(0,10, 1000)
+    x = np.linspace(0,10, 100)
     y_gt = ale_gt_0(x)
 
     # dale estimation
@@ -153,7 +153,7 @@ def plot_effect(K, savefig):
     plt.xlabel("$x_1$")
     plt.legend()
     if savefig:
-        tplt.save("./paper-acml/images/case-2-fe-bins-" + str(K) + ".tex")
+        tplt.save("./../paper/images/case-2-fe-bins-" + str(K) + ".tex")
     plt.show(block=False)
 
 def evaluate_many_K(K_list, X):
@@ -207,4 +207,4 @@ print(np.array(dale_err) < .1)
 N = 100
 samples_range = 10
 X = generate_samples(N, samples_range)
-plot_f(model=model, samples=X, nof_points=30, samples_range=samples_range, savefig=savefig)
+plot_f(model=model, samples=X, nof_points=15, samples_range=samples_range, savefig=savefig)

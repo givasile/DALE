@@ -12,50 +12,50 @@ legend style={
   fill opacity=0.8,
   draw opacity=1,
   text opacity=1,
-  at={(0.03,0.97)},
-  anchor=north west,
+  at={(0.91,0.5)},
+  anchor=east,
   draw=lightgray204
 },
 tick align=outside,
 tick pos=left,
-title={Execution time ALE: \(\displaystyle L=2\)},
+title={Execution time DALE: \(\displaystyle L=2\)},
 x grid style={darkgray176},
 xlabel={\(\displaystyle D\)},
 xmin=0.25, xmax=104.75,
 xtick style={color=black},
 y grid style={darkgray176},
 ylabel={time (seconds)},
-ymin=-2.73388298709979, ymax=57.999057591099,
+ymin=-0.0109329749522149, ymax=0.398615855950105,
 ytick style={color=black}
 ]
 \addplot [semithick, green01270, dashed, mark=*, mark size=3, mark options={solid}]
 table {%
-5 0.026705265045166
-10 0.0574851036071777
-15 0.0858516693115234
-20 0.112214326858521
-25 0.184911131858826
-100 0.628105640411377
+5 0.0076829195022583
+10 0.00905656814575195
+15 0.0112016201019287
+20 0.0126841068267822
+25 0.0161861181259155
+100 0.0369504690170288
 };
 \addlegendentry{$N=10^2$}
 \addplot [semithick, blue, dashed, mark=diamond*, mark size=3, mark options={solid}]
 table {%
-5 0.127141833305359
-10 0.271587371826172
-15 0.413034200668335
-20 0.54520583152771
-25 0.675822854042053
-100 2.74792742729187
+5 0.0340769290924072
+10 0.0398837327957153
+15 0.0440537929534912
+20 0.0425540208816528
+25 0.0495928525924683
+100 0.0912438631057739
 };
 \addlegendentry{$N=10^3$}
 \addplot [semithick, purple, dashed, mark=x, mark size=3, mark options={solid}]
 table {%
-5 1.20529174804688
-10 2.53928112983704
-15 3.89853239059448
-20 5.39064311981201
-25 6.83541965484619
-100 55.238468170166
+5 0.320958256721497
+10 0.334092974662781
+15 0.33648693561554
+20 0.340000033378601
+25 0.350000023841858
+100 0.379999995231628
 };
 \addlegendentry{$N=10^4$}
 \end{axis}

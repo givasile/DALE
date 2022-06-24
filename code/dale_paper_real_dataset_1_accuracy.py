@@ -8,7 +8,7 @@ import tensorflow as tf
 import random as python_random
 import timeit
 import tikzplotlib as tplt
-matplotlib.rcParams['text.usetex'] = True
+# matplotlib.rcParams['text.usetex'] = True
 savefig = False
 import feature_effect as fe
 
@@ -132,7 +132,7 @@ def plot_feature(s, X, ale, dale, savefig=False):
     plt.legend()
     if savefig:
         tplt.clean_figure()
-        tplt.save("./paper-acml/images/bike-dataset-fe-" + str(s) + ".tex")
+        tplt.save("./../paper/images/bike-dataset-fe-" + str(s) + ".tex")
     plt.show(block=False)
 
 
@@ -159,7 +159,7 @@ def plot_comparison_different_K(X, s, savefig=False):
 
     if savefig:
         tplt.clean_figure()
-        tplt.save("./paper-acml/images/bike-dataset-ale-comparison.tex")
+        tplt.save("./../paper/images/bike-dataset-ale-comparison.tex")
     plt.show(block=False)
 
     # dale part
@@ -180,7 +180,7 @@ def plot_comparison_different_K(X, s, savefig=False):
     plt.ylabel("$Y_{\mathtt{counts}}$")
     if savefig:
         tplt.clean_figure()
-        tplt.save("./paper-acml/images/bike-dataset-dale-comparison.tex")
+        tplt.save("./../paper/images/bike-dataset-dale-comparison.tex")
     plt.show(block=False)
 
 

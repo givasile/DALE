@@ -91,11 +91,12 @@ def plot_f(model, samples, nof_points, samples_range, savefig):
     plt.ylabel("$x_2$")
     plt.legend()
     if savefig:
-        tplt.save(".paper-acml/images/OOD-1.tex")
+        tplt.save("./../paper/images/OOD-1.tex")
     plt.show(block=False)
 
 # plot f
-plot_f(model=model, samples=None, nof_points=30, samples_range=samples_range, savefig=savefig)
+samples_range=10
+plot_f(model=model, samples=None, nof_points=10, samples_range=samples_range, savefig=savefig)
 
 
 def model(X: np.array) -> np.array:
@@ -145,5 +146,5 @@ plt.ylabel("Local effect")
 plt.xlabel("number of bins $(K)$")
 plt.legend()
 if savefig:
-    tplt.save("./paper-acml/images/OOD-2.tex")
+    tplt.save("./../paper/images/OOD-2.tex")
 plt.show(block=False)

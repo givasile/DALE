@@ -9,8 +9,7 @@ import tensorflow as tf
 import random as python_randomy
 import timeit
 import tikzplotlib as tplt
-matplotlib.rcParams['text.usetex'] = True
-save_fig = True
+# matplotlib.rcParams['text.usetex'] = True
 import feature_effect as fe
 
 savefig = False
@@ -94,7 +93,7 @@ plt.legend()
 plt.title("Execution time")
 if savefig:
     tplt.clean_figure()
-    tplt.save("/home/givasile/projects-org/org-feature-effect/paper-acml/images/bike-dataset-exec-time.tex")
+    tplt.save("./../paper/images/bike-dataset-exec-time.tex")
 plt.show(block=False)
 
 
