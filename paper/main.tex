@@ -1,140 +1,95 @@
 %\documentclass[wcp,gray]{jmlr} % test grayscale version
 \documentclass[wcp]{jmlr}
 
-% givasile packages
-\usepackage{bbm}
-\usepackage{multirow}
-\usepackage{xfrac}
-\usepackage[T1]{fontenc}
+% givasile packages \usepackage{bbm} \usepackage{multirow}
+\usepackage{xfrac} \usepackage[T1]{fontenc}
 
-\usepackage{enumitem}
-\usepackage{epstopdf}
+\usepackage{enumitem} \usepackage{epstopdf}
 
-\usepackage{bm}
-\usepackage{csquotes}
-\usepackage{algorithm}
-\usepackage{algorithmic}
-\newcommand{\dale}{f_{\mathtt{DALE}}}
+\usepackage{bm} \usepackage{csquotes} \usepackage{algorithm}
+\usepackage{algorithmic} \newcommand{\dale}{f_{\mathtt{DALE}}}
 \newcommand{\ale}{f_{\mathtt{ALE}}}
 \newcommand{\alep}{\hat{f}_{\mathtt{ALE}}}
-\newcommand{\xc}{\mathbf{x}_c}
-\newcommand{\Xcb}{\mathcal{X}_c}
-\newcommand{\Xs}{\mathcal{X}_s}
-\newcommand{\Xb}{\mathcal{X}}
+\newcommand{\xc}{\mathbf{x}_c} \newcommand{\Xcb}{\mathcal{X}_c}
+\newcommand{\Xs}{\mathcal{X}_s} \newcommand{\Xb}{\mathcal{X}}
 \newcommand{\xci}{\mathbf{x}^i_{\mathbf{c}}}
-\newcommand{\xb}{\mathbf{x}}
-\newcommand{\R}{\mathbb{R}}
-\newcommand{\E}{\mathbb{E}}
-\newcommand{\Jac}{\mathbf{J}}
-\newcommand{\N}{\mathbb{N}}
-\newcommand{\B}{\mathbb{B}}
-\newcommand\todo[1]{\textcolor{red}{#1}}
-\usepackage{microtype}
+\newcommand{\xb}{\mathbf{x}} \newcommand{\R}{\mathbb{R}}
+\newcommand{\E}{\mathbb{E}} \newcommand{\Jac}{\mathbf{J}}
+\newcommand{\N}{\mathbb{N}} \newcommand{\B}{\mathbb{B}}
+\newcommand\todo[1]{\textcolor{red}{#1}} \usepackage{microtype}
 
 \usepackage{tikz}
 \usetikzlibrary{matrix,positioning,arrows.meta,arrows,fit,backgrounds,decorations.pathreplacing}
 
-\tikzset{
-  mymat/.style={
-    matrix of math nodes,
-    text height=2.5ex,
-    text depth=0.75ex,
-    text width=6.00ex,
-    align=center,
-    column sep=-\pgflinewidth,
-    nodes={minimum height=5.0ex}
-  },
-  mymats/.style={
-    mymat,
-    nodes={draw,fill=#1}
-  },
-  mymat2/.style={
-    matrix of math nodes,
-    text height=1.0ex,
-    text depth=0.0ex,
-    minimum width=5ex,
-%     text width=7.00ex,
-    align=center,
-    column sep=-\pgflinewidth
-  },
-}
+\tikzset{ mymat/.style={ matrix of math nodes, text height=2.5ex, text
+depth=0.75ex, text width=6.00ex, align=center, column
+sep=-\pgflinewidth, nodes={minimum height=5.0ex} }, mymats/.style={
+mymat, nodes={draw,fill=#1} }, mymat2/.style={ matrix of math nodes,
+text height=1.0ex, text depth=0.0ex, minimum width=5ex, % text
+width=7.00ex, align=center, column sep=-\pgflinewidth }, }
 
 \usetikzlibrary{shapes.geometric, arrows, backgrounds, scopes}
-\usepackage{pgfplots}
-\pgfplotsset{width=6.75cm, compat=newest}
-\usepackage[utf8]{inputenc}
-\DeclareUnicodeCharacter{2212}{−}
+\usepackage{pgfplots} \pgfplotsset{width=6.75cm, compat=newest}
+\usepackage[utf8]{inputenc} \DeclareUnicodeCharacter{2212}{−}
 \usepgfplotslibrary{groupplots,dateplot}
 \usetikzlibrary{patterns,shapes.arrows}
 
 
-% The following packages will be automatically loaded:
-% amsmath, amssymb, natbib, graphicx, url, algorithm2e
+% The following packages will be automatically loaded: % amsmath,
+amssymb, natbib, graphicx, url, algorithm2e
 
 %\usepackage{rotating}% for sideways figures and tables
 \usepackage{longtable}% for long tables
 
-% The booktabs package is used by this sample document
-% (it provides \toprule, \midrule and \bottomrule).
-% Remove the next line if you don't require it.
-\usepackage{booktabs}
-% The siunitx package is used by this sample document
-% to align numbers in a column by their decimal point.
-% Remove the next line if you don't require it.
+% The booktabs package is used by this sample document % (it provides
+\toprule, \midrule and \bottomrule).  % Remove the next line if you
+don't require it.  \usepackage{booktabs} % The siunitx package is used
+by this sample document % to align numbers in a column by their
+decimal point.  % Remove the next line if you don't require it.
 %\usepackage[load-configurations=version-1]{siunitx} % newer version
-%\usepackage{siunitx}
-%\usepackage{natbib}
+%\usepackage{siunitx} %\usepackage{natbib}
 
-% Do not comment the following commands:
-\pagenumbering{gobble}
-\newcommand{\cs}[1]{\texttt{\char`\\#1}}
-\makeatletter
-\let\Ginclude@graphics\@org@Ginclude@graphics
-\makeatother
+% Do not comment the following commands: \pagenumbering{gobble}
+\newcommand{\cs}[1]{\texttt{\char`\\#1}} \makeatletter
+\let\Ginclude@graphics\@org@Ginclude@graphics \makeatother
 
-\jmlrvolume{}
-\jmlryear{2022}
-\jmlrworkshop{ACML 2022}
+\jmlrvolume{} \jmlryear{2022} \jmlrworkshop{ACML 2022}
 
-\title[DALE:~Differential Accumulated Local Effects]{DALE:~Differential Accumulated Local Effects for efficient and accurate global explanations}
+\title[DALE:~Differential Accumulated Local
+Effects]{DALE:~Differential Accumulated Local Effects for efficient
+and accurate global explanations}
 
- % Use \Name{Author Name} to specify the name.
- % If the surname contains spaces, enclose the surname
- % in braces, e.g. \Name{John {Smith Jones}} similarly
- % if the name has a "von" part, e.g \Name{Jane {de Winter}}.
- % If the first letter in the forenames is a diacritic
- % enclose the diacritic in braces, e.g. \Name{{\'E}louise Smith}
+ % Use \Name{Author Name} to specify the name.  % If the surname
+contains spaces, enclose the surname % in braces, e.g. \Name{John
+{Smith Jones}} similarly % if the name has a "von" part, e.g
+\Name{Jane {de Winter}}.  % If the first letter in the forenames is a
+diacritic % enclose the diacritic in braces, e.g. \Name{{\'E}louise
+Smith}
 
- % Two authors with the same address
- % \author{\Name{Author Name1} \Email{abc@sample.com}\and
- %  \Name{Author Name2} \Email{xyz@sample.com}\\
- %  \addr Address}
+ % Two authors with the same address % \author{\Name{Author Name1}
+\Email{abc@sample.com}\and % \Name{Author Name2}
+\Email{xyz@sample.com}\\ % \addr Address}
 
- % Three or more authors with the same address:
- % \author{\Name{Author Name1} \Email{an1@sample.com}\\
- %  \Name{Author Name2} \Email{an2@sample.com}\\
- %  \Name{Author Name3} \Email{an3@sample.com}\\
- %  \Name{Author Name4} \Email{an4@sample.com}\\
- %  \Name{Author Name5} \Email{an5@sample.com}\\
- %  \Name{Author Name6} \Email{an6@sample.com}\\
- %  \Name{Author Name7} \Email{an7@sample.com}\\
- %  \Name{Author Name8} \Email{an8@sample.com}\\
- %  \Name{Author Name9} \Email{an9@sample.com}\\
- %  \Name{Author Name10} \Email{an10@sample.com}\\
- %  \Name{Author Name11} \Email{an11@sample.com}\\
- %  \Name{Author Name12} \Email{an12@sample.com}\\
- %  \Name{Author Name13} \Email{an13@sample.com}\\
- %  \Name{Author Name14} \Email{an14@sample.com}\\
- %  \addr Address}
+ % Three or more authors with the same address: % \author{\Name{Author
+Name1} \Email{an1@sample.com}\\ % \Name{Author Name2}
+\Email{an2@sample.com}\\ % \Name{Author Name3}
+\Email{an3@sample.com}\\ % \Name{Author Name4}
+\Email{an4@sample.com}\\ % \Name{Author Name5}
+\Email{an5@sample.com}\\ % \Name{Author Name6}
+\Email{an6@sample.com}\\ % \Name{Author Name7}
+\Email{an7@sample.com}\\ % \Name{Author Name8}
+\Email{an8@sample.com}\\ % \Name{Author Name9}
+\Email{an9@sample.com}\\ % \Name{Author Name10}
+\Email{an10@sample.com}\\ % \Name{Author Name11}
+\Email{an11@sample.com}\\ % \Name{Author Name12}
+\Email{an12@sample.com}\\ % \Name{Author Name13}
+\Email{an13@sample.com}\\ % \Name{Author Name14}
+\Email{an14@sample.com}\\ % \addr Address}
 
 
- % Authors with different addresses:
- %  \author{\Name{Author Name1} \Email{abc@sample.com}\\
- %  \addr Address 1
- %  \AND
- %  \Name{Author Name2} \Email{xyz@sample.com}\\
- %  \addr Address 2
- % }
+ % Authors with different addresses: % \author{\Name{Author Name1}
+\Email{abc@sample.com}\\ % \addr Address 1 % \AND % \Name{Author
+Name2} \Email{xyz@sample.com}\\ % \addr Address 2 % }
 
 % \editors{Emtiyaz Khan and Mehmet Gonen}
 
