@@ -6,6 +6,7 @@
 \usepackage{multirow}
 \usepackage{xfrac}
 \usepackage[T1]{fontenc}
+% \usepackage{subcaption}
 
 \usepackage{enumitem}
 \usepackage{epstopdf}
@@ -41,84 +42,98 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
 \usepgfplotslibrary{groupplots,dateplot}
 \usetikzlibrary{patterns,shapes.arrows}
 
-% The following packages will be automatically loaded: % amsmath,
-% amssymb, natbib, graphicx, url, algorithm2e
+% The following packages will be automatically loaded:
+% amsmath, amssymb, natbib, graphicx, url, algorithm2e
 
 %\usepackage{rotating}% for sideways figures and tables
 \usepackage{longtable}% for long tables
 
-% % The booktabs package is used by this sample document % (it provides
-% \toprule, \midrule and \bottomrule).  % Remove the next line if you
-% don't require it.  \usepackage{booktabs} % The siunitx package is used
-% by this sample document % to align numbers in a column by their
-% decimal point.  % Remove the next line if you don't require it.
-% %\usepackage[load-configurations=version-1]{siunitx} % newer version
-% %\usepackage{siunitx} %\usepackage{natbib}
+% The booktabs package is used by this sample document
+% (it provides \toprule, \midrule and \bottomrule).
+% Remove the next line if you don't require it.
+\usepackage{booktabs}
+% The siunitx package is used by this sample document
+% to align numbers in a column by their decimal point.
+% Remove the next line if you don't require it.
+%\usepackage[load-configurations=version-1]{siunitx} % newer version
+%\usepackage{siunitx}
+%\usepackage{natbib}
 
-% Do not comment the following commands: \pagenumbering{gobble}
-\newcommand{\cs}[1]{\texttt{\char`\\#1}} \makeatletter
-\let\Ginclude@graphics\@org@Ginclude@graphics \makeatother
+% Do not comment the following commands:
+\pagenumbering{gobble}
+\newcommand{\cs}[1]{\texttt{\char`\\#1}}
+\makeatletter
+\let\Ginclude@graphics\@org@Ginclude@graphics 
+\makeatother
 
-\jmlrvolume{} \jmlryear{2022} \jmlrworkshop{ACML 2022}
+\jmlrvolume{189}
+\jmlryear{2022}
+\jmlrworkshop{ACML 2022}
 
-\title[DALE:~Differential Accumulated Local
-Effects]{DALE:~Differential Accumulated Local Effects for efficient
-and accurate global explanations}
+\title[DALE:~Differential Accumulated Local Effects]{DALE:~Differential Accumulated Local Effects for efficient and accurate global explanations}
 
-%  % Use \Name{Author Name} to specify the name.  % If the surname
-% contains spaces, enclose the surname % in braces, e.g. \Name{John
-% {Smith Jones}} similarly % if the name has a "von" part, e.g
-% \Name{Jane {de Winter}}.  % If the first letter in the forenames is a
-% diacritic % enclose the diacritic in braces, e.g. \Name{{\'E}louise
-% Smith}
+ % Use \Name{Author Name} to specify the name.
+ % If the surname contains spaces, enclose the surname
+ % in braces, e.g. \Name{John {Smith Jones}} similarly
+ % if the name has a "von" part, e.g \Name{Jane {de Winter}}.
+ % If the first letter in the forenames is a diacritic
+ % enclose the diacritic in braces, e.g. \Name{{\'E}louise Smith}
 
-%  % Two authors with the same address % \author{\Name{Author Name1}
-% \Email{abc@sample.com}\and % \Name{Author Name2}
-% \Email{xyz@sample.com}\\ % \addr Address}
+ % Two authors with the same address
+ % \author{\Name{Author Name1} \Email{abc@sample.com}\and
+ %  \Name{Author Name2} \Email{xyz@sample.com}\\
+ %  \addr Address}
 
-%  % Three or more authors with the same address: % \author{\Name{Author
-% Name1} \Email{an1@sample.com}\\ % \Name{Author Name2}
-% \Email{an2@sample.com}\\ % \Name{Author Name3}
-% \Email{an3@sample.com}\\ % \Name{Author Name4}
-% \Email{an4@sample.com}\\ % \Name{Author Name5}
-% \Email{an5@sample.com}\\ % \Name{Author Name6}
-% \Email{an6@sample.com}\\ % \Name{Author Name7}
-% \Email{an7@sample.com}\\ % \Name{Author Name8}
-% \Email{an8@sample.com}\\ % \Name{Author Name9}
-% \Email{an9@sample.com}\\ % \Name{Author Name10}
-% \Email{an10@sample.com}\\ % \Name{Author Name11}
-% \Email{an11@sample.com}\\ % \Name{Author Name12}
-% \Email{an12@sample.com}\\ % \Name{Author Name13}
-% \Email{an13@sample.com}\\ % \Name{Author Name14}
-% \Email{an14@sample.com}\\ % \addr Address}
+ % Three or more authors with the same address:
+ % \author{\Name{Author Name1} \Email{an1@sample.com}\\
+ %  \Name{Author Name2} \Email{an2@sample.com}\\
+ %  \Name{Author Name3} \Email{an3@sample.com}\\
+ %  \Name{Author Name4} \Email{an4@sample.com}\\
+ %  \Name{Author Name5} \Email{an5@sample.com}\\
+ %  \Name{Author Name6} \Email{an6@sample.com}\\
+ %  \Name{Author Name7} \Email{an7@sample.com}\\
+ %  \Name{Author Name8} \Email{an8@sample.com}\\
+ %  \Name{Author Name9} \Email{an9@sample.com}\\
+ %  \Name{Author Name10} \Email{an10@sample.com}\\
+ %  \Name{Author Name11} \Email{an11@sample.com}\\
+ %  \Name{Author Name12} \Email{an12@sample.com}\\
+ %  \Name{Author Name13} \Email{an13@sample.com}\\
+ %  \Name{Author Name14} \Email{an14@sample.com}\\
+ %  \addr Address}
 
 
-% Authors with different addresses:
-\author{\Name{Vasilis Gkolemis} \Email{gkolemis@hua.gr, vgkolemis@athenarc.gr}\\ \addr Harokopeio University Athens, IMIS ATHENA Research Center \AND
-  \Name{Theodore Dalamagas} \Email{dalamag@athenarc.gr}\\ \addr Athena Research Center \AND
-  \Name{Christos Diou} \Email{diou@hua.gr}\\ \addr Harokopeio University Athens}
+ %  Authors with different addresses:
+\author{\Name{Vasilis Gkolemis} \Email{gkolemis@hua.gr, vgkolemis@athenarc.gr}\\
+  \addr~Harokopio University of Athens, IMIS ATHENA Research Center
+  \AND
+  \Name{Theodore Dalamagas} \Email{dalamag@athenarc.gr}\\
+  \addr~IMIS ATHENA Research Center
+  \AND
+  \Name{Christos Diou} \Email{diou@hua.gr}\\
+  \addr~Harokopio University of Athens
+}
 
-% \editors{Emtiyaz Khan and Mehmet Gonen}
+\editors{Emtiyaz Khan and Mehmet G\"{o}nen}
 
 \begin{document}
 
 \maketitle
 
 \begin{abstract}
-  Accumulated Local Effect (ALE) is a method for accurately estimating feature effects, overcoming fundamental failure modes of previously-existed methods, such as Partial Dependence Plots. However, the \textit{approximation} method for ALE faces two weaknesses. Firstly, it does not scale well in cases where the input has high dimensionality, and, secondly, it is vulnerable to out-of-distribution (OOD) sampling in cases with limited training examples. In this paper, we propose a novel ALE approximation, called Differential Accumulated Local Effects (DALE), a fast and accurate alternative for estimating feature effects in cases where the ML model is differentiable and an auto-differentiable framework is accessible. Our proposal has significant computational advantages, making feature effect estimation applicable to high-dimensional Machine Learning scenarios with near-zero computational overhead. Furthermore, DALE does not create artificial points for calculating the feature effect, resolving misleading estimations due to OOD sampling. Finally, we formally prove that, under some hypotheses, DALE is an unbiased estimator of ALE and we present a method for quantifying the uncertainty of the explanation. Experiments using both synthetic and real datasets demonstrate the value of the proposed approach. Code to reproduce these experiments is provided in the submission and will become publicly available upon acceptance.
+Accumulated Local Effect (ALE) is a method for accurately estimating feature effects, overcoming fundamental failure modes of previously-existed methods, such as Partial Dependence Plots. However, \textit{ALE's approximation}, i.e.~the proposed method for estimating ALE from the limited samples of the training set, faces two weaknesses. First, it does not scale well in cases where the input has high dimensionality, and, second, it is vulnerable to out-of-distribution (OOD) sampling when the training set is relatively small. In this paper, we propose a novel ALE approximation, called Differential Accumulated Local Effects (DALE), which can be used in cases where the ML model is differentiable and an auto-differentiable framework is accessible. Our proposal has significant computational advantages, making feature effect estimation applicable to high-dimensional Machine Learning scenarios with near-zero computational overhead. Furthermore, DALE does not create artificial points for calculating the feature effect, resolving misleading estimations due to OOD sampling. Finally, we formally prove that, under some hypotheses, DALE is an unbiased estimator of ALE and we present a method for quantifying the uncertainty of the explanation. Experiments using both synthetic and real datasets demonstrate the value of the proposed approach.
 \end{abstract}
 \begin{keywords}
-Feature Effect;~Explainable AI;~Differentiable Models;~Neural Networks
+Feature Effect;~Explainable AI;~Interpretability;~Global Methods;~Neural Networks
 \end{keywords}
 
 \section{Introduction}
 \label{sec:1-introduction}
 
-Recently, Machine Learning (ML) models have flourished in critical, high-stakes application domains, such as healthcare and finance. These fields require methods with the ability to explain their predictions, i.e., justify why a specific outcome has emerged. However, several types of accurate and highly non-linear models like Deep Neural Networks do not meet this requirement. Therefore, there is a growing need for explainability methods for interpreting such ``black-box'' models. Feature effect forms a fundamental category of global explainability methods (i.e. characterizing the model as a whole, not a particular input). The goal of the feature effect is to isolate the average impact of a single feature on the output. This class of methods is attractive due to the simplicity of the explanation that is easily understandable by a non-expert.
+Machine Learning (ML) models have flourished in critical, high-stakes application domains, such as healthcare and finance. These fields require methods with the ability to explain their predictions, i.e., justify why a specific outcome has emerged. However, several types of accurate and highly non-linear models like Deep Neural Networks do not meet this requirement. Therefore, there is a growing need for explainability methods for interpreting such ``black-box'' models. Feature effect forms a fundamental category of global explainability methods (i.e. characterizing the model as a whole, not a particular input). The goal of the feature effect is to isolate the average impact of a single feature on the output. This class of methods is attractive due to the simplicity of the explanation that is easily understandable by a non-expert.
 
-There are three popular feature effect methods: (i) Partial Dependence Plots (PDPlots) \citep{Friedman2001}, (ii) Marginal Plots (MPlots)~\citep{Apley2020} and (iii) Aggregated Local Effects (ALE)~\citep{Apley2020}. PDPlots and MPlots assume that input features are not correlated. When this does not hold, both methods lead to misestimation; PDPlots quantify the effect by marginalizing over out-of-distribution (OOD) synthetic instances, and MPlots yield aggregated effects on single features. Therefore, both methods perform well only in independent or low-correlated features. ALE is the only feature effect method that succeeds in staying on distribution and isolating feature effects in situations where input features are highly correlated.\footnote{In Section~\ref{sec:3-feature-effect}, we provide a thorough analysis for clarifying the differences between these three approaches.} However, in most cases, it is impossible to compute ALE through its definition since this would require (a) solving a high-dimensional integral, which is infeasible, and (b) evaluating the data generating distribution, which is usually unknown. Therefore,~\cite{Apley2020} proposed an estimating ALE with a Monte-Carlo approximation. This approximation faces two weaknesses. First, it becomes computationally inefficient in cases of datasets with numerous high-dimensional instances. Second, it is still vulnerable to OOD sampling in cases of wide bin sizes.
+There are three popular feature effect methods: (i) Partial Dependence Plots (PDPlots) \citep{Friedman2001}, (ii) Marginal Plots (MPlots)~\citep{Apley2020} and (iii) Accumulated Local Effects (ALE)~\citep{Apley2020}. PDPlots and MPlots assume that input features are not correlated. When this does not hold, both methods lead to misestimation; PDPlots quantify the effect by marginalizing over out-of-distribution (OOD) synthetic instances, and MPlots yield aggregated effects on single features. Therefore, both methods perform well only in independent or low-correlated features. ALE is the only feature effect method that succeeds in staying on distribution and isolating feature effects in situations where input features are highly correlated.\footnote{In Section~\ref{sec:3-feature-effect}, we provide a thorough analysis for clarifying the differences between these three approaches.} However, in most cases, it is impossible to compute ALE through its definition since this would require (a) solving a high-dimensional integral, which is infeasible, and (b) evaluating the data generating distribution, which is usually unknown. Therefore,~\cite{Apley2020} proposed an estimating ALE with a Monte-Carlo approximation. This approximation faces two weaknesses. First, it becomes computationally inefficient in cases of datasets with numerous high-dimensional instances. Second, it is still vulnerable to OOD sampling in cases of wide bin sizes.
 
-This paper proposes Differential Aggregated Local Effects (DALE), a novel approximation for ALE that resolves both weaknesses. DALE leverages auto-differentiation for computing the derivatives wrt each instance in a single pass. Therefore, it scales well in the case of high-dimensional inputs, large training sets and expensive black-box models. Furthermore, DALE estimates the feature effect using only the examples from the training set, securing that the estimation is not affected by OOD samples.
+This paper proposes Differential Accumulated Local Effects (DALE), a novel approximation for ALE that resolves both weaknesses. DALE leverages auto-differentiation for computing the derivatives wrt each instance in a single pass. Therefore, it scales well in the case of high-dimensional inputs, large training sets and expensive black-box models. Furthermore, DALE estimates the feature effect using only the examples from the training set, securing that the estimation is not affected by OOD samples.
 %
 The contributions of this work are:
 %
@@ -145,8 +160,8 @@ methods explain why a model made a specific prediction given a
 specific input. For example, local surrogates such as
 LIME~\citep{Ribeiro2016} train an explainable-by-design model in data
 points generated from a local area around the input under
-examination. SHAP values~\citep{Lundberg2017} measures the contribution
-of each attribute in a specific prediction, formulating a
+examination. SHAP values~\citep{Lundberg2017} measures the
+contribution of each attribute in a specific prediction, formulating a
 game-theoretical framework based on Shapley
 Values. Counterfactuals~\citep{Wachter2017} search for a data point as
 close as possible to the examined input that flips the
@@ -156,28 +171,31 @@ independently of the value of the rest of the attributes.
 
 
 Global methods, which is the focus of this paper, explain the average
-model behavior. For example, prototypes~\citep{Gurumoorthy2019} search
-for a data point that is a characteristic representative of a specific
-class. Criticisms~\citep{Kim2016}, search for data points whose class
-is ambiguous. Global feature importance methods characterize each
-input feature by assigning to it an importance score. Permutation
-feature importance~\citep{Fisher2019} measures the change in the
-prediction score of a model, after permuting the value of each
-feature. Often, apart from knowing that a feature is important, it
-also valuable to know the type of the effect on the output
-(positive/negative). Feature effect methods take a step further and
-quantify the type of a each feature attribute influences the output on
-average. There are three popular feature effect techniques Partial
-Dependence Plots~\citep{Friedman2001}, Marginal Plots and
-ALE~\citep{Apley2020}. Another class of global explanation techniques
-measures the interaction~\citep{Friedman2008} between features. Feature
-interaction quantifies to what extent the effect of two variables on
-the output comes is because of their combination.~\cite{Friedman2008}
-proposed a set of appropriate visualizations for such
-interactions. The generalization of feature effect and variable
-interactions is functional decomposition~\citep{Molnar2021}, that
-decomposes the black-box function into a set of simpler ones that may
-include more than two features.
+model behavior. Global surrogates approximate the black-box model with
+a simple one, for example, decision
+trees~\citep{nanfack2021global}. Prototypes~\citep{Gurumoorthy2019}
+search for data points that are representative for each class and
+criticisms~\citep{Kim2016} for ambiguous data points that
+representative of the boarder between classes. Global feature
+importance methods characterize each input feature by assigning to it
+an importance score. Permutation feature importance~\citep{Fisher2019}
+measures the change in the prediction score of a model, after
+permuting the value of each feature. Often, apart from knowing that a
+feature is important, it also valuable to know the type of the effect
+on the output (positive/negative). Feature effect methods take a step
+further and quantify the type of a each feature attribute influences
+the output on average. There are three popular feature effect
+techniques Partial Dependence Plots~\citep{Friedman2001}, Marginal
+Plots and ALE~\citep{Apley2020}. Another class of global explanation
+techniques measures the interaction~\citep{Friedman2008} between
+features. Feature interaction quantifies to what extent the effect of
+two variables on the outcome is because of their
+combination.~\cite{Friedman2008} proposed a set of appropriate
+visualizations for such interactions. The generalization of feature
+effect and variable interactions is functional
+decomposition~\citep{Molnar2021}, that decomposes the black-box
+function into a set of simpler ones that may include more than two
+features.
 
 \section{Background}
 \label{sec:3-feature-effect}
@@ -391,15 +409,13 @@ additional cost.
 \subsection{Computational Benefit}
 \label{sec:4-2-computational}
 
-DALE approximation has significant computational advantages,
-especially in the case of a high-dimensional input space. For
+DALE approximation has significant computational advantages. For
 estimating the feature effect of all features, our approach processes
-\(N\) data points, namely, the examples of the training set. In
-contrast, ALE approximation generates and processes
-\(2 \cdot N \cdot D\) artificial data points. The difference by a
-factor of \(D\) has major implications in the computational complexity
-and the memory requirements. Our method scales nicely in problems with
-high dimensionality, as is the case in most Deep Learning setups. Our
+the \(N\) data points of the training set. In contrast, ALE
+approximation generates and processes \(2 \cdot N \cdot D\), weigthng
+by a factor of \(D\) the computational complexity and the memory
+requirements. Therefore, DALE scales nicely in problems with high
+dimensionality as is the case in most Deep Learning setups. Our
 approach is built on the computation of the Jacobian matrix,
 
 \begin{equation} \Jac =
@@ -438,13 +454,17 @@ derivative of \(\nabla_{\mathbf{x}} f \) and (c) the dataset
 defines the resolution of the DALE plot. The algorithm returns a
 matrix \(\mathbf{A}\), where the cell \(\mathbf{A}_{s,j}\) contains
 the effect of the \(j\)-th bin of the \(s\)-th feature, i.e.,
-\(\dale^s(x) = \mathbf{A}_{s,k_x} \). Steps 3-5 iterate
-over each attribute, therefore these steps have complexity
+\(\dale^s(x) = \mathbf{A}_{s,k_x} \). Steps 3-5 iterate over each
+attribute, therefore these steps have complexity
 \(\mathcal{O}(N \cdot D)\). However these steps involve relatively
 cheap operations (allocation, averaging and aggregation) in comparison
 with the computation of the Jacobian matrix. Finally, with matrix
-\(\mathbf{A}\) computed, evaluating \(\dale(x)\) requires
-only locating the bin \(k_x\) that \( x \) belongs to.
+\(\mathbf{A}\) computed, evaluating \(\dale(x)\) requires only
+locating the bin \(k_x\) that \( x \) belongs to. The same
+computational advantage also hold for the second-order DALE. In the
+second-order we need to compute the Hessian Matrix instead of the
+Jacobian (Step 1) and to allocate the points in a 2D grid instead of
+the sequence of intervals (Step 3).
 
 \begin{algorithm}[h]
 \caption{DALE approximation}
@@ -800,9 +820,9 @@ to OOD sampling.
     \resizebox{.32\columnwidth}{!}{\input{./images/case-2-fe-bins-50.tex}}
     \resizebox{.32\columnwidth}{!}{\input{./images/case-2-fe-bins-5.tex}}
   \end{center}
-  \caption[Case 2]{Case 2 experiment. (Left) The black-box function
-    \(f\) of Section~\ref{sec:4-3-robustness}. (Center) Estimation of
-    the feature effect for a large number of bins \(K=50\). (Right)
+  \caption[Case 2]{Case 2 experiment. (a) The black-box function \(f\)
+    of Section~\ref{sec:4-3-robustness}. (b) Estimation of the
+    feature effect for a large number of bins \(K=50\). (c)
     Estimation of the feature effect for a small number of bins
     \(K=5\).}
   \label{fig:example-2-samples}
@@ -960,12 +980,32 @@ permits creating feature effect plots at different resolutions with
 near-zero computational overhead, which can be embedded into a
 multi-resolution feature effect plots framework.
 
-% \acks{Acknowledgements should go at the end, before appendices and
-% references. You can uncomment this for the camera-ready version on
-% paper acceptance.}
+
+\acks{We thank Eirini Ntoutsi for her insightful comments in the
+  draft versions of the paper and Giorgos Giannopoulos for the valuable
+  discussions while forming the initial idea.
+
+  \noindent
+  This research was funded by the EU (H2020-EU.2.1.1.) project,
+  “XMANAI: Explainable Manufacturing Artificial Intelligence" -
+  ICT-38-2020 - Artificial intelligence for manufacturing, Grant
+  agreement ID: 957362.
+}
+
+
 
 %\bibliographystyle{plain}
-\bibliography{bibliography.bib}
+\bibliography{gkolemis22-bib}
 
 % \appendix
+
+% \section{First Appendix}\label{apd:first}
+
+% This is the first appendix.
+
+% \section{Second Appendix}\label{apd:second}
+
+% This is the second appendix.
+
+
 \end{document}
