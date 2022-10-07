@@ -109,7 +109,7 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
   \Name{Theodore Dalamagas} \Email{dalamag@athenarc.gr}\\
   \addr~IMIS ATHENA Research Center
   \AND
-  \Name{Christos Diou} \Email{diou@hua.gr}\\
+  \Name{Christos Diou} \Email{cdiou@hua.gr}\\
   \addr~Harokopio University of Athens
 }
 
@@ -120,7 +120,7 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
 \maketitle
 
 \begin{abstract}
-Accumulated Local Effect (ALE) is a method for accurately estimating feature effects, overcoming fundamental failure modes of previously-existed methods, such as Partial Dependence Plots. However, \textit{ALE's approximation}, i.e.~the method for estimating ALE from the limited samples of the training set, faces two weaknesses. First, it does not scale well in cases where the input has high dimensionality, and, second, it is vulnerable to out-of-distribution (OOD) sampling when the training set is relatively small. In this paper, we propose a novel ALE approximation, called Differential Accumulated Local Effects (DALE), which can be used in cases where the ML model is differentiable and an auto-differentiable framework is accessible. Our proposal has significant computational advantages, making feature effect estimation applicable to high-dimensional Machine Learning scenarios with near-zero computational overhead. Furthermore, DALE does not create artificial points for calculating the feature effect, resolving misleading estimations due to OOD sampling. Finally, we formally prove that, under some hypotheses, DALE is an unbiased estimator of ALE and we present a method for quantifying the uncertainty of the explanation. Experiments using both synthetic and real datasets demonstrate the value of the proposed approach.
+Accumulated Local Effect (ALE) is a method for accurately estimating feature effects, overcoming fundamental failure modes of previously-existed methods, such as Partial Dependence Plots. However, \textit{ALE's approximation}, i.e.~the method for estimating ALE from the limited samples of the training set, faces two weaknesses. First, it does not scale well in cases where the input has high dimensionality, and, second, it is vulnerable to out-of-distribution (OOD) sampling when the training set is relatively small. In this paper, we propose a novel ALE approximation, called Differential Accumulated Local Effects (DALE), which can be used in cases where the ML model is differentiable and an auto-differentiable framework is accessible. Our proposal has significant computational advantages, making feature effect estimation applicable to high-dimensional Machine Learning scenarios with near-zero computational overhead. Furthermore, DALE does not create artificial points for calculating the feature effect, resolving misleading estimations due to OOD sampling. Finally, we formally prove that, under some hypotheses, DALE is an unbiased estimator of ALE and we present a method for quantifying the standard error of the explanation. Experiments using both synthetic and real datasets demonstrate the value of the proposed approach.
 \end{abstract}
 \begin{keywords}
 Feature Effect;~Explainable AI;~Interpretability;~Global Methods;~Neural Networks
@@ -129,7 +129,7 @@ Feature Effect;~Explainable AI;~Interpretability;~Global Methods;~Neural Network
 \section{Introduction}
 \label{sec:1-introduction}
 
-Machine Learning (ML) models have flourished in critical, high-stakes application domains, such as healthcare and finance. These fields require methods with the ability to explain their predictions, i.e., justify why a specific outcome has emerged. However, several types of accurate and highly non-linear models like Deep Neural Networks do not meet this requirement. Therefore, there is a growing need for explainability methods for interpreting such ``black-box'' models. Feature effect forms a fundamental category of global explainability methods (i.e. characterizing the model as a whole, not a particular input). The goal of the feature effect is to isolate the average impact of a single feature on the output. This class of methods is attractive due to the simplicity of the explanation that is easily understandable by a non-expert.
+Machine Learning (ML) models have been adopted to high-stakes application domains, such as healthcare and finance. These fields require methods with the ability to explain their predictions, i.e., justify why a specific outcome has emerged. However, several types of accurate and highly non-linear models like Deep Neural Networks do not meet this requirement. Therefore, there is a growing need for explainability methods for interpreting such ``black-box'' models. Feature effect forms a fundamental category of global explainability methods (i.e. characterizing the model as a whole, not a particular input). The goal of the feature effect is to isolate the average impact of a single feature on the output. This class of methods is attractive due to the simplicity of the explanation that is easily understandable by a non-expert.
 
 There are three popular feature effect methods: (i) Partial Dependence Plots (PDPlots) \citep{Friedman2001}, (ii) Marginal Plots (MPlots)~\citep{Apley2020} and (iii) Accumulated Local Effects (ALE)~\citep{Apley2020}. PDPlots and MPlots assume that input features are not correlated. When this does not hold, both methods lead to misestimation; PDPlots quantify the effect by marginalizing over out-of-distribution (OOD) synthetic instances, and MPlots yield aggregated effects on single features. Therefore, both methods perform well only in independent or low-correlated features. ALE is the only feature effect method that succeeds in staying on distribution and isolating feature effects in situations where input features are highly correlated.\footnote{In Section~\ref{sec:3-feature-effect}, we provide a thorough analysis for clarifying the differences between these three approaches.} However, in most cases, it is impossible to compute ALE through its definition since this would require (a) solving a high-dimensional integral, which is infeasible, and (b) evaluating the data generating distribution, which is usually unknown. Therefore,~\cite{Apley2020} proposed an estimating ALE with a Monte-Carlo approximation. This approximation faces two weaknesses. First, it becomes computationally inefficient in cases of datasets with numerous high-dimensional instances. Second, it is still vulnerable to OOD sampling in cases of wide bin sizes.
 
@@ -140,113 +140,34 @@ The contributions of this work are:
 \begin{itemize}
 \item We introduce DALE, a novel approximation to efficiently create ALE plots on differentiable black-box models. DALE is more efficient than the traditional ALE approximation, scales much better to high-dimensional datasets, and avoids OOD sampling.
 \item We formally prove that DALE is an unbiased estimator of ALE and quantify the standard error of the approximation.
-\item We experiment with synthetic and real datasets, showing that DALE: (a) scales in all cases better than ALE, (b) provides a better approximation compared to ALE, especially in cases of wide bin sizes
+\item We show with synthetic and real datasets that DALE: (a) scales
+  better than ALE, (b) provides a better approximation than ALE,
+  especially in cases of wide bins. Code for reproducing all
+  experiments is provided at \href{https://github.com/givasile/DALE}{https://github.com/givasile/DALE}.
 \end{itemize}
 
 
 \section{Related Work}
 \label{sec:2-related}
 
-Explainable AI (XAI) is a fast-evolving field with a growing
-interest. In recent years, the domain has matured by establishing its
-terminology and objectives~\citep{Hoffman2018}. Several surveys have
-been published~\citep{BarredoArrieta2020},~\citep{Adadi2018} classifying
-the different approaches and detecting future challenges on the
-field~\citep{Molnar2020}.
+Explainable AI (XAI) is a fast-evolving field with a growing interest. In recent years, the domain has matured by establishing its terminology and objectives~\citep{Hoffman2018}. Several surveys have been published~\citep{BarredoArrieta2020},~\citep{Adadi2018} classifying the different approaches and detecting future challenges on the field~\citep{Molnar2020}. There are several criteria for grouping XAI methods. A very popular distinction is between local and global ones. Local interpretability methods explain why a model made a specific prediction given a specific input. For example, local surrogates such as LIME~\citep{Ribeiro2016} train an explainable-by-design model in data points generated from a local area around the input under examination. SHAP values~\citep{Lundberg2017} measures the contribution of each attribute in a specific prediction, formulating a game-theoretical framework based on Shapley Values. Counterfactuals~\citep{Wachter2017} search for a data point as close as possible to the examined input that flips the prediction. Anchors~\citep{Ribeiro2018} provide a rule, i.e., a set of attribute values, that is enough to freeze the prediction, independently of the value of the rest of the attributes.
 
-There are several criterias for grouping XAI methods. A very popular
-distinction is between local and global ones. Local interpretability
-methods explain why a model made a specific prediction given a
-specific input. For example, local surrogates such as
-LIME~\citep{Ribeiro2016} train an explainable-by-design model in data
-points generated from a local area around the input under
-examination. SHAP values~\citep{Lundberg2017} measures the
-contribution of each attribute in a specific prediction, formulating a
-game-theoretical framework based on Shapley
-Values. Counterfactuals~\citep{Wachter2017} search for a data point as
-close as possible to the examined input that flips the
-prediction. Anchors~\citep{Ribeiro2018} provide a rule, i.e., a set of
-attribute values, that is enough to freeze the prediction,
-independently of the value of the rest of the attributes.
-
-
-Global methods, which is the focus of this paper, explain the average
-model behavior. Global surrogates approximate the black-box model with
-a simple one, for example, decision
-trees~\citep{nanfack2021global}. Prototypes~\citep{Gurumoorthy2019}
-search for data points that are representative for each class and
-criticisms~\citep{Kim2016} for ambiguous data points that
-representative of the boarder between classes. Global feature
-importance methods characterize each input feature by assigning to it
-an importance score. Permutation feature importance~\citep{Fisher2019}
-measures the change in the prediction score of a model, after
-permuting the value of each feature. Often, apart from knowing that a
-feature is important, it also valuable to know the type of the effect
-on the output (positive/negative). Feature effect methods take a step
-further and quantify the type of a each feature attribute influences
-the output on average. There are three popular feature effect
-techniques Partial Dependence Plots~\citep{Friedman2001}, Marginal
-Plots and ALE~\citep{Apley2020}. Another class of global explanation
-techniques measures the interaction~\citep{Friedman2008} between
-features. Feature interaction quantifies to what extent the effect of
-two variables on the outcome is because of their
-combination.~\cite{Friedman2008} proposed a set of appropriate
-visualizations for such interactions. The generalization of feature
-effect and variable interactions is functional
-decomposition~\citep{Molnar2021}, that decomposes the black-box
-function into a set of simpler ones that may include more than two
-features.
+Global methods, which is the focus of this paper, explain the average model behavior. Global surrogates approximate the black-box model with a simple one, for example, decision trees~\citep{nanfack2021global}. Prototypes~\citep{Gurumoorthy2019} search for data points that are representative for each class and criticisms~\citep{Kim2016} for ambiguous data points that representative of the boarder between classes. Global feature importance methods characterize each input feature by assigning to it an importance score. Permutation feature importance~\citep{Fisher2019} measures the change in the prediction score of a model, after permuting the value of each feature. Often, apart from knowing that a feature is important, it also valuable to know the type of the effect on the output (positive/negative). Feature effect methods take a step further and quantify the type of a each feature attribute influences the output on average. There are three popular feature effect techniques Partial Dependence Plots~\citep{Friedman2001}, Marginal Plots and ALE~\citep{Apley2020}. Another class of global explanation techniques measures the interaction~\citep{Friedman2008} between features. Feature interaction quantifies to what extent the effect of two variables on the outcome is because of their combination.~\cite{Friedman2008} proposed a set of appropriate visualizations for such interactions. The generalization of feature effect and variable interactions is functional decomposition~\citep{Molnar2021}, that decomposes the black-box function into a set of simpler ones that may include more than two features.
 
 \section{Background}
 \label{sec:3-feature-effect}
 
-This section introduces the reader to three popular feature effect
-methods; PDPlots, MPlots and ALE.
+This section introduces the reader to three popular feature effect methods; PDPlots, MPlots and ALE.
 
-\paragraph*{Notation.} We use uppercase and calligraphic font
-\( \mathcal{X}\) for random variables (rv), plain lowercase \( x \)
-for scalar variables and bold \( \xb \) for vectors. Often, we
-partition the input vector \(\xb \in \R^D\) to the feature of interest
-\(x_s \in \R \) and the rest of the features \(\xc \in \R^{D-1}\), and
-for convenience we notate it \(\xb = (x_s, \xc)\). We clarify that
-\((x_s, \xc)\) corresponds to the vector
-\((x_1, \cdots, x_s, \cdots x_D)\). Equivalently, we notate the
-corresponding rv to \(\mathcal{X} = (\mathcal{X}_s,
-\mathcal{X}_c)\). The black-box function is
-\( f: \R^D \rightarrow \R \) and the feature effect of the \(s\)-th
-feature is \(f_{\mathtt{<method>}}(x_s)\), where \(\mathtt{<method>}\)
-is the name of the feature effect method.\footnote{An extensive list
-  of all symbols used in the paper is provided in the helping
-  material.}
+\paragraph*{Notation.} We use uppercase and calligraphic font \( \mathcal{X}\) for random variables (rv), plain lowercase \( x \) for scalar variables and bold \( \xb \) for vectors. Often, we partition the input vector \(\xb \in \R^D\) to the feature of interest \(x_s \in \R \) and the rest of the features \(\xc \in \R^{D-1}\), and for convenience we notate it \(\xb = (x_s, \xc)\). We clarify that \((x_s, \xc)\) corresponds to the vector \((x_1, \cdots, x_s, \cdots x_D)\). Equivalently, we notate the corresponding rv to \(\mathcal{X} = (\mathcal{X}_s, \mathcal{X}_c)\). The black-box function is \( f: \R^D \rightarrow \R \) and the feature effect of the \(s\)-th feature is \(f_{\mathtt{<method>}}(x_s)\), where \(\mathtt{<method>}\) is the name of the feature effect method.% \footnote{An extensive list of all symbols used in the paper is provided in the helping material.}
 
-\paragraph{Feature Effect Methods.} PDPlots formulate the feature
-effect of the \(s\)-th attribute as an expectation over the marginal
-distribution \(\mathcal{X}_c\), i.e.,
-\(f_{\mathtt{PDP}}(x_s) =
-\mathbb{\E}_{\mathcal{X}_c}[f(x_s,\mathcal{X}_c)]\). MPlots formulate
-it as an expectation over the conditional
-\(\mathcal{X}_c|\mathcal{X}_s\), i.e.,
-\(f_{\mathtt{MP}}(x_s) = \E_{\mathcal{X}_c|\mathcal{X}_s = x_s}[f(x_s,
-\mathcal{X}_c)]\). ALE computes the global effect at \(x_s\) as an
-accumulation of the local effects. The local effect at point \(z\) is
-the expected change on the output over the conditional distribution
-\(\Xcb|\mathcal{X}_s=z\), i.e.
-\( \E_{\Xcb|\mathcal{X}_s=z} \left [ \frac{\partial f(x_s,
-    \mathcal{X}_c)}{\partial x_s} \right] \). The formula that defines
-ALE is presented below:
+\paragraph{Feature Effect Methods.} PDPlots formulate the feature effect of the \(s\)-th attribute as an expectation over the marginal distribution \(\mathcal{X}_c\), i.e., \(f_{\mathtt{PDP}}(x_s) = \mathbb{\E}_{\mathcal{X}_c}[f(x_s,\mathcal{X}_c)]\). MPlots formulate it as an expectation over the conditional \(\mathcal{X}_c|\mathcal{X}_s\), i.e., \(f_{\mathtt{MP}}(x_s) = \E_{\mathcal{X}_c|\mathcal{X}_s = x_s}[f(x_s, \mathcal{X}_c)]\). ALE computes the global effect at \(x_s\) as an accumulation of the local effects. The local effect at point \(z\) is the expected change on the output over the conditional distribution \(\Xcb|\mathcal{X}_s=z\), i.e.  \( \E_{\Xcb|\mathcal{X}_s=z} \left [ \frac{\partial f(x_s, \mathcal{X}_c)}{\partial x_s} \right] \). The formula that defines ALE is presented below:
 
 \begin{gather}
   \label{eq:ALE} f_{\mathtt{ALE}}(x_s) = c + \int_{-\infty}^{x_s} \mathbb{E}_{\Xcb|\mathcal{X}_s=z}\left[\frac{\partial f(z, \mathcal{X}_c)}{\partial z}\right] \partial z
 \end{gather}
 %
-The constant \(c\) is used for centering the ALE plot. For
-illustrating the differences between the methods and the superiority
-of ALE, we provide a toy example. We select a bivariate black-box
-function \(f\) with correlated features; the first feature \( x_1 \)
-follows a uniform distribution \( x_1 \sim \mathcal{U}(0,1)\) and the
-second feature gets the value of \(x_1\) in a deterministic way, i.e.,
-\( x_2 = x_1 \). The black-box function is the following piece-wise
-linear mapping:
+The constant \(c\) is used for centering the ALE plot. For illustrating the differences between the methods and the superiority of ALE, we provide a toy example. We select a bivariate black-box function \(f\) with correlated features; the first feature \( x_1 \) follows a uniform distribution \( x_1 \sim \mathcal{U}(0,1)\) and the second feature gets the value of \(x_1\) in a deterministic way, i.e., \( x_2 = x_1 \). The black-box function is the following piece-wise linear mapping:
 %
 \begin{equation} \label{eq:example-1-mapping} f(x_1, x_2) =
   \begin{cases} 1 - x_1 - x_2 & x_1 + x_2 \leq 1 \\ 0 & \text{otherwise}
@@ -254,13 +175,7 @@ linear mapping:
 \end{equation}
 \noindent
 %
-Due to the piece-wise linear form, it is easy to isolate the effect of
-\(x_1\); Insider the region \(0 \leq x_1 \leq 0.5\), the effect is
-linear, i.e., \(-x_1\), and outside it is constant, i.e., the effect
-does not depend on \(x_1\). The closed-form solution for each method
-is presented below:~\footnote{Detailed derivations can be found in the
-  helping material.}~\footnote{ Due to symmetry, for each method, the
-  effect for \(x_2\) is the same with the effect of \(x_1\)}
+Due to the piece-wise linear form, it is easy to isolate the effect of \(x_1\); Insider the region \(0 \leq x_1 \leq 0.5\), the effect is linear, i.e., \(-x_1\), and outside it is constant, i.e., the effect does not depend on \(x_1\). The closed-form solution for each method is presented below:~\footnote{Detailed derivations can be found in the helping material.}~\footnote{ Due to symmetry, for each method, the effect for \(x_2\) is the same with the effect of \(x_1\)}
 %
 \begin{equation}\label{eq:example-1-pdp} f_{\mathtt{PDP}}(x_1) = \mathbb{\E}_{\mathcal{X}_2} \left [f(x_1,\mathcal{X}_2) \right] = \frac{{(1-x_1)}^2}{2}, \: \forall x_1 \in [0,1]
 \end{equation}
@@ -284,139 +199,49 @@ In real scenarios, we cannot obtain a solution directly from Eq.~\eqref{eq:ALE}.
 
 \section{Differential Accumulated Local Effects (DALE)}
 
-In this section, we present DALE.~First, we formulate the expression
-for the first and second-order DALE and, then, we explain its
-computational benefits and its robustness to OOD sampling. Finally, we
-quantify the standard error of the DALE estimation.
+In this section, we present DALE.~First, we formulate the expression for the first and second-order DALE and, then, we explain its computational benefits and its robustness to OOD sampling. Finally, we quantify the standard error of the DALE estimation.
 
 \subsection{Definition of DALE}
-\label{sec:4-1-DALE}
-As briefly discussed in Section~\ref{sec:3-feature-effect}, in most
-cases it is infeasible to compute ALE in an analytical
-form. Therefore,~\cite{Apley2020} proposed the following
-approximation that is based on the instances of the training set:
+\label{sec:4-1-DALE} As briefly discussed in Section~\ref{sec:3-feature-effect}, in most cases it is infeasible to compute ALE in an analytical form. Therefore,~\cite{Apley2020} proposed the following approximation that is based on the instances of the training set:
 
-\begin{align}
-  \hat{f}_{\mathtt{ALE}}(x_s) &= \sum_{k=1}^{k_x} \frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} [f(z_k,\xci) - f(z_{k-1}, \xci)]
+\begin{align} \hat{f}_{\mathtt{ALE}}(x_s) &= \sum_{k=1}^{k_x} \frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} [f(z_k,\xci) - f(z_{k-1}, \xci)]
   \label{eq:ALE_appr}
 \end{align}
 %
-We denote as \( \xb^i \) the \(i\)-th example of the training set and
-as \(x_s^i\) its \(s\)-th feature. \(k_x\) is the index of the bin
-\(x_s\) belongs to, i.e., \(k_x: z_{k_x-1} \leq x_s < z_{k_x} \) and
-\(\mathcal{S}_k\) is the set of points that lie in the \(k\)-th bin,
-i.e.  \( \mathcal{S}_k = \{ \xb^i : z_{k-1} \leq x^i_s < z_{k} \} \).
-For understanding Eq.~\eqref{eq:ALE_appr} better, we split it in three
-levels: Instance effect is the effect computed on the \(i\)-th
-example, i.e., \(\Delta f_i = f(z_k,\xci) - f(z_{k-1}, \xci)\), bin
-effect is the effect computed by the samples that are in the \(k\)-th
-bin, i.e.
-\(\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \Delta
-f_i \), and global effect is ALE approximation
-\(\hat{f}_{\mathtt{ALE}}(x_s)\). The approximation splits the axis
-into \( K \) equally-sized bins and computes each bin effect by
-averaging the instance effects of the samples that lie in each
-bin. The global effect is the accumulation of the bin effects. To make
-a connection with ALE definition (Eq.~\ref{eq:ALE}), the bin effect is
-an estimation of the accumulated local effects of the interval covered
-by the bin, i.e.
-\(\int_{z_{k-1}}^{z_k} \E_{\Xcb|\mathcal{X}_s=z}\left[\frac{\partial
-    f(z,\Xcb)}{\partial x_s}\right] \partial z \).
-
-The approach of Eq.~(\ref{eq:ALE_appr}) has some weaknesses. Firstly,
-it is computationally demanding since it evaluates \(f\) for
-\(2 \cdot N \cdot D\) artificial samples, where \(N\) is the number of
-samples in the dataset and \(D\) is the number of features.  Secondly,
-it is vulnerable to OOD sampling when the bins length becomes
-large. This happens because the instance effects are estimated by
-generating artificial samples at the bin limits. Finally, the whole
-computation usable only for a predefined bin length; altering the bin
-size for assessing the feature effect at a different resolution,
-requires all computations to be repeated from scratch.
+We denote as \( \xb^i \) the \(i\)-th example of the training set and as \(x_s^i\) its \(s\)-th feature. \(k_x\) is the index of the bin \(x_s\) belongs to, i.e., \(k_x: z_{k_x-1} \leq x_s < z_{k_x} \) and \(\mathcal{S}_k\) is the set of points that lie in the \(k\)-th bin, i.e.  \( \mathcal{S}_k = \{ \xb^i : z_{k-1} \leq x^i_s < z_{k} \} \).  For understanding Eq.~\eqref{eq:ALE_appr} better, we split it in three levels: Instance effect is the effect computed on the \(i\)-th example, i.e., \(\Delta f_i = f(z_k,\xci) - f(z_{k-1}, \xci)\), bin effect is the effect computed by the samples that are in the \(k\)-th bin, i.e.  \(\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \Delta f_i \), and global effect is ALE approximation \(\hat{f}_{\mathtt{ALE}}(x_s)\). The approximation splits the axis into \( K \) equally-sized bins and computes each bin effect by averaging the instance effects of the samples that lie in each bin. The global effect is the accumulation of the bin effects. To make a connection with ALE definition (Eq.~\ref{eq:ALE}), the bin effect is an estimation of the accumulated local effects of the interval covered by the bin, i.e.  \(\int_{z_{k-1}}^{z_k} \E_{\Xcb|\mathcal{X}_s=z}\left[\frac{\partial f(z,\Xcb)}{\partial x_s}\right] \partial z \).
+%
+The approach of Eq.~(\ref{eq:ALE_appr}) has some weaknesses. Firstly, it is computationally demanding since it evaluates \(f\) for \(2 \cdot N \cdot D\) artificial samples, where \(N\) is the number of samples in the dataset and \(D\) is the number of features.  Secondly, it is vulnerable to OOD sampling when the bins length becomes large. This happens because the instance effects are estimated by generating artificial samples at the bin limits. Finally, the whole computation usable only for a predefined bin length; altering the bin size for assessing the feature effect at a different resolution, requires all computations to be repeated from scratch.
 
 \subsubsection{First-order DALE.}
 %
-To address these drawbacks, we propose Differential Accumulated
-Feature Effect (DALE) that exploits the partial derivatives without
-altering the data points. The following formula describes the
-first-order DALE approximation:
+To address these drawbacks, we propose Differential Accumulated Feature Effect (DALE) that exploits the partial derivatives without altering the data points. The following formula describes the first-order DALE approximation:
 %
-\begin{equation}
-  \dale(x_s) = \Delta x \sum_{k=1}^{k_x} \frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} [f_s(\xb^i)] = \Delta x \sum_{k=1}^{k_x} \hat{\mu}_k
+\begin{equation} \dale(x_s) = \Delta x \sum_{k=1}^{k_x} \frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} [f_s(\xb^i)] = \Delta x \sum_{k=1}^{k_x} \hat{\mu}_k
  \label{eq:DALE}
 \end{equation}
 %
-where \(\Delta x\) is the bin length and \(f_s\) the partial derivative
-wrt \(x_s\), i.e.  \(f_s = \frac{\partial f}{\partial x_s}\). We use
-\(\hat{\mu}_k^s = \frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in
-  \mathcal{S}_k} [f_s(\xb^i)]\) to indicate the estimated \(k\)-th bin
-effect. DALE uses only the dataset samples and doesn't perturb any
-feature, securing that we estimate the bin effect from on-distribution
-(observed) data points. In Eq.~(\ref{eq:DALE}), the estimation of the
-instance effect at each training sample is independent from the bin
-size. Unlike ALE approximation, the number of the bins (hyperparameter
-K) affects only the resolution of the plot and \textbf{not} the
-instance effects. Finally, DALE enables computing the local effects
-\( f_s(\xb^i) \) for \(s = \{1, \ldots, D \}\),
-\(i = \{1, \ldots, N \}\) once, and reusing them to create ALE plots
-of different resolutions.  Therefore, the user may experiment with
-feature effect plots at many different resolutions, with near-zero
-computational cost.
+where \(\Delta x\) is the bin length and \(f_s\) the partial derivative wrt \(x_s\), i.e.  \(f_s = \frac{\partial f}{\partial x_s}\). We use \(\hat{\mu}_k^s = \frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} [f_s(\xb^i)]\) to indicate the estimated \(k\)-th bin effect. DALE uses only the dataset samples and doesn't perturb any feature, securing that we estimate the bin effect from on-distribution (observed) data points. In Eq.~(\ref{eq:DALE}), the estimation of the instance effect at each training sample is independent from the bin size. Unlike ALE approximation, the number of the bins (hyperparameter K) affects only the resolution of the plot and \textbf{not} the instance effects. Finally, DALE enables computing the local effects \( f_s(\xb^i) \) for \(s = \{1, \ldots, D \}\), \(i = \{1, \ldots, N \}\) once, and reusing them to create ALE plots of different resolutions.  Therefore, the user may experiment with feature effect plots at many different resolutions, with near-zero computational cost.
 
 \subsubsection{Second-order DALE.}
 
-~\cite{Apley2020} also provide a formula for approximating the
-combined effect of a pair of attributes \(x_l, x_m\):\footnote{For
-  completeness, we provide the second-order ALE definition in the
-  helping material.}
+~\cite{Apley2020} also provide a formula for approximating the combined effect of a pair of attributes \(x_l, x_m\):\footnote{For completeness, we provide the second-order ALE definition in the helping material.}
 
 \begin{equation}
-  \label{eq:ALE2approx}
-  \hat{f}_{\mathtt{ALE}}(x_l, x_m) =
-  \sum_{p=1}^{p_x}
-  \sum_{q=1}^{q_x} \frac{1}{|\mathcal{S}_{p,q}|}
-  \sum_{i:\xb^i \in \mathcal{S}_{p,q}} \Delta^2 f_i
+  \label{eq:ALE2approx} \hat{f}_{\mathtt{ALE}}(x_l, x_m) = \sum_{p=1}^{p_x} \sum_{q=1}^{q_x} \frac{1}{|\mathcal{S}_{p,q}|} \sum_{i:\xb^i \in \mathcal{S}_{p,q}} \Delta^2 f_i
 \end{equation}
 %
-where
-\( \Delta^2 f_i = [f(z_p, z_q, \xc) - f(z_{p-1}, z_q, \xc)] - [f(z_p,
-z_{q-1}, \xc) - f(z_{p-1}, z_{q-1}, \xc)] \). As before, instead of
-evaluating the second-order derivative at the limits of the grid, we
-propose accessing the second-order derivatives on the data points. The
-following formula describes the second-order DALE approximation:
+where \( \Delta^2 f_i = [f(z_p, z_q, \xc) - f(z_{p-1}, z_q, \xc)] - [f(z_p, z_{q-1}, \xc) - f(z_{p-1}, z_{q-1}, \xc)] \). As before, instead of evaluating the second-order derivative at the limits of the grid, we propose accessing the second-order derivatives on the data points. The following formula describes the second-order DALE approximation:
 
-\begin{equation}
-  \dale(x_l, x_m)
-  = \Delta x_l \Delta x_m \sum_{p=1}^{p_x} \sum_{q=1}^{q_x}
-  \frac{1}{|\mathcal{S}_{p,q}|} \sum_{i:\xb^i \in \mathcal{S}_{p,q}}f_{l,m}(\xb^i)
-  = \Delta x_l \Delta x_m \sum_{p=1}^{p_x} \sum_{q=1}^{q_x} \hat{\mu}_{p,q}^s
+\begin{equation} \dale(x_l, x_m) = \Delta x_l \Delta x_m \sum_{p=1}^{p_x} \sum_{q=1}^{q_x} \frac{1}{|\mathcal{S}_{p,q}|} \sum_{i:\xb^i \in \mathcal{S}_{p,q}}f_{l,m}(\xb^i) = \Delta x_l \Delta x_m \sum_{p=1}^{p_x} \sum_{q=1}^{q_x} \hat{\mu}_{p,q}^s
   \label{eq:DALE-2}
 \end{equation}
 %
-where \( f_{l,m}(\xb) \) is the second-order derivative evaluated at
-\(\xb^i\), i.e.
-\( f_{l,m}(\xb) = \dfrac{\partial^2f(x)}{\partial x_l \partial x_m}
-\), and \(\Delta x_l\), \(\Delta x_m\) correspond to the bin step for
-features \(x_l\) and \(x_m\), respectively. As in the first-order
-description, we use
-\( \hat{\mu}_{p,q}^s = \frac{1}{|\mathcal{S}_{p,q}|} \sum_{i:\xb^i \in
-  \mathcal{S}_{p,q}}f_{l,m}(\xb^i)\) to express the local effect at
-the bin \( (p, q) \). DALE second-order approximation has the same
-advantages over ALE as in the first-order case; it is faster, protects
-from OOD sampling and permits multi-resolution plots, with near-zero
-additional cost.
+where \( f_{l,m}(\xb) \) is the second-order derivative evaluated at \(\xb^i\), i.e.  \( f_{l,m}(\xb) = \dfrac{\partial^2f(x)}{\partial x_l \partial x_m} \), and \(\Delta x_l\), \(\Delta x_m\) correspond to the bin step for features \(x_l\) and \(x_m\), respectively. As in the first-order description, we use \( \hat{\mu}_{p,q}^s = \frac{1}{|\mathcal{S}_{p,q}|} \sum_{i:\xb^i \in \mathcal{S}_{p,q}}f_{l,m}(\xb^i)\) to express the local effect at the bin \( (p, q) \). DALE second-order approximation has the same advantages over ALE as in the first-order case; it is faster, protects from OOD sampling and permits multi-resolution plots, with near-zero additional cost.
 
 \subsection{Computational Benefit}
 \label{sec:4-2-computational}
 
-DALE approximation has significant computational advantages. For
-estimating the feature effect of all features, our approach processes
-the \(N\) data points of the training set. In contrast, ALE
-approximation generates and processes \(2 \cdot N \cdot D\), weigthng
-by a factor of \(D\) the computational complexity and the memory
-requirements. Therefore, DALE scales nicely in problems with high
-dimensionality as is the case in most Deep Learning setups. Our
-approach is built on the computation of the Jacobian matrix,
+DALE approximation has significant computational advantages. For estimating the feature effect of all features, our approach processes the \(N\) data points of the training set. In contrast, ALE approximation generates and processes \(2 \cdot N \cdot D\), weighting by a factor of \(D\) the computational complexity and the memory requirements. Therefore, DALE scales nicely in problems with high dimensionality as is the case in most Deep Learning setups. Our approach is built on the computation of the Jacobian matrix,
 
 \begin{equation} \Jac =
   \begin{bmatrix} \nabla_{\xb}f(\xb^1) \\ \vdots \\ \nabla_{\xb}f(\xb^N)
@@ -426,290 +251,92 @@ approach is built on the computation of the Jacobian matrix,
 \label{eq:jacobian}
 \end{equation}
 
-\noindent
-where, as before, \( f_s(\xb^i) \) is the partial derivative of the
-\(s\)-th feature evaluated at the \(i\)-th training point. Automatic
-differentiation enables the computation of the gradients wrt all
-features in a single pass. Computing the gradient vector for a
-training example \(\xb^i\) wrt all features
-\( \nabla_{\xb}f(\xb^i) = [f_1(\xb), \cdots, f_D(\xb)] \) is
-computationally equivalent to evaluating \(f(\xb^i)\). Based on this
-observation, computing the whole Jacobian matrix costs
-\(\mathcal{O}(N)\). In contrast, in ALE, the evaluation of \(f\) for
-\(2 \cdot N \cdot D\) times costs \(\mathcal{O}(N \cdot D)\). Our
-method, also, takes advantage of all existing automatic
-differentiation frameworks which are optimized for computing the
-gradients efficiently.\footnote{For example, the computation of that
-  Jacobian can be done in a single command using TensorFlow
-  \( \mathtt{tf.GradientTape.jacobian(predictions, X)} \) and PyTorch
-  \( \mathtt{torch.autograd.functional.jacobian(f, X)} \)} In
-Algorithm~\ref{alg:dale}, we present DALE in an algorithmic form. The
-algorithm needs as input: (a) the black-box function \(f\), (b) the
-derivative of \(\nabla_{\mathbf{x}} f \) and (c) the dataset
-\( \mathbf{X} \).\footnote{Technically, having access to
-  \(\nabla_{\mathbf{x}} f \) is not a prerequisite, since the partial
-  derivative \(\frac{\partial f}{\partial x}\) can be approximated
-  numerically, with finite differences. However, in this case, the
-  computational advantages are canceled.} The parameter \( K \)
-defines the resolution of the DALE plot. The algorithm returns a
-matrix \(\mathbf{A}\), where the cell \(\mathbf{A}_{s,j}\) contains
-the effect of the \(j\)-th bin of the \(s\)-th feature, i.e.,
-\(\dale^s(x) = \mathbf{A}_{s,k_x} \). Steps 3-5 iterate over each
-attribute, therefore these steps have complexity
-\(\mathcal{O}(N \cdot D)\). However these steps involve relatively
-cheap operations (allocation, averaging and aggregation) in comparison
-with the computation of the Jacobian matrix. Finally, with matrix
-\(\mathbf{A}\) computed, evaluating \(\dale(x)\) requires only
-locating the bin \(k_x\) that \( x \) belongs to. The same
-computational advantage also hold for the second-order DALE. In the
-second-order we need to compute the Hessian Matrix instead of the
-Jacobian (Step 1) and to allocate the points in a 2D grid instead of
-the sequence of intervals (Step 3).
+\noindent where, as before, \( f_s(\xb^i) \) is the partial derivative of the \(s\)-th feature evaluated at the \(i\)-th training point. Automatic differentiation enables the computation of the gradients wrt all features in a single pass. Computing the gradient vector for a training example \(\xb^i\) wrt all features \( \nabla_{\xb}f(\xb^i) = [f_1(\xb), \cdots, f_D(\xb)] \) is computationally equivalent to evaluating \(f(\xb^i)\). Based on this observation, computing the whole Jacobian matrix costs \(\mathcal{O}(N)\). In contrast, in ALE, the evaluation of \(f\) for \(2 \cdot N \cdot D\) times costs \(\mathcal{O}(N \cdot D)\). Our method, also, takes advantage of all existing automatic differentiation frameworks which are optimized for computing the gradients efficiently.\footnote{For example, the computation of that Jacobian can be done in a single command using TensorFlow \( \mathtt{tf.GradientTape.jacobian(predictions, X)} \) and PyTorch \( \mathtt{torch.autograd.functional.jacobian(f, X)} \)} In Algorithm~\ref{alg:dale}, we present DALE in an algorithmic form. The algorithm needs as input: (a) the black-box function \(f\), (b) the derivative of \(\nabla_{\mathbf{x}} f \) and (c) the dataset \( \mathbf{X} \).\footnote{Technically, having access to \(\nabla_{\mathbf{x}} f \) is not a prerequisite, since the partial derivative \(\frac{\partial f}{\partial x}\) can be approximated numerically, with finite differences. However, in this case, the computational advantages are canceled.} The parameter \( K \) defines the resolution of the DALE plot. The algorithm returns a matrix \(\mathbf{A}\), where the cell \(\mathbf{A}_{s,j}\) contains the effect of the \(j\)-th bin of the \(s\)-th feature, i.e., \(\dale^s(x) = \mathbf{A}_{s,k_x} \). Steps 3-5 iterate over each attribute, therefore these steps have complexity \(\mathcal{O}(N \cdot D)\). However these steps involve relatively cheap operations (allocation, averaging and aggregation) in comparison with the computation of the Jacobian matrix. Finally, with matrix \(\mathbf{A}\) computed, evaluating \(\dale(x)\) requires only locating the bin \(k_x\) that \( x \) belongs to. The same computational advantage also hold for the second-order DALE. In the second-order we need to compute the Hessian Matrix instead of the Jacobian (Step 1) and to allocate the points in a 2D grid instead of the sequence of intervals (Step 3).
 
 \begin{algorithm}[h]
 \caption{DALE approximation}
-\label{alg:dale}
-\textbf{Input}: \( f, \nabla_{\mathbf{x}} f, \mathbf{X} \) \\
-\textbf{Parameter}: \( K \) \\
-\textbf{Output}: \(\mathbf{A}\)
-\begin{algorithmic}[1] %[1] enables line numbers
-\STATE Compute the Jacobian \(\Jac\) of Eq. \eqref{eq:jacobian}
-\FOR{\(s = 1, \ldots , D\)}
-\STATE Allocate points \( \Rightarrow \mathcal{S}_k \forall k \)
-\STATE Estimate local effect \( \Rightarrow \hat{\mu}_k^s \forall k\) of Eq.~\eqref{eq:DALE}
-\STATE Aggregate \( \Rightarrow \mathbf{A}_{s,j} = \Delta x\sum_{k=1}^{j} \hat{\mu}_k^s, j =  1, \ldots, K \)
-\ENDFOR
-\STATE \textbf{return} \(\mathbf{A}\) \textbf{||} Note that \( \dale(x) = \mathbf{A}_{s,k_x} \)
+\label{alg:dale} \textbf{Input}: \( f, \nabla_{\mathbf{x}} f, \mathbf{X} \) \\ \textbf{Parameter}: \( K \) \\ \textbf{Output}: \(\mathbf{A}\)
+\begin{algorithmic}[1]
+  % [1] enables line numbers
+  \STATE Compute the Jacobian \(\Jac\) of Eq. \eqref{eq:jacobian}
+  \FOR{\(s = 1, \ldots , D\)}
+  \STATE Allocate points \( \Rightarrow \mathcal{S}_k \forall k \)
+  \STATE Estimate local effect \( \Rightarrow \hat{\mu}_k^s \forall k\) of Eq.~\eqref{eq:DALE}
+  \STATE Aggregate \( \Rightarrow \mathbf{A}_{s,j} = \Delta x\sum_{k=1}^{j} \hat{\mu}_k^s, j = 1, \ldots, K \)
+  \ENDFOR
+  \STATE \textbf{return} \(\mathbf{A}\) \textbf{||} Note that \( \dale(x) = \mathbf{A}_{s,k_x} \)
 \end{algorithmic}
 \end{algorithm}
 
 
 \subsection{Robustness to out-of-distribution sampling}
-\label{sec:4-3-robustness}
-OOD sampling is the source of failure in many explainability methods
-that perturb features(~\cite{Baniecki2022}, \cite{Hooker2021}). ALE is
-vulnerable to OOD sampling when the bin length is relatively big, or,
-equivalently, when the number of bins (hyperparameter \(K\)) is
-relatively small. We use the word \textit{relatively} to indicate that
-the threshold for characterizing a bin as big/small depends on the
-properties of the black-box function, i.e., how quickly it diverges
-outside of the data manifold. ML models learn to map
-\( \xb \rightarrow y \) only in the manifold of the data generating
-distribution \(\Xb\). Therefore, the black-box function \(f\) can take
-any arbitrary form away from \(\Xb\) without any increase in the
-training loss. On the other hand, when a limited number of samples is
-available, it maybe necessary to lower \(K\) to ensure a robust
-estimation of the mean effect. An end-to-end experimentation on the
-effect of OOD will be provided in Case 2 of
-Section~\ref{sec:5-1-artificial-experiments}.
+\label{sec:4-3-robustness} OOD sampling is the source of failure in many explainability methods that perturb features(~\cite{Baniecki2022}, \cite{Hooker2021}). ALE is vulnerable to OOD sampling when the bin length is relatively big, or, equivalently, when the number of bins (hyperparameter \(K\)) is relatively small. We use the word \textit{relatively} to indicate that the threshold for characterizing a bin as big/small depends on the properties of the black-box function, i.e., how quickly it diverges outside of the data manifold. ML models learn to map \( \xb \rightarrow y \) only in the manifold of the data generating distribution \(\Xb\). Therefore, the black-box function \(f\) can take any arbitrary form away from \(\Xb\) without any increase in the training loss. On the other hand, when a limited number of samples is available, it maybe necessary to lower \(K\) to ensure a robust estimation of the mean effect. An end-to-end experimentation on the effect of OOD will be provided in Case 2 of Section~\ref{sec:5-1-artificial-experiments}.
+%
+In Figure~\Ref{fig:example-different-bins} we illustrate a small example where the underlying black-box function \(f\) has different behavior on the data generating distribution and away from it. As can be seen in Figure~\ref{fig:example-different-bins}(a), we set the black-box function to be \(f = x_1x_2\) inside \(|x_1-x_2| < 0.5\) and to rapidly diverge outside of this region. The first feature follows a uniform distribution, i.e., \(x_1 \sim U(0,10)\), and for the second feature \(x_2=x_1\). The local effect of \(x_1\) is \(\E_{x_2|x_1} \left [ f_1(\xb) \right ] = x_1 \). Splitting in \(K\) bins, the first bin covers the region \( [0, \frac{10}{K} ) \), therefore, as discussed in~\ref{sec:4-1-DALE}, the ground truth bin effect is \(\int_0^{10/K} \E_{x_2|z}\left[f_1(\xb)\right]\partial z = \frac{5}{K}\). In Figure~\Ref{fig:example-different-bins}(b), we observe that as the bin-length becomes bigger (smaller \(K\)), DALE approximates the effect perfectly, whereas, ALE fails due to OOD sampling. This happens because in the ALE approximation of Eq.~\eqref{eq:ALE_appr}, the bin limits \(z_{k-1}, z_k\) fall outside of the region \(|x_1-x_2| < 0.5\).
 
-
-In Figure~\Ref{fig:example-different-bins} we illustrate a small
-example where the underlying black-box function \(f\) has different
-behavior on the data generating distribution and away from it. As can
-be seen in Figure~\ref{fig:example-different-bins}(a), we set the
-black-box function to be \(f = x_1x_2\) inside \(|x_1-x_2| < 0.5\) and
-to rapidly diverge outside of this region. The first feature follows a
-uniform distribution, i.e., \(x_1 \sim U(0,10)\), and for the second
-feature \(x_2=x_1\). The local effect of \(x_1\) is
-\(\E_{x_2|x_1} \left [ f_1(\xb) \right ] = x_1 \). Splitting in K bins,
-the first bin covers the region \( [0, \frac{10}{K} ) \), therefore,
-as discussed in~\ref{sec:4-1-DALE}, the ground truth bin effect is
-\(\int_0^{10/K} \E_{x_2|z}\left[f_1(\xb)\right]\partial z =
-\frac{5}{K}\). In Figure~\Ref{fig:example-different-bins}(b), we
-observe that as the bin-length becomes bigger (smaller K), DALE
-approximates the effect perfectly, whereas, ALE fails due to OOD
-sampling. This happens because in the ALE approximation of
-Eq.~\eqref{eq:ALE_appr}, the bin limits \(z_{k-1}, z_k\) fall outside
-of the region \(|x_1-x_2| < 0.5\).
-
-\begin{figure}[h]
-  \centering
-  \resizebox{.35\columnwidth}{!}{\input{./images/OOD-1.tex}}
-  \resizebox{.35\columnwidth}{!}{\input{./images/OOD-2.tex}}
-  \caption[Example comparison]{(Left) The black-box function \(f\) of
-    Section~\ref{sec:4-3-robustness}. (Right) Estimation of the bin
-    effect of the first bin for DALE and ALE, for varying number of
-    bins \(K\).}
+\begin{figure}[h] \centering \resizebox{.35\columnwidth}{!}{\input{./images/OOD-1.tex}} \resizebox{.35\columnwidth}{!}{\input{./images/OOD-2.tex}}
+  \caption[Example comparison]{(Left) The black-box function \(f\) of Section~\ref{sec:4-3-robustness}. (Right) Estimation of the bin effect of the first bin for DALE and ALE, for varying number of bins \(K\).}
   \label{fig:example-different-bins}
 \end{figure}
 
 
 \subsection{Bias and variance}
-\label{sec:4-4-std}
-Let a finite dataset of samples \(\mathcal{S}\), drawn independently
-and identically distributed (i.i.d) from the data generating
-distribution of \(\mathcal{X}\). DALE computes the accumulated local
-effect (Eq.~\eqref{eq:ALE}), using the approximation in
-(Eq.~\eqref{eq:DALE}). The expected value of the approximation across
-different datasets is
+\label{sec:4-4-std} Let a finite dataset of samples \(\mathcal{S}\), drawn independently and identically distributed (i.i.d) from the data generating distribution of \(\mathcal{X}\). DALE computes the accumulated local effect (Eq.~\eqref{eq:ALE}), using the approximation in (Eq.~\eqref{eq:DALE}). The expected value of the approximation across different datasets is
 
-\begin{equation}
-  \mathbb{E}_{\mathcal{S}}[\dale(x)] =
-  \Delta x\sum_{k=1}^{k_x}\mathbb{E}_{\mathcal{S}}[\frac{1}{|\mathcal{S}_k|}\sum_{i:\xb^i \in
-      \mathcal{S}_k} f_s(\xb^i)]
+\begin{equation} \mathbb{E}_{\mathcal{S}}[\dale(x)] = \Delta x\sum_{k=1}^{k_x}\mathbb{E}_{\mathcal{S}}[\frac{1}{|\mathcal{S}_k|}\sum_{i:\xb^i \in \mathcal{S}_k} f_s(\xb^i)]
   \label{eq:bias_dale}
 \end{equation}
 
-\noindent
-Notice also that for the values of \(x\) at the end of bin \(k_x\),
-Eq.~\eqref{eq:ALE} can be rewritten as (after omitting the constant
-\(c\))
-\begin{equation}
-  f_{\mathtt{ALE}}(x) = \sum_{k = 1}^{k_x}\int_{x_{k-1}}^{x_k}
-    \mathbb{E}_{\Xcb|\mathcal{X}_s=z}[f_s(\xb)] \partial z
+\noindent Notice also that for the values of \(x\) at the end of bin \(k_x\), Eq.~\eqref{eq:ALE} can be rewritten as (after omitting the constant \(c\))
+\begin{equation} f_{\mathtt{ALE}}(x) = \sum_{k = 1}^{k_x}\int_{x_{k-1}}^{x_k} \mathbb{E}_{\Xcb|\mathcal{X}_s=z}[f_s(\xb)] \partial z
     \label{eq:bias_ale_1}
-\end{equation}
-where \(x_0=x_{s, min}\) and \(x_i\), \(i=1, \dotsc, k_x\) are the bin limits.
+\end{equation} where \(x_0=x_{s, min}\) and \(x_i\), \(i=1, \dotsc, k_x\) are the bin limits.
 
-\noindent
-If we assume that each bin is sufficiently small such that \(f_s(\xb)\) does
-not depend on \(x_s\) (i.e., \(f(x)\) is linear wrt \(x_s\)) within the bin, then
-Eq. \eqref{eq:bias_ale_1} becomes
-\begin{equation}
-  f_{\mathtt{ALE}}(x) = \sum_{k = 1}^{k_x}\mathbb{E}_{\Xcb|\mathcal{X}_s \in
-    \mathcal{S}_k}[f_s(\xb)]\int_{x_{k-1}}^{x_k} \partial z
-  = \Delta x\sum_{k=1}^{k_x}\mathbb{E}_{\mathcal{X} \in \mathcal{S}_k}[f_s(\xb)]
+\noindent If we assume that each bin is sufficiently small such that \(f_s(\xb)\) does not depend on \(x_s\) (i.e., \(f(x)\) is linear wrt \(x_s\)) within the bin, then Eq. \eqref{eq:bias_ale_1} becomes
+\begin{equation} f_{\mathtt{ALE}}(x) = \sum_{k = 1}^{k_x}\mathbb{E}_{\Xcb|\mathcal{X}_s \in \mathcal{S}_k}[f_s(\xb)]\int_{x_{k-1}}^{x_k} \partial z = \Delta x\sum_{k=1}^{k_x}\mathbb{E}_{\mathcal{X} \in \mathcal{S}_k}[f_s(\xb)]
     \label{eq:bias_ale_2}
 \end{equation}
 
-\noindent
-From Eqs. \eqref{eq:bias_dale} and \eqref{eq:bias_ale_2} we have
-\begin{multline}
-    \mathbb{E}_{\mathcal{S}}[\dale]  - f_{\mathtt{ALE}}(x) =
-    \Delta x\sum_{k=1}^{k_x}\mathbb{E}_{\mathcal{S}}[\frac{1}{|\mathcal{S}_k|}\sum_{k:\xb^k \in
-        \mathcal{S}_k} f_s(\xb^k)] - \\
-    \Delta x\sum_{k=1}^{k_x}\mathbb{E}_{\mathcal{X}\in \mathcal{S}_k}[f_s(\xb)] =
-  \Delta x\sum_{k=1}^{k_x}\left(\mathbb{E}_{\mathcal{S}}[\hat{\mu}_k^s] - \mu_k^s\right) = 0
-\end{multline}
-since the expected value of the sample mean is an unbiased estimator
-of \(\mu_k^s\). As a result, under the condition of linearity wrt
-\(x_s\) within the bin, DALE is an unbiased estimator of the feature
-effect. If this assumption is violated (e.g., large bin size or highly
-nonlinear function), then this approach may introduce bias. The
-variance of the estimator is given\footnote{We show that in the
-  supporting material.} by
-\( \mathrm{Var}[\hat{\mu}_k^s] =
-\dfrac{(\sigma_k^s)^2}{|\mathcal{S}_k|} \), where \((\sigma_k^s)^2\)
-is the variance of \(f_s\) within the bin. Furthermore, since the
-samples \(\xb^i\) are independent, \(\hat{\mu}_k^s\) for
-\(k=1,\dotsc,k_x\) are also independent. The variance of the
-estimation can then be approximated as
+\noindent From Eqs. \eqref{eq:bias_dale} and \eqref{eq:bias_ale_2} we have
+\begin{multline} \mathbb{E}_{\mathcal{S}}[\dale] - f_{\mathtt{ALE}}(x) = \Delta x\sum_{k=1}^{k_x}\mathbb{E}_{\mathcal{S}}[\frac{1}{|\mathcal{S}_k|}\sum_{k:\xb^k \in \mathcal{S}_k} f_s(\xb^k)] - \\ \Delta x\sum_{k=1}^{k_x}\mathbb{E}_{\mathcal{X}\in \mathcal{S}_k}[f_s(\xb)] = \Delta x\sum_{k=1}^{k_x}\left(\mathbb{E}_{\mathcal{S}}[\hat{\mu}_k^s] - \mu_k^s\right) = 0
+\end{multline} since the expected value of the sample mean is an unbiased estimator of \(\mu_k^s\). As a result, under the condition of linearity wrt \(x_s\) within the bin, DALE is an unbiased estimator of the feature effect. If this assumption is violated (e.g., large bin size or highly nonlinear function), then this approach may introduce bias. The variance of the estimator is given\footnote{We show that in the supporting material.} by \( \mathrm{Var}[\hat{\mu}_k^s] = \dfrac{(\sigma_k^s)^2}{|\mathcal{S}_k|} \), where \((\sigma_k^s)^2\) is the variance of \(f_s\) within the bin. Furthermore, since the samples \(\xb^i\) are independent, \(\hat{\mu}_k^s\) for \(k=1,\dotsc,k_x\) are also independent. The variance of the estimation can then be approximated as
 %
-\begin{equation}
-  \mathrm{Var}[\dale(x)] = (\Delta x)^2\sum_k^{k_x} \mathrm{Var} [\hat{\mu}_k^s]
-  = (\Delta x)^2 \sum_k^{k_x}  \dfrac{(\sigma_k^s)^2}{|\mathcal{S}_k|} \approx
-  (\Delta x)^2 \sum_k^{k_x}  \dfrac{(\hat{\sigma}_k^s)^2}{|\mathcal{S}_k|}
+\begin{equation} \mathrm{Var}[\dale(x)] = (\Delta x)^2\sum_k^{k_x} \mathrm{Var} [\hat{\mu}_k^s] = (\Delta x)^2 \sum_k^{k_x} \dfrac{(\sigma_k^s)^2}{|\mathcal{S}_k|} \approx (\Delta x)^2 \sum_k^{k_x} \dfrac{(\hat{\sigma}_k^s)^2}{|\mathcal{S}_k|}
   \label{eq:DALE-var}
 \end{equation}
 %
-where \((\hat{\sigma}_k^s)^2\) is the sample variance within bin
-\(k\). Equation~\eqref{eq:DALE-var} allows the calculation of the
-standard error for the DALE approximation.
+where \((\hat{\sigma}_k^s)^2\) is the sample variance within bin \(k\). Equation~\eqref{eq:DALE-var} allows the calculation of the standard error for the DALE approximation.
 
 
 % \subsection{Limitations of DALE}
-% \label{sec:3-5-limitations}
-% \input{./chapters/3-5-limitations.tex}
+% \label{sec:3-5-limitations} % \input{./chapters/3-5-limitations.tex}
 
 \section{Experiments}
 
-This section presents the experimental evaluation of DALE using two
-synthetic and one real dataset. The experiments aim to compare DALE
-(\(\dale\)) with ALE approximation
-(\(\hat{f}_{\mathtt{ALE}}\)) from the perspectives of both efficiency
-and accuracy.
+This section presents the experimental evaluation of DALE using two synthetic and one real dataset. The experiments aim to compare DALE (\(\dale\)) with ALE approximation (\(\hat{f}_{\mathtt{ALE}}\)) from the perspectives of both efficiency and accuracy.
 
-\paragraph{Metrics.} For evaluating the efficiency of the
-approximations we measure the execution times (in seconds). For
-evaluating the accuracy we use: (a) qualitative comparison of the
-feature effect plots and (b) the Normalized Mean Squared Error which
-is defined as
-\(\text{NMSE}_{\mathtt{<approx>}} = \frac{\E[(\ale -
-  f_{\mathtt{<approx>}})^2]}{\text{Var}[\ale]}\).
+\paragraph{Metrics.} For evaluating the efficiency of the approximations we measure the execution times (in seconds). For evaluating the accuracy we use: (a) qualitative comparison of the feature effect plots and (b) the Normalized Mean Squared Error which is defined as \(\text{NMSE}_{\mathtt{<approx>}} = \frac{\E[(\ale - f_{\mathtt{<approx>}})^2]}{\text{Var}[\ale]}\).
 
-\paragraph{Synthetic Datasets.} The first synthetic dataset (Case 1) is designed
-to compare the approximations in terms of efficiency. For this reason,
-we generate design matrices \(\mathbf{X}\) of varying dimensionality
-\(D\) and number of instances \(N\). The second synthetic dataset
-(Case 2) is designed to compare the approximations in terms of
-accuracy. We define a data generating distribution \(\mathcal{X}\) and
-a black box function \(f\) with known forms for being able to directly
-compute the ground-truth ALE from Eq.~\eqref{eq:ALE}. Both
-\(\mathcal{X}\) and \(f\) are designed to amplify the effect of OOD
-sampling.
+\paragraph{Synthetic Datasets.} The first synthetic dataset (Case 1) is designed to compare the approximations in terms of efficiency. For this reason, we generate design matrices \(\mathbf{X}\) of varying dimensionality \(D\) and number of instances \(N\). The second synthetic dataset (Case 2) is designed to compare the approximations in terms of accuracy. We define a data generating distribution \(\mathcal{X}\) and a black box function \(f\) with known forms for being able to directly compute the ground-truth ALE from Eq.~\eqref{eq:ALE}. Both \(\mathcal{X}\) and \(f\) are designed to amplify the effect of OOD sampling.
 
-\paragraph{Real Dataset} We choose the Bike-Sharing dataset for two
-reasons. Firstly, it is the dataset utilized in the original ALE
-paper, so it is a proper choice for unbiased comparisons. Secondly, we
-wanted a dataset with enough training points to approximate the
-feature effect accurately, since the ground-truth is not
-available. Therefore, we want to check that \(\dale\) and
-\(\hat{f}_{\mathtt{ALE}}\) provide similar effects using dense
-bins. We also evaluate the accuracy of both methods behave when using
-larger bins.
+\paragraph{Real Dataset} We choose the Bike-Sharing dataset for two reasons. Firstly, it is the dataset utilized in the original ALE paper, so it is a proper choice for unbiased comparisons. Secondly, we wanted a dataset with enough training points to approximate the feature effect accurately, since the ground-truth is not available. Therefore, we want to check that \(\dale\) and \(\hat{f}_{\mathtt{ALE}}\) provide similar effects using dense bins. We also evaluate the accuracy of both methods behave when using larger bins.
 
 \subsection{Synthetic Datasets}
 \label{sec:5-1-artificial-experiments}
 \subsubsection{Case 1 - Efficiency comparison}
 \label{sec:case-1}
 
-In this example, we evaluate the efficiency of the two approximations,
-\(\dale\) and \(\hat{f}_{\mathtt{ALE}}\), through the
-execution times. We want to compare how both approximations perform in
-terms of the dimensionality of the problem (\(D\)), the dataset size
-(\(N\)) and the size of the model \(L\). In each experiment we
-generate a design-matrix \( \mathbf{X} \), by drawing \( N \cdot D \)
-samples from a standard normal distribution. The black-box function
-\(f \) is a fully-connected neural network with \(L\) hidden layers of
-\( 1024 \) units each. All experiments are done using \(K=100\). We
-want to clarify that the value of \(K\) plays almost no role in the
-execution times.
+In this example, we evaluate the efficiency of the two approximations, \(\dale\) and \(\hat{f}_{\mathtt{ALE}}\), through the execution times. We want to compare how both approximations perform in terms of the dimensionality of the problem (\(D\)), the dataset size (\(N\)) and the size of the model \(L\). In each experiment we generate a design-matrix \( \mathbf{X} \), by drawing \( N \cdot D \) samples from a standard normal distribution. The black-box function \(f \) is a fully-connected neural network with \(L\) hidden layers of \( 1024 \) units each. All experiments are done using \(K=100\). We want to clarify that the value of \(K\) plays almost no role in the execution times.
 
-In Figure~\Ref{fig:case-1-plots-1}, we directly compare
-\(\dale\) and \(\hat{f}_{\mathtt{ALE}}\) in two different
-setups: in Figure~\Ref{fig:case-1-plots-1}(Left), we use a light setup
-of \(N=10^3\) examples and a model of \(L=2\) layers, whereas in
-Figure~\Ref{fig:case-1-plots-1}(Right), a heavier setup with
-\(N=10^5\) and \(L=6\). We observe that in both cases, DALE executes
-in near-constant time independently of \(D\), while ALE scales
-linearly with wrt \(D\), confirming our claims of
-Section~\ref{sec:4-2-computational}. The difference in the execution
-time reaches significant levels from a relatively small
-dimensionality. In the heavy setup, ALE needs almost a minute for
-\(D=20\), three minutes for \(D=50\), and 15 minutes for \(D=100\). In
-all these cases, DALE executes in a few seconds. Another critical
-remark is that DALE's execution time is almost identical to the
-computation of the Jacobian \( \Jac \), which is benefited by
-automatic differentiation. Hence, we confirm that the overhead of
-performing steps 3-5 of Algorithm~\ref{alg:dale} is a small fraction
-of the total execution time. Another consequence of this remark is
-that we can test many different bin sizes with near-zero computational
-cost.
+In Figure~\Ref{fig:case-1-plots-1}, we directly compare \(\dale\) and \(\hat{f}_{\mathtt{ALE}}\) in two different setups: in Figure~\Ref{fig:case-1-plots-1}(Left), we use a light setup of \(N=10^3\) examples and a model of \(L=2\) layers, whereas in Figure~\Ref{fig:case-1-plots-1}(Right), a heavier setup with \(N=10^5\) and \(L=6\). We observe that in both cases, DALE executes in near-constant time independently of \(D\), while ALE scales linearly with wrt \(D\), confirming our claims of Section~\ref{sec:4-2-computational}. The difference in the execution time reaches significant levels from a relatively small dimensionality. In the heavy setup, ALE needs almost a minute for \(D=20\), three minutes for \(D=50\), and 15 minutes for \(D=100\). In all these cases, DALE executes in a few seconds. Another critical remark is that DALE's execution time is almost identical to the computation of the Jacobian \( \Jac \), which is benefited by automatic differentiation. Hence, we confirm that the overhead of performing steps 3-5 of Algorithm~\ref{alg:dale} is a small fraction of the total execution time. Another consequence of this remark is that we can test many different bin sizes with near-zero computational cost.
 
-In Figure~\Ref{fig:case-1-plots-2}, we rigorously quantify to what
-extent the dataset size \(N\) and the model size \(L\) affect both
-methods. In Figures~\Ref{fig:case-1-plots-2}(a) and
-~\Ref{fig:case-1-plots-2}(c), we confirm that both \(N\) and \(L\)
-have crucial impact in ALE's execution times. Therefore, for a big
-dataset and a heavy model \(f\), ALE's execution time quickly reaches
-prohibitive levels. In contrast, in
-Figures~\Ref{fig:case-1-plots-2}(b) and
-Figures~\Ref{fig:case-1-plots-2}(d), DALE is negligibly affected by
-these parameters. In the figures, we restrict the experiment to cases
-up to 100-dimensional input for illustration purposes. The same trend
-continues for an arbitrary number of dimensions. DALE can scale
-efficiently to any dimensionality as long as we have enough resources
-to store the dataset, evaluate the prediction model \(f\) and apply
-the gradients \(\nabla_{\xb}f\).
+In Figure~\Ref{fig:case-1-plots-2}, we rigorously quantify to what extent the dataset size \(N\) and the model size \(L\) affect both methods. In Figures~\Ref{fig:case-1-plots-2}(a) and ~\Ref{fig:case-1-plots-2}(c), we confirm that both \(N\) and \(L\) have crucial impact in ALE's execution times. Therefore, for a big dataset and a heavy model \(f\), ALE's execution time quickly reaches prohibitive levels. In contrast, in Figures~\Ref{fig:case-1-plots-2}(b) and Figures~\Ref{fig:case-1-plots-2}(d), DALE is negligibly affected by these parameters. In the figures, we restrict the experiment to cases up to 100-dimensional input for illustration purposes. The same trend continues for an arbitrary number of dimensions. DALE can scale efficiently to any dimensionality as long as we have enough resources to store the dataset, evaluate the prediction model \(f\) and apply the gradients \(\nabla_{\xb}f\).
 
 \begin{figure}[h]
   \centering
   \resizebox{.4\columnwidth}{!}{\input{./images/case-1-plot-1.tex}}
   \resizebox{.43\columnwidth}{!}{\input{./images/case-1-plot-2.tex}}
-  \caption[Case-1-fig-1]{Case 1. Comparison of the execution time of DALE
-    and ALE in two setups: (Left) Light setup; \(N=10^3, L=2\).
-    (Right) Light setup; \(N=10^5, L=6\)}
+  \caption[Case-1-fig-1]{Case 1. Comparison of the execution time of DALE and ALE wrt dimensionality in two setups: (Left) Light setup; \(N=10^3, L=2\).  (Right) Heavy setup; \(N=10^5, L=6\)}
   \label{fig:case-1-plots-1}
 \end{figure}
 
@@ -719,11 +346,12 @@ the gradients \(\nabla_{\xb}f\).
   \resizebox{.23\columnwidth}{!}{\input{./images/case-1-plot-4.tex}}
   \resizebox{.23\columnwidth}{!}{\input{./images/case-1-plot-5.tex}}
   \resizebox{.23\columnwidth}{!}{\input{./images/case-1-plot-6.tex}}
-  \caption[Case-1-fig-2]{Case 1. Measurements of the execution time wrt dimensionality \(D\):
-    (a) \(\hat{f}_{\mathtt{ALE}}\) for \(L = 2\), and many dataset sizes \(N\)
-    (b) \(\hat{f}_{\mathtt{ALE}}\) for \(N = 10^3\), and many model sizes \(L\)
-    (c) \(\dale\) for \(L = 2\), and many dataset sizes \(N\)
-    (d) \(\dale\) for \(N = 10^3\), and many model sizes \(L\)
+  \caption[Case-1-fig-2]{
+    Case 1. Measurements of the execution time wrt dimensionality \(D\). From left to right:
+    (a) \(\hat{f}_{\mathtt{ALE}}\) for \(L = 2\) and many dataset sizes \(N\)
+    (b) \(\dale\) for \(L = 2\) and many dataset sizes \(N\)
+    (c) \(\hat{f}_{\mathtt{ALE}}\) for \(N = 10^3\) and many model sizes \(L\)
+    (d) \(\dale\) for \(N = 10^3\) and many model sizes \(L\)
   }
   \label{fig:case-1-plots-2}
 \end{figure}
@@ -732,266 +360,111 @@ the gradients \(\nabla_{\xb}f\).
 \subsubsection{Case 2 - Accuracy Comparison}
 \label{sec:example2}
 
-In this example, we evaluate the accuracy of the two approximations,
-\(\dale\) and \(\hat{f}_{\mathtt{ALE}}\), in a synthetic
-dataset where the ground truth ALE is accessible. As discussed in
-Section~\ref{sec:4-3-robustness}, ALE approximation is vulnerable to
-OOD sampling when the bins are wide, or equivalently, the number of
-bins \(K\) is small. We want to compare how both approximations behave
-in a case where the local effect is noisy.
+In this example, we evaluate the accuracy of the two approximations, \(\dale\) and \(\hat{f}_{\mathtt{ALE}}\), in a synthetic dataset where the ground truth ALE is accessible. As discussed in Section~\ref{sec:4-3-robustness}, ALE approximation is vulnerable to OOD sampling when the bins are wide, or equivalently, the number of bins \(K\) is small. We want to compare how both approximations behave in a case where the local effect is noisy.
 %
-We design an experiment where we know the black-box function and the
-data generating distribution. The black-box function
-\(f:\R^3 \rightarrow \R\) is split in three parts to amplify the
-effect of OOD sampling. It includes a mild term
-\( f_0(x) = x_1x_2 + x_1x_3 \) in the region
-\( 0 \leq |x_1 - x_2| < \tau \) and then a quadratic term
-\(g(x) = \alpha ((x_1 - x_2)^2 - \tau^2)\) is added(subtracted)
-over(under) the region, i.e.:
+We design an experiment where we know the black-box function and the data generating distribution. The black-box function \(f:\R^3 \rightarrow \R\) is split in three parts to amplify the effect of OOD sampling. It includes a mild term \( f_0(x) = x_1x_2 + x_1x_3 \) in the region \( 0 \leq |x_1 - x_2| < \tau \) and then a quadratic term \(g(x) = \alpha ((x_1 - x_2)^2 - \tau^2)\) is added(subtracted) over(under) the region, i.e.:
 
-\begin{equation} \label{eq:example-2-mapping}
-  f(\mathbf{x}) =
-  \begin{cases}
-    f_0(x) & , 0 \leq |x_1 - x_2|  < \tau \\
-    f_0(x) - g(x) & , \tau \leq |x_1 - x_2|  \\
-    f_0(x) + g(x) & , \tau \leq - |x_1 - x_2|  \\
+\begin{equation} \label{eq:example-2-mapping} f(\mathbf{x}) =
+  \begin{cases} f_0(x) & , 0 \leq |x_1 - x_2| < \tau \\ f_0(x) - g(x) & , \tau \leq |x_1 - x_2| \\ f_0(x) + g(x) & , \tau \leq - |x_1 - x_2| \\
   \end{cases}
 \end{equation}
 
 \noindent
 %
-The data points \(X^i = (x_1^i, x_2^i, x_3^i)\) are generated as
-follows; \(x_1^i \) are clustered around the points
-\(\{1.5, 3, 5, 7, 8.5\}\),
-\(x_2^i \sim \mathcal{N}(\mu=x_1, \sigma_2=0.1) \) and
-\(x_3^i \sim \mathcal{N}(\mu=0, \sigma_3^2=10) \). In
-Figure~\ref{fig:example-2-samples}(a), we illustrate \(f(\xb)\) for
-\(x_3=0\), as well as the generated data points. In this example, the
-local effect of \(x_1\) is
-\(\frac{\partial f}{\partial x_1} = x_2 + x_3\). Due to the noisy
-nature of \(x_3\), both ALE and DALE need a large number of sample for
-robust estimation. Therefore, we need to lower the number of bins
-\(K\). As will be shown below, both ALE and DALE fail to approximate
-the feature effect for high \(K\). On the other hand, when using a
-lower \(K\), ALE approximation fails due to OOD sampling, while DALE
-manages to accurately approximate the feature effect.
+The data points \(X^i = (x_1^i, x_2^i, x_3^i)\) are generated as follows; \(x_1^i \) are clustered around the points \(\{1.5, 3, 5, 7, 8.5\}\), \(x_2^i \sim \mathcal{N}(\mu=x_1, \sigma_2=0.1) \) and \(x_3^i \sim \mathcal{N}(\mu=0, \sigma_3^2=10) \). In Figure~\ref{fig:example-2-samples}(a), we illustrate \(f(\xb)\) for \(x_3=0\), as well as the generated data points. In this example, the local effect of \(x_1\) is \(\frac{\partial f}{\partial x_1} = x_2 + x_3\). Due to the noisy nature of \(x_3\), both ALE and DALE need a large number of sample for robust estimation. Therefore, we need to lower the number of bins \(K\). As will be shown below, both ALE and DALE fail to approximate the feature effect for high \(K\). On the other hand, when using a lower \(K\), ALE approximation fails due to OOD sampling, while DALE manages to accurately approximate the feature effect.
 
-In Figure~\ref{fig:example-2-samples}(b) and
-Figure~\ref{fig:example-2-samples}(c), we observe the estimated
-effects for \(K=50\) and \(K=5\). In
-Figure~\ref{fig:example-2-samples}(b), \((K=50)\) the approximations
-converge to the same estimated effect which is inaccurate due to many
-noisy artifacts. In Figure~\ref{fig:example-2-samples}(c), \((K=5)\)
-we observe that for small \(K\), DALE approximates the ground-truth
-effect well, whereas ALE fails due to OOD
-sampling. Table~\ref{tab:case-2-accuracy} provides the NMSE of both
-approximation for varying number of bins \(K\). We observe that DALE
-consistently provides accurate estimations (NMSE \(\leq 0.1\)) for all
-small \(K\) values.
+In Figure~\ref{fig:example-2-samples}(b) and Figure~\ref{fig:example-2-samples}(c), we observe the estimated effects for \(K=50\) and \(K=5\). In Figure~\ref{fig:example-2-samples}(b), \((K=50)\) the approximations converge to the same estimated effect which is inaccurate due to many noisy artifacts. In Figure~\ref{fig:example-2-samples}(c), \((K=5)\) we observe that for small \(K\), DALE approximates the ground-truth effect well, whereas ALE fails due to OOD sampling. Table~\ref{tab:case-2-accuracy} provides the NMSE of both approximation for varying number of bins \(K\). We observe that DALE consistently provides accurate estimations (NMSE \(\leq 0.1\)) for all small \(K\) values.
 
-The experiments helps us confirm that when \(K \) increases, both
-approximations are based on a limited number of samples, and are
-vulnerable to noise. When \(K\) decreases, DALE lowers the resolution
-but provides more robust estimations. In contrast, ALE is vulnerable
-to OOD sampling.
+The experiments helps us confirm that when \(K \) increases, both approximations are based on a limited number of samples, and are vulnerable to noise. When \(K\) decreases, DALE lowers the resolution but provides more robust estimations. In contrast, ALE is vulnerable to OOD sampling.
 
-\begin{table}
-  \centering
+\begin{table} \centering
   \caption{Case 2. Evaluation of the NMSE between the approximations and the ground truth. Blue color indicates the values that are below \(0.1\).}
   \label{tab:case-2-accuracy}
   \begin{tabular}{c|c|c|c|c|c|c|c|c|c}
     \multicolumn{10}{c}{Accuracy on the Synthetic Dataset (Case 2)} \\
-    \hline \hline
-    & & \multicolumn{8}{|c}{Number of bins} \\
-    \hline
-    & & 1 & 2 & 3 & 4 & 5 & 10 & 20 & 40 \\
-    \hline
-    \hline
-    \multirow{2}{*}{\(\mathtt{NMSE}\)} & \(\dale\) & \textcolor{blue}{0.10} & \textcolor{blue}{0.03} & \textcolor{blue}{0.09} & \textcolor{blue}{0.02} & \textcolor{blue}{0.02} & 0.82 & 0.24 & 0.38\\
-    & \(\alep\) & 100.42 & 22.09 & 4.97 & 2.81 & 0.78 & 1.49 & 0.34 & 0.39 \\
+    \hline \hline & & \multicolumn{8}{|c}{Number of bins} \\
+    \hline & & 1 & 2 & 3 & 4 & 5 & 10 & 20 & 40 \\
+    \hline \hline \multirow{2}{*}{\(\mathtt{NMSE}\)} & \(\alep\) & 100.42 & 22.09 & 4.97 & 2.81 & 0.78 & 1.49 & 0.34 & 0.39 \\
+    & \(\dale\) & \textcolor{blue}{0.10} & \textcolor{blue}{0.03} & \textcolor{blue}{0.09} & \textcolor{blue}{0.02} & \textcolor{blue}{0.02} & 0.82 & 0.24 & 0.38 \\
     \hline
   \end{tabular}
 \end{table}
 
 
 \begin{figure}[h]
-  \begin{center}
-    \resizebox{.33\columnwidth}{!}{\input{./images/case-2-f-gt.tex}}
-    \resizebox{.32\columnwidth}{!}{\input{./images/case-2-fe-bins-50.tex}}
-    \resizebox{.32\columnwidth}{!}{\input{./images/case-2-fe-bins-5.tex}}
+  \begin{center} \resizebox{.33\columnwidth}{!}{\input{./images/case-2-f-gt.tex}} \resizebox{.32\columnwidth}{!}{\input{./images/case-2-fe-bins-50.tex}} \resizebox{.32\columnwidth}{!}{\input{./images/case-2-fe-bins-5.tex}}
   \end{center}
-  \caption[Case 2]{Case 2 experiment. (a) The black-box function \(f\)
-    of Section~\ref{sec:4-3-robustness}. (b) Estimation of the
-    feature effect for a large number of bins \(K=50\). (c)
-    Estimation of the feature effect for a small number of bins
-    \(K=5\).}
+  \caption[Case 2]{Case 2 experiment. (a) The black-box function \(f\) of Section~\ref{sec:4-3-robustness}. (b) Estimation of the feature effect for a large number of bins \(K=50\). (c) Estimation of the feature effect for a small number of bins \(K=5\).}
   \label{fig:example-2-samples}
 \end{figure}
 
 
 \subsection{Real dataset}
-\label{sec:5-2-real-datasets}
-In this section, we test our approximation on the Bike-Sharing
-Dataset~\cite{BikeSharing}.~\footnote{It is dataset drawn from the
-  Capital Bikeshare system (Washington D.C., USA) over the period
-  2011-2012. The dataset can be found
-  \href{https://archive.ics.uci.edu/ml/machine-learning-databases/00275/Bike-Sharing-Dataset.zip}{here}}
-The Bike-Sharing Dataset is chosen as the main illustration example in
-the original ALE paper, therefore it was considered appropriate for
-comparisons. The dataset contains the bike rentals for almost every
-hour over the period 2011 and 2012. The dataset contains 14 features,
-which we denote as \( X_{\mathtt{<feature\_name>}} \). We select the
-11 features that are relevant to the prediction task. Most of the
-features are measurements of the environmental conditions, e.g.
-\(X_{\mathtt{month}}\), \(X_{\mathtt{hour}}\),
-\(X_{\mathtt{temperature}}\), \(X_{\mathtt{humidity}}\),
-\(X_{\mathtt{windspeed}}\), while some others inform us about the
-day-type, e.g. whether we refer to a working-day
-\(X_{\mathtt{workingday}}\). The target value \( Y_{\mathtt{count}}\)
-is the bike rentals per hour, which has mean value
-\(\mu_{\mathtt{count}} = 189\) and standard deviation
-\(\sigma_{\mathtt{count}} = 181\). We train a deep fully-connected
-Neural Network with 6 hidden layers and \(711681\) parameters. We
-train the model for \(20\) epochs, using the Adam optimizer with
-learning rate 0.01. The model achieves a mean absolute error on the
-test of about \(38\) counts.
+\label{sec:5-2-real-datasets} In this section, we test our approximation on the Bike-Sharing Dataset~\cite{BikeSharing}.~\footnote{It is dataset drawn from the Capital Bikeshare system (Washington D.C., USA) over the period 2011-2012. The dataset can be found \href{https://archive.ics.uci.edu/ml/machine-learning-databases/00275/Bike-Sharing-Dataset.zip}{here}} The Bike-Sharing Dataset is chosen as the main illustration example in the original ALE paper, therefore it was considered appropriate for comparisons. The dataset contains the bike rentals for almost every hour over the period 2011 and 2012. The dataset contains 14 features, which we denote as \( X_{\mathtt{<feature\_name>}} \). We select the 11 features that are relevant to the prediction task. Most of the features are measurements of the environmental conditions, e.g.  \(X_{\mathtt{month}}\), \(X_{\mathtt{hour}}\), \(X_{\mathtt{temperature}}\), \(X_{\mathtt{humidity}}\), \(X_{\mathtt{windspeed}}\), while some others inform us about the day-type, e.g. whether we refer to a working-day \(X_{\mathtt{workingday}}\). The target value \( Y_{\mathtt{count}}\) is the bike rentals per hour, which has mean value \(\mu_{\mathtt{count}} = 189\) and standard deviation \(\sigma_{\mathtt{count}} = 181\). We train a deep fully-connected Neural Network with 6 hidden layers and \(711681\) parameters. We train the model for \(20\) epochs, using the Adam optimizer with learning rate 0.01. The model achieves a mean absolute error on the test of about \(38\) counts.
 
-\paragraph{Efficiency.} For comparing the efficiency, we measure the
-execution time of DALE and ALE for a variable number of features. We
-present the results in Table~\ref{tab:bike-sharing-efficiency}. We
-confirm that DALE can compute the feature effect for all features in
-almost constant time wrt \(D\). In contrast, ALE scales linearly wrt
-\(D\) which leads to an execution time of over \(10\) seconds.
+\paragraph{Efficiency.} For comparing the efficiency, we measure the execution time of DALE and ALE for a variable number of features. We present the results in Table~\ref{tab:bike-sharing-efficiency}. We confirm that DALE can compute the feature effect for all features in almost constant time wrt \(D\). In contrast, ALE scales linearly wrt \(D\) which leads to an execution time of over \(10\) seconds.
 
 \begin{table}
   \caption{Bike-Sharing Dataset. Measurements of the execution time.}
-  \label{tab:bike-sharing-efficiency}
-  \centering
+  \label{tab:bike-sharing-efficiency} \centering
   \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c}
     \multicolumn{12}{c}{Efficiency on Bike-Sharing Dataset (Execution Times in seconds)} \\
-    \hline\hline
-    & \multicolumn{11}{|c}{Number of Features} \\
-    \hline
-    & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
-    \hline
-    \( \dale \) & 1.17 & \textbf{1.19} & \textbf{1.22} & \textbf{1.24} & \textbf{1.27} & \textbf{1.30} & \textbf{1.36} & \textbf{1.32} & \textbf{1.33} & \textbf{1.37} & \textbf{1.39} \\
-    \hline
-    \( \alep \) & \textbf{0.85} & 1.78 & 2.69 & 3.66 & 4.64 & 5.64 & 6.85 & 7.73 & 8.86 & 9.9 & 10.9 \\
+    \hline\hline & \multicolumn{11}{|c}{Number of Features} \\
+    \hline & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
+    \hline \( \alep \) & \textbf{0.85} & 1.78 & 2.69 & 3.66 & 4.64 & 5.64 & 6.85 & 7.73 & 8.86 & 9.9 & 10.9 \\
+    \hline \( \dale \) & 1.17 & \textbf{1.19} & \textbf{1.22} & \textbf{1.24} & \textbf{1.27} & \textbf{1.30} & \textbf{1.36} & \textbf{1.32} & \textbf{1.33} & \textbf{1.37} & \textbf{1.39} \\
     \hline
   \end{tabular}
 \end{table}
 
 \paragraph{Accuracy.}
 
-In the case of the Bike-Sharing, it is infeasible compare to compute
-the ground-truth ALE. We have lack of knowledge about the
-data-generating distribution and the dimensionality of the problem
-\(D=11\) is prohibitive for applying numerical integration on
-Eq.~\eqref{eq:ALE}. However, given the fact that the dataset has a
-large number of instances, DALE and ALE provide almost identical
-approximations for all features for large \(K\) as we confirm in
-Figure~\ref{fig:bike-sharing-comparison}. We also notice the for all
-feature features, except \(X_{\mathtt{hour}}\), lowering the number of
-bins \(K\) does not significantly impacts the approximation, since
-these features change slowly wrt the feature value.
+In the case of the Bike-Sharing, it is infeasible compare to compute the ground-truth ALE. We have lack of knowledge about the data-generating distribution and the dimensionality of the problem \(D=11\) is prohibitive for applying numerical integration on Eq.~\eqref{eq:ALE}. However, given the fact that the dataset has a large number of instances, DALE and ALE provide almost identical approximations for all features for large \(K\) as we confirm in Figure~\ref{fig:bike-sharing-comparison}. We also notice the for all feature features, except \(X_{\mathtt{hour}}\), lowering the number of bins \(K\) does not significantly impacts the approximation, since these features change slowly wrt the feature value.
 
-An exception is feature \(X_{\mathtt{hour}}\). In this case, the
-\(\dale\) approximation remains accurate when lowering the
-number of bins \(K\) (Fig.~\ref{fig:bike-sharing-feature-3}(b)), while
-\(\hat{f}_{\mathtt{ALE}}\) deteriorates significantly
-(Fig.~\ref{fig:bike-sharing-feature-3}(c)). In
-Table~\ref{tab:bike-sharing-accuracy} we evaluate both approximations
-on \(X_{\mathtt{hour}}\), for different number of bins \(K\). We set
-the ground-truth effect to be the approximation for \(K=200\). We
-observe that NMSE remains low in DALE for all \(K\), while for ALE it
-rapidly increases. This is due to OOD sampling that occurs when the
-bin size becomes large.
+An exception is feature \(X_{\mathtt{hour}}\). In this case, the \(\dale\) approximation remains accurate when lowering the number of bins \(K\) (Fig.~\ref{fig:bike-sharing-feature-3}(b)), while \(\hat{f}_{\mathtt{ALE}}\) deteriorates significantly (Fig.~\ref{fig:bike-sharing-feature-3}(c)). In Table~\ref{tab:bike-sharing-accuracy} we evaluate both approximations on \(X_{\mathtt{hour}}\), for different number of bins \(K\). We set the ground-truth effect to be the approximation for \(K=200\). We observe that NMSE remains low in DALE for all \(K\), while for ALE it rapidly increases. This is due to OOD sampling that occurs when the bin size becomes large.
 
 \begin{figure}[h]
   \centering
   \resizebox{.3\columnwidth}{!}{\input{./images/bike-dataset-fe-1.tex}}
   \resizebox{.3\columnwidth}{!}{\input{./images/bike-dataset-fe-8.tex}}
   \resizebox{.3\columnwidth}{!}{\input{./images/bike-dataset-fe-9.tex}}
-  \caption{Bike-Sharing Dataset. DALE and ALE feature effect plots with \(K=200\) for:
-    \(X_{\texttt{month}}\), \(X_{\mathtt{atemp}}\),\(X_{\mathtt{hum}}\).}
+  \caption{Bike-Sharing Dataset. DALE and ALE feature effect plots with \(K=200\) for: \(X_{\texttt{month}}\), \(X_{\mathtt{atemp}}\),\(X_{\mathtt{hum}}\).}
   \label{fig:bike-sharing-comparison}
 \end{figure}
 
 
 \begin{figure}[h]
   \centering
-    \resizebox{.3\columnwidth}{!}{\input{./images/bike-dataset-fe-2.tex}}
-    \resizebox{.3\columnwidth}{!}{\input{./images/bike-dataset-dale-comparison.tex}}
-    \resizebox{.3\columnwidth}{!}{\input{./images/bike-dataset-ale-comparison.tex}}
-    \caption{Bike-Sharing Dataset. Feature effect plots on \(X_{\texttt{hour}}\): (Left)
-      DALE vs ALE for \(K=200\). (Center) DALE plots for
-      \(K = \{25, 50, 100\}\). (Right) ALE plots for
-      \(K = \{25, 50, 100\}\)}
+  \resizebox{.3\columnwidth}{!}{\input{./images/bike-dataset-fe-2.tex}}
+  \resizebox{.3\columnwidth}{!}{\input{./images/bike-dataset-dale-comparison.tex}}
+  \resizebox{.3\columnwidth}{!}{\input{./images/bike-dataset-ale-comparison.tex}}
+  \caption{Bike-Sharing Dataset. Feature effect plots on \(X_{\texttt{hour}}\): (Left) DALE vs ALE for \(K=200\). (Center) DALE plots for \(K = \{25, 50, 100\}\). (Right) ALE plots for \(K = \{25, 50, 100\}\)}
   \label{fig:bike-sharing-feature-3}
 \end{figure}
 
 
 \begin{table}
-  \caption{Evaluation of DALE and ALE approximation when lowering the
-    number of bins \(K\). The ground-truth effect has been computed
-    for \(K=200\).}
-  \label{tab:bike-sharing-accuracy}
-  \centering
+  \caption{Evaluation of DALE and ALE approximation when lowering the number of bins \(K\). The ground-truth effect has been computed for \(K=200\).}
+  \label{tab:bike-sharing-accuracy} \centering
   \begin{tabular}{c|c|c|c|c|c}
     \multicolumn{6}{c}{Accuracy on Bike-Sharing Dataset - Feature \(X_{\mathtt{hour}}\)} \\
-    \hline \hline
-    & & \multicolumn{4}{|c}{Number of bins} \\
-    \hline
-    & & 100 & 50 & 25 & 15 \\
-    \hline
-    \hline
-    \multirow{2}{*}{\(\mathtt{NMSE}\)} & \(\dale\) & \textbf{0.007} & \textbf{0.01} & \textbf{0.03} & \textbf{0.09} \\
-    & \(\alep\) & 0.04 & 0.43 & 0.79 & 0.83 \\
+    \hline \hline & & \multicolumn{4}{|c}{Number of bins} \\
+    \hline & & 100 & 50 & 25 & 15 \\
+    \hline \hline \multirow{2}{*}{\(\mathtt{NMSE}\)} & \(\alep\) & 0.04 & 0.43 & 0.79 & 0.83 \\
+                  & \(\dale\) & \textbf{0.007} & \textbf{0.01} & \textbf{0.03} & \textbf{0.09} \\
     \hline
   \end{tabular}
 \end{table}
 
 
-\section{Conclusion and Future Work}
-This paper introduced DALE, an efficient and robust-to-OOD
-approximation for ALE, the state-of-the-art method for feature effect
-analysis. First, we explored the advantages of ALE over the other two
-renowned feature effect methods, PDP and MPlots. However, ALE's
-approximation scales poorly in big and high-dimensional datasets and
-suffers from OOD sampling in cases with limited samples. For
-addressing these deficiencies, we proposed DALE, a fast and
-on-distribution alternative. We presented the method and discussed the
-advantages over the typical ALE approximation. We proved that under
-some hypotheses, our proposal is an unbiased estimator of ALE and we
-presented a method for quantifying the uncertainty of the explanation,
-i.e. the standard error of the approximation. The experiments verify
-the aforementioned claims. DALE significantly improves the efficiency
-of ALE's approximation by orders of magnitude and secures that local
-effect estimations come from on-distribution samples. The latter leads
-to more accurate feature effect plots when the bins are wide and the
-black-box function changes away from the data generating distribution.
+\section{Conclusion and Future Work} This paper introduced DALE, an efficient and robust to OOD approximation for ALE. Although ALE models the feature effect correctly in cases of correlated features, ALE's approximation scales poorly in high-dimensional datasets and suffers from OOD sampling. As discussed in the paper, DALE addresses these limitations providing a fast and on-distribution alternative. We proved that under some hypotheses, our proposal is an unbiased estimator of ALE and we presented a method for quantifying the standard error of the approximation. The experiments verified our claims. DALE significantly improves the efficiency of ALE's approximation by orders of magnitude and secures that local effect estimations come from on-distribution samples. The latter leads to more accurate feature effect plots when the bins are wide and the black-box function changes away from the data generating distribution.
 
-The computational efficiency of DALE delivers a substantial margin for
-future extensions. A significant advantage of our proposal is that
-effects are computed once on the training set points and can be reused
-in different-size bins. The decision for the bin density, i.e., the
-resolution of the plot, can be taken afterwards. Therefore, DALE
-permits creating feature effect plots at different resolutions with
-near-zero computational overhead, which can be embedded into a
-multi-resolution feature effect plots framework.
+The computational efficiency of DALE delivers a substantial margin for future extensions. A significant advantage of our proposal is that effects are computed once on the training set points and can be reused in different-size bins. The decision for the bin density, i.e., the resolution of the plot, can be taken afterwards. Therefore, DALE permits creating feature effect plots at different resolutions with near-zero computational overhead, which can be embedded into a multi-resolution feature effect plots framework.
 
 
-\acks{We thank Eirini Ntoutsi for her insightful comments in the
-  draft versions of the paper and Giorgos Giannopoulos for the valuable
-  discussions while forming the initial idea.
+\acks{We thank Eirini Ntoutsi for her insightful comments in the draft versions of the paper and Giorgos Giannopoulos for the valuable discussions while forming the initial idea.
 
-  \noindent
-  This research was funded by the EU (H2020-EU.2.1.1.) project,
-  “XMANAI: Explainable Manufacturing Artificial Intelligence" -
-  ICT-38-2020 - Artificial intelligence for manufacturing, Grant
-  agreement ID: 957362.
-}
-
+  \noindent This work was partially supported by projects i4metal (grant T2EDK- 03010) and XMANAI (grant agreement No 957362), which have received funding by the European Regional Development Fund of the EU and Greek national funds (through the Operational Program Competitiveness, Entrepreneurship and Innovation, under the call Research-Create-Innovate) and the EU 2020 Programme, ICT-38-2020 - Artificial intelligence for manufacturing, respectively.  }
 
 
 %\bibliographystyle{plain}
