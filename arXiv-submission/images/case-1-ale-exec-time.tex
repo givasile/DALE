@@ -1,0 +1,73 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{green01270}{RGB}{0,127,0}
+\definecolor{lightgray204}{RGB}{204,204,204}
+\definecolor{purple}{RGB}{128,0,128}
+
+\begin{axis}[
+legend cell align={left},
+legend style={
+  fill opacity=0.8,
+  draw opacity=1,
+  text opacity=1,
+  at={(0.03,0.97)},
+  anchor=north west,
+  draw=lightgray204
+},
+tick align=outside,
+tick pos=left,
+title={Execution time: ALE},
+x grid style={darkgray176},
+xlabel={\(\displaystyle D\)},
+xmin=0.25, xmax=104.75,
+xtick style={color=black},
+y grid style={darkgray176},
+ylabel={time (seconds)},
+ymin=-10.1084520236545, ymax=221.13399362265,
+ytick style={color=black}
+]
+\addplot [semithick, red, dashed, mark=square*, mark size=3, mark options={solid}]
+table {%
+5 0.402568221092224
+10 0.818896055221558
+15 1.20589685440063
+20 1.6645781993866
+25 2.07307553291321
+100 8.4846887588501
+};
+\addlegendentry{$N=10^2$}
+\addplot [semithick, green01270, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+5 0.824095249176025
+10 1.60241365432739
+15 2.41199326515198
+20 3.20370101928711
+25 4.13980340957642
+100 17.3969821929932
+};
+\addlegendentry{$N=10^3$}
+\addplot [semithick, blue, dashed, mark=diamond*, mark size=3, mark options={solid}]
+table {%
+5 4.73604583740234
+10 9.45039939880371
+15 14.2106018066406
+20 19.1919708251953
+25 23.8749561309814
+100 104.836074829102
+};
+\addlegendentry{$N=10^4$}
+\addplot [semithick, purple, dashed, mark=triangle*, mark size=3, mark options={solid,rotate=180}]
+table {%
+5 9.08888912200928
+10 18.0478954315186
+15 27.5209407806396
+20 37.5816116333008
+25 48.3250312805176
+100 210.622970581055
+};
+\addlegendentry{$N=2 x 10^4$}
+\end{axis}
+
+\end{tikzpicture}

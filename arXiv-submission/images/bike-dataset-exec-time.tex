@@ -1,0 +1,68 @@
+% This file was created with tikzplotlib v0.10.1.
+\begin{tikzpicture}
+
+\definecolor{darkgray176}{RGB}{176,176,176}
+\definecolor{dodgerblue}{RGB}{30,144,255}
+\definecolor{lightgray204}{RGB}{204,204,204}
+
+\begin{axis}[
+legend cell align={left},
+legend style={
+  fill opacity=0.8,
+  draw opacity=1,
+  text opacity=1,
+  at={(0.03,0.97)},
+  anchor=north west,
+  draw=lightgray204
+},
+tick align=outside,
+tick pos=left,
+title={Execution time vs number of features},
+x grid style={darkgray176},
+xlabel={\(\displaystyle D\)},
+xmin=0.35, xmax=14.65,
+xtick style={color=black},
+y grid style={darkgray176},
+ylabel={time (seconds)},
+ymin=0.144154728660942, ymax=15.5982661563525,
+ytick style={color=black}
+]
+\addplot [semithick, dodgerblue, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+1 0.846614360809326
+2 1.72692942619324
+3 2.65662574768066
+4 3.66230654716492
+5 4.61438512802124
+6 5.68880891799927
+7 6.63948249816895
+8 7.77279090881348
+9 8.66639804840088
+10 9.72735595703125
+11 10.7279272079468
+12 12.5414180755615
+13 14.2149019241333
+14 14.895806312561
+};
+\addlegendentry{$\hat{f}_{\mathtt{ALE}}$}
+\addplot [semithick, black, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+1 1.14760231971741
+2 1.13242828845978
+3 1.29699635505676
+4 1.25175428390503
+5 1.28723073005676
+6 1.27077507972717
+7 1.31220817565918
+8 1.35202884674072
+9 1.30552756786346
+10 1.32483470439911
+11 1.36501741409302
+12 1.47622466087341
+13 1.54766571521759
+14 1.44376242160797
+};
+\addlegendentry{$f_{\mathtt{DALE}}$}
+\end{axis}
+
+\end{tikzpicture}
