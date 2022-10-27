@@ -5,4 +5,4 @@ Accepted for publication at [Asian Conference of Machine Learning (ACML) 2022](h
 - `./ACML-camera-ready`: The camera-ready version of the paper
 - `./ACML-paper`: The initial submission
 - `./ACML-rebuttal`: Our answers to the issues raised by the reviewers
-- `./code`: The code for reproducing all the experiments presented in the paper
+- `./ACML-code`: The code for reproducing all the experiments presented in the paper
