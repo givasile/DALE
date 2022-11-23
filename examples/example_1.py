@@ -4,6 +4,9 @@ import matplotlib.pyplot as plt
 from matplotlib import cm
 import copy
 
+np.random.seed(12532)
+
+
 def model(X: np.array) -> np.array:
     tau = 1.2
     a = 7
@@ -80,11 +83,11 @@ def generate_samples(N: int, samples_range) -> np.array:
                          9.1*np.ones(1),
                          np.ones(int(1))*samples_range])
     x2 = x1 + np.random.normal(size=(x1.shape[0]))*.6
-    x3 = np.random.normal(size=(x1.shape[0]))*20
+    x3 = np.random.normal(size=(x1.shape[0]))*3
     return np.stack([x1, x2, x3]).T
 
 
-def plot_model(model, samples, nof_points, samples_range, savefig):
+def plot_model(model, samples, nof_points, samples_range, limits, savefig):
     x = np.linspace(-.1*samples_range, 1.1*samples_range, nof_points)
     y = np.linspace(-.1*samples_range, 1.1*samples_range, nof_points)
     xx, yy = np.meshgrid(x, y)
@@ -95,13 +98,17 @@ def plot_model(model, samples, nof_points, samples_range, savefig):
     cs = ax.contourf(xx, yy, zz, levels=400, vmin=-100, vmax=200., cmap=cm.viridis, extend='both')
     ax.plot(samples[:, 0], samples[:, 1], 'ro', label="samples")
     ax.plot(np.linspace(0, 10, 10), np.linspace(0, samples_range, 10), "r--")
+
+    if limits is not None:
+        ax.vlines(limits, ymin=np.min(y), ymax=np.max(y), linestyles="dashed", label="bins")
+
     plt.title(r"$f(x_1, x_2, x_3=0)$")
     plt.xlabel("$x_1$")
     plt.ylabel("$x_2$")
     plt.legend()
     plt.colorbar(cs)
-    if savefig:
-        tplt.save("./../paper/images/case-2-f-gt.tex")
+    # if savefig:
+    #     tplt.save("./../paper/images/case-2-f-gt.tex")
     plt.show(block=False)
 
 
@@ -134,17 +141,34 @@ def generate_samples(N: int, samples_range) -> np.array:
                          9.1*np.ones(1),
                          np.ones(int(1))*samples_range])
     x2 = x1 + np.random.normal(size=(x1.shape[0]))*.6
-    x3 = np.random.normal(size=(x1.shape[0]))*20
+    x3 = np.random.normal(size=(x1.shape[0]))*3
     return np.stack([x1, x2, x3]).T
 
 
 N = 1000
-X = generate_samples(N, samples_range)
 samples_range = 10
-plot_model(model=model, samples=X, nof_points=15, samples_range=samples_range, savefig=False)
+X = generate_samples(N, samples_range)
+plot_model(model=model, samples=X, nof_points=15, samples_range=samples_range, limits=None, savefig=False)
 
 
 # DALE
 dale = pythia.DALE(data=X, model=model, model_jac=model_jac)
-dale.fit(features=0, alg_params={"method": "fixed", "nof_bins": 10})
-dale.plot(s=0)
+dale.fit(features=0, params={"method": "fixed", "nof_bins": 10})
+dale.plot(s=0, error=False)
+plot_model(model=model, samples=X, nof_points=15, samples_range=samples_range,
+           limits=dale.feature_effect["feature_0"]["limits"], savefig=False)
+
+# DALE
+dale = pythia.DALE(data=X, model=model, model_jac=model_jac)
+dale.fit(features=0, params={"method": "fixed", "nof_bins": 5})
+dale.plot(s=0, error=False)
+plot_model(model=model, samples=X, nof_points=15, samples_range=samples_range,
+           limits=dale.feature_effect["feature_0"]["limits"], savefig=False)
+
+
+
+# ALE
+ale = pythia.ALE(data=X, model=model)
+ale.fit(features=0, params={"nof_bins": 10})
+ale.plot(s=0, error=False)
+
