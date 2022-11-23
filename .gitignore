@@ -133,5 +133,10 @@ dmypy.json
 *.bbl
 *.blg
 *.out
+*.toc
+*.snm
+*.bcf
+*.nav
+*.xml
 
 .idea
