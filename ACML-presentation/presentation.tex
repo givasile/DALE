@@ -7,7 +7,12 @@
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \documentclass{beamer}
+\setbeamersize{text margin left=3mm,text margin right=3mm}
 \usepackage{tikz}
+
+\usepackage{natbib}
+\bibliographystyle{plain}
+
 \usepackage{amsmath, bm, amssymb}
 \usepackage{graphicx}
 \usepackage{xcolor}
@@ -20,8 +25,23 @@
     filecolor=magenta,
     urlcolor=cyan,
     }
-\usepackage[backend=biber, citestyle=authoryear, bibstyle=alphabetic]{biblatex}
-\addbibresource{bibliography.bib}
+% \usepackage[backend=biber, citestyle=authoryear, bibstyle=alphabetic]{biblatex}
+
+\usepackage{tikz}
+\usetikzlibrary{matrix,positioning,arrows.meta,arrows,fit,backgrounds,decorations.pathreplacing}
+
+\tikzset{ mymat/.style={ matrix of math nodes, text height=2.5ex, text
+depth=0.75ex, text width=6.00ex, align=center, column
+sep=-\pgflinewidth, nodes={minimum height=5.0ex} }, mymats/.style={
+mymat, nodes={draw,fill=#1} }, mymat2/.style={ matrix of math nodes,
+text height=1.0ex, text depth=0.0ex, minimum width=5ex, % text
+width=7.00ex, align=center, column sep=-\pgflinewidth }, }
+
+\usetikzlibrary{shapes.geometric, arrows, backgrounds, scopes}
+\usepackage{pgfplots} \pgfplotsset{width=6.75cm, compat=newest}
+\usepackage[utf8]{inputenc} \DeclareUnicodeCharacter{2212}{−}
+\usepgfplotslibrary{groupplots,dateplot}
+\usetikzlibrary{patterns,shapes.arrows}
 
 
 
@@ -33,18 +53,21 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}
 
-\title[FUB-Presentation]{Bayesian Inference and Explainable AI}
-\subtitle{Quantifying the uncertainty of the explanations}
+\title[DALE]{Paper presentation at ACML 2022}
+\subtitle{DALE: Differential Accumulated Local Effects for efficient and accurate global explanations}
 \author[Gkolemis, Vasilis] % (optional)
-{Vasilis Gkolemis\inst{1}}
+{Vasilis Gkolemis\inst{1,2} \and Theodore Dalamagas\inst{1} \and Christos Diou\inst{2}}
 
-\institute[VFU] % (optional)
-{
-  \inst{1}%
-  ATHENA Research and Innovation Center
+\institute[ATHENA]{\inst{1}}
+\institute[HUA]{\inst{2}Harokopio University of Athens}
+
+\institute[ATH-HUA]{
+  \inst{1} ATHENA Research and Innovation Center
+  \and %
+  \inst{2} Harokopio University of Athens
 }
 
-\date{November 2021}
+\date{December 2022}
 
 
 % Use a simple TikZ graphic to show where the logo is positioned
@@ -74,23 +97,177 @@
 
 \section{Feature Effect}
 \begin{frame}
-  \frametitle{Feature Effect}
+  \frametitle{Interpretable ML}
+  \begin{itemize}
+  \item Black-box model \(f(\cdot): \mathcal{X} \rightarrow \mathcal{Y} \), trained on \(\mathcal{D}\)
+    \vspace{3mm}
 
+    \item Reveal interpretable properties:
+    \begin{itemize}
+    \item[] Which features are important (in general)?
+    \item[] Which features have positive impact for a class?
+
+    \end{itemize}
+
+  \vspace{3mm}
+
+    \item Categories:
+      \begin{itemize}
+        \item[\(\rightarrow\)] Global vs local
+        \item[\(\rightarrow\)] Model-agnostic vs Model-specific
+        \item[\(\rightarrow\)] Output? number, plot, instance etc.
+      \end{itemize}
+  \end{itemize}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  Feature Effect: Global, Model-agnostic, outputs plot
+\end{frame}
+
+\begin{frame}
+  \frametitle{Feature Effect}
+  \(y = f(x_s) \rightarrow\) Effect of a single feature \(x_s\) on the output \(y\)
+  \vspace{2mm}
   \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.4\textwidth]{./figures/bin_splitting_3_bins.png}\\
-    \includegraphics[width=0.4\textwidth]{./figures/dale_3_bins.png}
-    \includegraphics[width=0.4\textwidth]{./figures/ale_3_bins.png}
-    \label{}
+    \includegraphics[width=0.7\textwidth]{./figures/pdp-cervical-1.jpeg}
+    \caption{Image taken from Interpretable ML book~\citep{molnar2022}}
   \end{figure}
+
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  We search for a \alert{single configuration (point-estimate) \( \hat{\thetab}\) }
+  Feature Effect is simple and intuitive.
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Feature Effect Methods}
+  \begin{itemize}
+  \item<1-> PDP
+    \begin{itemize}
+    \item Expected outcome over \(x_c\): \(f(x_s) = \mathbb{E}_{\mathbf{x_c}}[f(x_s, \mathbf{x_c})]\)
+    \item \textbf{Unrealistic instances}
+    \end{itemize}
+
+  \item<2-> MPlot
+    \begin{itemize}
+    \item Expected outcome over \(x_c|x_s\): \(f(x_s) = \mathbb{E}_{\mathbf{x_c}|x_s}[f(x_s, \mathbf{x_c})]\)
+    \item \textbf{Aggregated effects}
+    \end{itemize}
+
+  \item<3-> ALE
+    \begin{itemize}
+    \item \(f(x_s) = \int_{x_{min}}^{x_s}\mathbb{E}_{\mathbf{x_c}|x_s=z}[ \frac{\partial f}{\partial x_s}(x_s, \mathbf{x_c})] \partial z\)
+    \item \textbf{Resolves both failure modes}
+    \end{itemize}
+
+  \end{itemize}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  PDP vs MPlot vs \alert{ALE}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{ALE approximation}
+  ALE definition: \( f(x_s) = \int_{x_{min}}^{x_s}\mathbb{E}_{\mathbf{x_c}|x_s=z}[ \frac{\partial f}{\partial x_s}(x_s, \mathbf{x_c})] \partial z \)
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  ALE approximation from \(\mathcal{D} = { \{\mathbf{x}^i, y^i}\}_{i=1}^N\)
+
+    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[f(z_k, \mathbf{x^i_c}) - f(z_{k-1}, \mathbf{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
+
+    \begin{itemize}
+    \item Slow \( \rightarrow \) 2 evaluations of \(f\) per point
+    \item Restrictive \( \rightarrow\) change bin limits, pay again \(2*N\) evaluations of \(f\)
+    \item Insecure \( \rightarrow\) broad bins may create out of distribution samples instances
+    \end{itemize}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  ALE approximation has some disadvantages
+\end{frame}
+
+
+
+
+\begin{frame}
+  \frametitle{DALE - Differential ALE}
+  ALE definition:\(f(x_s) = \Delta x \int_{x_{min}}^{x_s}\mathbb{E}_{\mathbf{x_c}|x_s=z}[ \frac{\partial f}{\partial x_s}(x_s, \mathbf{x_c})] \partial z\)
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE, from the dataset \(\mathcal{D} = { \{\mathbf{x}^i, y^i}\}_{i=1}^N\)
+
+    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \mathbf{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
+
+    \begin{itemize}
+    \item Fast \( \rightarrow \) use of auto-differentiation, all derivatives in a single pass
+    \item Versatile \( \rightarrow\) point effects computed once, change bins without cost
+    \item Secure \( \rightarrow\) does not create artificial instances
+    \end{itemize}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE is a better approximation of ALE, for \alert{differentiable} models
 \end{frame}
 
 
 
 % chapter 1
 \section{DALE vs ALE}
+
+\subsection{Dale is faster and versatile}
+
+\begin{frame}
+  \frametitle{DALE is faster and versatile - Theory}
+    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \mathbf{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
+
+  \begin{itemize}
+  \item Faster
+    \begin{itemize}
+      \item gradients wrt all features \(\nabla_{\mathbf{x}} f(\mathbf{x^i})\) in a single pass
+      \item auto-differentiation must be available (deep learning)
+    \end{itemize}
+  \item Versatile
+    \begin{itemize}
+    \item Change bin limits, with near zero computational cost
+    \end{itemize}
+
+  \end{itemize}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE is faster and allows redefining bin-limits
+\end{frame}
+
+\begin{frame}
+  \frametitle{DALE is faster and versatile - Experiments}
+  \begin{figure}[h]
+  \centering
+  \resizebox{.4\columnwidth}{!}{\input{./../ACML-paper/images/case-1-plot-1.tex}}
+  \resizebox{.43\columnwidth}{!}{\input{./../ACML-paper/images/case-1-plot-2.tex}}
+  \caption[Case-1-fig-1]{Light setup; small dataset, light \(f\). Heavy setup; big dataset (\(N=10^5\)), heavy \(f\)}
+  \label{fig:case-1-plots-1}
+\end{figure}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE considerably accelerates the estimation
+\end{frame}
+
+
+\subsection{DALE is more Accurate}
+
+\begin{frame}
+  \frametitle{DALE uses only on-distribution samples}
+    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \mathbf{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
+
+  \begin{itemize}
+  \item Faster
+    \begin{itemize}
+      \item gradients wrt all features \(\nabla_{\mathbf{x}} f(\mathbf{x^i})\) in a single pass
+      \item auto-differentiation must be available (deep learning)
+    \end{itemize}
+  \item Versatile
+    \begin{itemize}
+    \item Change bin limits, with near zero computational cost
+    \end{itemize}
+
+  \end{itemize}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE is faster and allows redefining bin-limits
+\end{frame}
+
 \begin{frame}
   \frametitle{DALE vs ALE - 3 Bins}
   \begin{figure}[ht]
@@ -161,186 +338,29 @@
   We search for a \alert{single configuration (point-estimate) \( \hat{\thetab}\) }
 \end{frame}
 
-
-
-\section{Bayesian Formulation}
-\subsection{Differences with traditional ML}
-\begin{frame}
-  \frametitle{Traditional Machine Learning}
-  \begin{itemize}
-    \item Parametric model \( f_{\thetab}: \xb \rightarrow y \)
-    \item Define a distance function \( d(\cdot, \cdot) \) and measure the
-          distance (loss) from observed data
-      \begin{equation}
-        L(\thetab) = \sum_i^N d(f_{\thetab}(\xb^i), y^i)
-      \end{equation}
-    \item Search for the parameter set $\hat{\thetab}$ that reproduces the observed data best
-      \begin{equation}
-         \hat{\thetab} = \argmin_{\thetab} L(\thetab)
-      \end{equation}
-    \end{itemize}
-    \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-    We search for a \alert{single configuration (point-estimate) \( \hat{\thetab}\) }
-
-\end{frame}
+\section{Future Work}
 
 \begin{frame}
-  \frametitle{Bayesian Formulation}
-  \begin{itemize}
-    \item On the modelling part:
-      \begin{itemize}
-        \item we need the \textcolor{blue}{joint distribution \(p(\xb,y,\thetab)\)}
-        \item to replace the \textcolor{red}{parametric model \(f_{\thetab}: \xb \rightarrow y\)}
-      \end{itemize}
-
-    \item Training part:
-      \begin{itemize}
-        \item infer the \textcolor{blue}{posterior distribution \(p(\thetab|D)\)}
-        \item to replace the optimal \textcolor{red}{point estimate \(\hat{\thetab} = \argmin_{\thetab} L(\thetab)\)}
-      \end{itemize}
-
-    \item Prediction part:
-      \begin{itemize}
-        \item infer the \textcolor{blue}{predictive distribution \(p(y|\xb,D)\)}
-        \item to replace the \textcolor{red}{point-estimate prediction \(y=f_{\hat{\thetab}}(\xb)\)}
-      \end{itemize}
-    \end{itemize}
-    \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-    We replace point estimates \alert{with distributions (uncertainty quantification)}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Modelling part}
-  \begin{itemize}
-    \item joint distribution \( p(\xb, y, \thetab) = p(y|\xb,\thetab) p(\xb) p(\thetab) \)
-    \item \( p(\thetab) \), our prior belief about the parameters of the model
-    \item \( p(y|\xb, \thetab)\), the likelihood of the model
-    \item joint distribution can be defined as a \alert{DAG}
-  \end{itemize}
-
-  \begin{figure}[!h]
-  \begin{tikzpicture}[scale=.3]
-  \node (x1) [draw, circle, xshift=0cm, minimum size=.6cm, inner sep=0pt]{$x_1$};
-  \node (x2) [draw, circle, xshift=0cm, right of=x1, minimum size=.6cm, inner sep=0pt] {$x_2$};
-  \node (th1) [draw, circle, xshift=0cm, right of=x2, minimum size=.6cm, inner sep=0pt] {$\theta_1$};
-  \node (x3) [draw, circle, xshift=-.5cm, below of=x2, minimum size=.6cm, inner sep=0pt] {$x_3$};
-  \node (th2) [draw, circle, xshift=1cm, below of=x2, minimum size=.6cm, inner sep=0pt] {$\theta_2$};
-  \node (y) [draw, circle, xshift=.5cm, below of=x3, minimum size=.6cm, inner sep=0pt] {$y$};
-
-  \draw [->, shorten >=2pt] (x1) -- (x3);
-  \draw [->, shorten >=2pt] (x2) -- (x3);
-  \draw [->, shorten >=2pt] (th1) -- (x3);
-  \draw [->, shorten >=2pt] (x3) -- (y);
-  \draw [->, shorten >=2pt] (th2) -- (y);
-  \end{tikzpicture}
-\end{figure}
-
-\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-\begin{itemize}
-\item We need to model \alert{ \(p(\thetab) \text{ and } p(y|\xb, \thetab) \)}
-\end{itemize}
-
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{Training part}
-  \begin{itemize}
-  \item We use Bayes law to infer the posterior distribution
-    \begin{equation}
-      p(\thetab|D) = \frac{p(D|\thetab)p(\thetab)}{p(D)} \propto \prod_i^N p(y^i|\xb^i, \thetab)p(\thetab)
-    \end{equation}
-    where $D = \{\xb^i, y^i\}_{i=\{1, ..., N\}}$, the observed data (training-set)
-    \item In the extreme case where $p(\thetab|D) = \delta(\thetab - \hat{\thetab})$, we get a point-estimate is in traditional ML
-    \end{itemize}
-
-    \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-    The `training process` leads to many possible models, each one with different probability (\alert{uncertainty about the model})
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{Inference part}
-  \begin{itemize}
-  \item We need to solve/approximate the predictive distribution $p(y|\xb, D) = \int_{\thetab} p(y|\xb,\thetab)p(\thetab|D) \partial \thetab$
-  \item We consider the posterior $p(\thetab|D)$ as known (computed exactly or approximated)
-  \item In the extreme case where
-    $p(\thetab|D) = \delta(\thetab - \hat{\thetab})$, we get all the mass of the
-    prediction $p(y|\xb, D) = p(y|\xb,\hat{\thetab})$ from a single model
-  \end{itemize}
-
-    \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  The `prediction process` gets one prediction per each
-    plausible model (\alert{uncertainty about the model leads to uncertainty about the
-    prediction})
-
-
-\end{frame}
-
-\subsection{Pros and Cons}
-\begin{frame}
-  \frametitle{Bayesian Formulation - Disadvantages}
-  What we lose
-  \begin{itemize}
-  \item On the modelling part
-    \begin{itemize}
-    \item Time to think how the input features $x_i$ relate to each
-      other i.e. building the DAG
-    \end{itemize}
-    \item On the training-prediction (inference) part
-      \begin{itemize}
-        \item Expressions difficult to approximate
-        \item $p(\thetab|D)$ - how to compute the posterior distribution?
-        \item $p(y|\xb,D) = \int_{\thetab} p(y|\xb, \thetab) p(\thetab|D)\partial \thetab$ - how to compute the predictive distribution?
-      \end{itemize}
-    \end{itemize}
-\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-Bayesian Formulation is \alert{difficult from both the mathematical and the computational point-of-view}
-\end{frame}
-
-\begin{frame}
-  \frametitle{Bayesian Formulation - Advantages}
-  What we get:
-  \begin{itemize}
-  \item On the modelling part
-    \begin{itemize}
-    \item Specify who the features relate to each other
-    \item check \href{https://www.mbmlbook.com/}{Model-based Machine Learning} - a new approach for ML model building
-    \end{itemize}
-  \item On the inference part
-    \begin{itemize}
-    \item Uncertainty estimation! Why we need it?
-    \item Most times the available data is not enough to reveal a single instance $\hat{\thetab}$
-    \item Sometimes we want to predict on a new $\xb$ that is very
-      different from the training set
-    \end{itemize}
-  \end{itemize}
-\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-\alert{Let's be wise enough and be uncertain about our predictions.}
-\end{frame}
-
-
-\begin{frame}
-
-  \frametitle{Bayesian Formulation - Example}  \begin{itemize}
-    \item In areas without training points our uncertainty is bigger
-  \end{itemize}
-
-
+  \frametitle{What next?}
   \begin{figure}[ht]
     \centering
-    \label{fig:bayesian_predictive}
+    \includegraphics[width=0.4\textwidth]{./figures/bin_splitting_40_bins.png}\\
+    \includegraphics[width=0.4\textwidth]{./figures/dale_40_bins.png}
+    \includegraphics[width=0.4\textwidth]{./figures/ale_40_bins.png}
+    \label{}
   \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE advantages can be a driver for future work
 \end{frame}
 
-% chapter 2
-\section{MSc Dissertation - UoE 2020}
 
 
-% chapter 3
-% \section{Quantify the uncertainty of the Explanations}
-% \input{./chapters/3_uncertainty_in_XAI.tex}
+
+
+\begin{frame}[allowframebreaks]
+  \frametitle{References}
+  \bibliography{bibliography.bib}
+\end{frame}
 
 
 \end{document}
