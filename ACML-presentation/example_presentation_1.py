@@ -98,6 +98,10 @@ def plot_model(model, samples, nof_points, samples_range, limits, savefig):
     plt.show(block=False)
 
 
+def ale_gt(x):
+    c = 18.5
+    return x**2/2 - c
+
 N = 1000
 samples_range = 10
 X = generate_samples(N, samples_range)
@@ -110,36 +114,19 @@ for nof_bins in [3, 5, 10, 20, 40, 100]:
     # DALE
     dale = pythia.DALE(data=X, model=model, model_jac=model_jac)
     dale.fit(features=0, params={"method": "fixed", "nof_bins": nof_bins})
-    dale.plot(s=0, error=False, savefig="./figures/dale_" + str(nof_bins) + "_bins.pdf")
-    dale.plot(s=0, error=False, savefig="./figures/dale_" + str(nof_bins) + "_bins.png")
+    dale.plot(s=0, error=False,
+              title="DALE",
+              gt=ale_gt,
+              savefig="./figures/dale_" + str(nof_bins) + "_bins.pdf")
 
     # ALE
     ale = pythia.ALE(data=X, model=model)
     ale.fit(features=0, params={"nof_bins": nof_bins})
-    ale.plot(s=0, error=False, savefig="./figures/ale_" + str(nof_bins) + "_bins.pdf")
-    ale.plot(s=0, error=False, savefig="./figures/ale_" + str(nof_bins) + "_bins.png")
+    ale.plot(s=0, error=False,
+             title="ALE",
+             gt=ale_gt,
+             savefig="./figures/ale_" + str(nof_bins) + "_bins.pdf")
 
-    plot_model(model=model, samples=X, nof_points=40, samples_range=samples_range,
-               limits=dale.feature_effect["feature_0"]["limits"],
-               savefig="./figures/bin_splitting_" + str(nof_bins) + "_bins.png")
     plot_model(model=model, samples=X, nof_points=40, samples_range=samples_range,
                limits=dale.feature_effect["feature_0"]["limits"],
                savefig="./figures/bin_splitting_" + str(nof_bins) + "_bins.pdf")
-
-
-
-#
-# # DALE
-# dale = pythia.DALE(data=X, model=model, model_jac=model_jac)
-# dale.fit(features=0, params={"method": "fixed", "nof_bins": 5})
-# dale.plot(s=0, error=False)
-# plot_model(model=model, samples=X, nof_points=40, samples_range=samples_range,
-#            limits=dale.feature_effect["feature_0"]["limits"], savefig=False)
-#
-#
-#
-# # ALE
-# ale = pythia.ALE(data=X, model=model)
-# ale.fit(features=0, params={"nof_bins": 10})
-# ale.plot(s=0, error=False)
-#

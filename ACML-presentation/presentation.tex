@@ -1,14 +1,6 @@
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%
-% Welcome to Overleaf --- just edit your LaTeX on the left,
-% and we'll compile it for you on the right. If you open the
-% 'Share' menu, you can invite other users to edit at the same
-% time. See www.overleaf.com/learn for more info. Enjoy!
-%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \documentclass{beamer}
 \setbeamersize{text margin left=3mm,text margin right=3mm}
-\usepackage{tikz}
+
 
 \usepackage{natbib}
 \bibliographystyle{plain}
@@ -17,25 +9,24 @@
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{hyperref}
-\usepackage{algorithm}
-\usepackage[noend]{algpseudocode}
-\hypersetup{
-    colorlinks=true,
-    linkcolor=blue,
-    filecolor=magenta,
-    urlcolor=cyan,
-    }
-% \usepackage[backend=biber, citestyle=authoryear, bibstyle=alphabetic]{biblatex}
+\usepackage{multirow}
 
 \usepackage{tikz}
 \usetikzlibrary{matrix,positioning,arrows.meta,arrows,fit,backgrounds,decorations.pathreplacing}
 
-\tikzset{ mymat/.style={ matrix of math nodes, text height=2.5ex, text
-depth=0.75ex, text width=6.00ex, align=center, column
-sep=-\pgflinewidth, nodes={minimum height=5.0ex} }, mymats/.style={
-mymat, nodes={draw,fill=#1} }, mymat2/.style={ matrix of math nodes,
-text height=1.0ex, text depth=0.0ex, minimum width=5ex, % text
-width=7.00ex, align=center, column sep=-\pgflinewidth }, }
+\tikzset{
+  mymat/.style={ matrix of math nodes, text height=2.5ex, text
+    depth=0.75ex, text width=6.00ex, align=center, column
+    sep=-\pgflinewidth, nodes={minimum height=5.0ex}
+  },
+  mymats/.style={ mymat, nodes={draw,fill=#1}
+  },
+  mymat2/.style={
+    matrix of math nodes, text height=1.0ex, text depth=0.0ex, minimum
+    width=5ex, % text
+    width=7.00ex, align=center, column sep=-\pgflinewidth
+  },
+}
 
 \usetikzlibrary{shapes.geometric, arrows, backgrounds, scopes}
 \usepackage{pgfplots} \pgfplotsset{width=6.75cm, compat=newest}
@@ -46,7 +37,7 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
 
 
 \usepackage{tikzsymbols}
-\usetheme{Frankfurt}
+\usetheme{Boadilla}
 \usecolortheme{seahorse}
 \newcommand{\thetab}{\boldsymbol{\theta}}
 \newcommand{\xb}{\boldsymbol{x}}
@@ -97,15 +88,15 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
 
 \section{Feature Effect}
 \begin{frame}
-  \frametitle{Interpretable ML}
+  \frametitle{eXplainable AI (XAI)}
   \begin{itemize}
   \item Black-box model \(f(\cdot): \mathcal{X} \rightarrow \mathcal{Y} \), trained on \(\mathcal{D}\)
     \vspace{3mm}
 
-    \item Reveal interpretable properties:
+    \item XAI extracts interpretable properties:
     \begin{itemize}
-    \item[] Which features are important (in general)?
-    \item[] Which features have positive impact for a class?
+    \item[\(\rightarrow\)] Which features are important (in general)?
+    \item[\(\rightarrow\)] Which features favor a prediction?
 
     \end{itemize}
 
@@ -120,12 +111,12 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
   \end{itemize}
 
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  Feature Effect: Global, Model-agnostic, outputs plot
+  Feature Effect: global, model-agnostic, outputs plot
 \end{frame}
 
 \begin{frame}
   \frametitle{Feature Effect}
-  \(y = f(x_s) \rightarrow\) Effect of a single feature \(x_s\) on the output \(y\)
+  \(y = f(x_s) \rightarrow\) plot showing the effect of \(x_s\) on the output \(y\)
   \vspace{2mm}
   \begin{figure}[ht]
     \centering
@@ -141,67 +132,89 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
 \begin{frame}
   \frametitle{Feature Effect Methods}
   \begin{itemize}
-  \item<1-> PDP
+  \item \(x_s \rightarrow \) feature of interest, \(\bm{x_c} \rightarrow\) other features
+  \item FE methods take \((f, \mathcal{D}, s)\) and return \(y = f_{\mathtt{<name>}}(x_s)\)
+  \end{itemize}
+
+  \begin{itemize}
+  \item<1-> PDP\citep{Friedman2001}
     \begin{itemize}
-    \item Expected outcome over \(x_c\): \(f(x_s) = \mathbb{E}_{\bm{x_c}}[f(x_s, \bm{x_c})]\)
+    \item Expected outcome over \(\bm{x_c}\): \(f(x_s) = \mathbb{E}_{\bm{x_c}}[f(x_s, \bm{x_c})]\)
     \item \textbf{Unrealistic instances}
     \end{itemize}
 
-  \item<2-> MPlot
+  \item<2-> MPlot\citep{Apley2020}
     \begin{itemize}
-    \item Expected outcome over \(x_c|x_s\): \(f(x_s) = \mathbb{E}_{\bm{x_c}|x_s}[f(x_s, \bm{x_c})]\)
+    \item Expected outcome over \(\bm{x_c}|x_s\): \(f(x_s) = \mathbb{E}_{\bm{x_c}|x_s}[f(x_s, \bm{x_c})]\)
     \item \textbf{Aggregated effects}
     \end{itemize}
 
-  \item<3-> ALE
+  \item<3-> ALE\citep{Apley2020}
     \begin{itemize}
-    \item \(f(x_s) = \int_{x_{min}}^{x_s}\mathbb{E}_{\bm{x_c}|x_s=z}[ \frac{\partial f}{\partial x_s}(x_s, \bm{x_c})] \partial z\)
+    \item \(f(x_s) = \int_{x_{min}}^{x_s}\mathbb{E}_{\bm{x_c}|z}[ \frac{\partial f}{\partial x_s}(z, \bm{x_c})] \partial z\)
     \item \textbf{Resolves both failure modes}
     \end{itemize}
 
   \end{itemize}
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  PDP vs MPlot vs \alert{ALE}
+  PDP vs MPlot vs ALE
 \end{frame}
 
 
 \begin{frame}
   \frametitle{ALE approximation}
-  ALE definition: \( f(x_s) = \int_{x_{min}}^{x_s}\mathbb{E}_{\bm{x_c}|x_s=z}[ \frac{\partial f}{\partial x_s}(x_s, \bm{x_c})] \partial z \)
+  ALE definition: \( f(x_s) = \int_{x_{s, min}}^{x_s}\mathbb{E}_{\bm{x_c}|z}[ \frac{\partial f}{\partial x_s}(z, \bm{x_c})] \partial z \)
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
   ALE approximation from \(\mathcal{D} = { \{\bm{x}^i, y^i}\}_{i=1}^N\)
 
     \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[f(z_k, \bm{x^i_c}) - f(z_{k-1}, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
 
     \begin{itemize}
-    \item Slow \( \rightarrow \) 2 evaluations of \(f\) per point
-    \item Restrictive \( \rightarrow\) change bin limits, pay again \(2*N\) evaluations of \(f\)
-    \item Insecure \( \rightarrow\) broad bins may create out of distribution samples instances
+    \item Partitions interval \([x_{s,min}, x_{s,max}]\) in \(K\) equisized bins
+    \item \(\mathcal{S}_k\) instances lying at \(k-th\) bin
+    \item \(z_{k-1}, z_k\) limits of \(k\)-th bin
+    \item Point effect \(\rightarrow [f(z_k, \bm{x^i_c}) - f(z_{k-1}, \bm{x^i_c})] \rightarrow \) evaluating at bin limits
+    \item Bin effect \(\rightarrow\) mean of point effects
+    \item ALE \(\rightarrow\) sum of bin effects until \(k_x\)-th bin
     \end{itemize}
 
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  ALE approximation has some disadvantages
+  Bin splitting (parameter \(K\)) is crucial!
 \end{frame}
 
 
+\begin{frame}
+  \frametitle{ALE approximation}
+  ALE approximation from \(\mathcal{D} = { \{\bm{x}^i, y^i}\}_{i=1}^N\)
+
+    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[f(z_k, \bm{x^i_c}) - f(z_{k-1}, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
+
+    \begin{itemize}
+    \item 2 evaluations of \(f\) per point \( \rightarrow \) slow
+    \item change bin limits, pay again \(2*N\) evaluations of \(f\) \( \rightarrow\) restrictive
+    \item broad bins may create out of distribution (OOD) samples \( \rightarrow\) not-robust in wide bins
+    \end{itemize}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  ALE approximation has some weaknesses
+\end{frame}
 
 
 \begin{frame}
   \frametitle{DALE - Differential ALE}
-  ALE definition:\(f(x_s) = \Delta x \int_{x_{min}}^{x_s}\mathbb{E}_{\bm{x_c}|x_s=z}[ \frac{\partial f}{\partial x_s}(x_s, \bm{x_c})] \partial z\)
-  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
   DALE, from the dataset \(\mathcal{D} = { \{\bm{x}^i, y^i}\}_{i=1}^N\)
 
-    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
+    \[f(x_s) = \Delta x \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \bm{x^i_c})]}_{\text{\alert{point effect}}}}_{\text{bin effect}} \]
 
     \begin{itemize}
+    \item only change point effect computation
     \item Fast \( \rightarrow \) use of auto-differentiation, all derivatives in a single pass
     \item Versatile \( \rightarrow\) point effects computed once, change bins without cost
     \item Secure \( \rightarrow\) does not create artificial instances
     \end{itemize}
 
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  DALE is a better approximation of ALE, for \alert{differentiable} models
+  For \alert{differentiable} models, DALE resolves ALE weaknesses
 \end{frame}
 
 
@@ -212,8 +225,8 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
 \subsection{Dale is faster and versatile}
 
 \begin{frame}
-  \frametitle{DALE is faster and versatile - Theory}
-    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
+  \frametitle{DALE is faster and versatile - theory}
+    \[f(x_s) = \Delta x \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
 
   \begin{itemize}
   \item Faster
@@ -237,7 +250,7 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
   \centering
   \resizebox{.4\columnwidth}{!}{\input{./../ACML-paper/images/case-1-plot-1.tex}}
   \resizebox{.43\columnwidth}{!}{\input{./../ACML-paper/images/case-1-plot-2.tex}}
-  \caption[Case-1-fig-1]{Light setup; small dataset, light \(f\). Heavy setup; big dataset (\(N=10^5\)), heavy \(f\)}
+  \caption[Case-1-fig-1]{Light setup; small dataset \((N=10^2\) instances), light \(f\). Heavy setup; big dataset (\(N=10^5\) instances), heavy \(f\)}
   \label{fig:case-1-plots-1}
 \end{figure}
 
@@ -249,7 +262,7 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
 \subsection{DALE is more Accurate}
 
 \begin{frame}
-  \frametitle{DALE uses only on-distribution samples - Theory}
+  \frametitle{DALE uses on-distribution samples - Theory}
   \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|}
       \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial
           f}{\partial x_s}(x_s^i, \bm{x^i_c})]}_{\text{point
@@ -261,8 +274,7 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
     \item \(\frac{\partial f}{\partial x_s}(x_s^i, \bm{x^i_c})\)
       computed on real instances \(\bm{x}^i = (x_s^i, \bm{x_c^i})\)
     \end{itemize}
-  \item bin limits affect only the \alert{resolution} of the plot bin
-    definition
+  \item bin limits affect only the \alert{resolution} of the plot
     \begin{itemize}
     \item wide bins \(\rightarrow\) low resolution plot, bin
       estimation from more points
@@ -271,60 +283,61 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
     \end{itemize}
   \end{itemize}
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  Wide bins without creating out of distribution instances
+  DALE enables wide bins without creating out of distribution instances
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{DALE uses only on-distribution samples - Experiments}
+  \frametitle{DALE uses on-distribution samples - Experiments}
 \begin{columns}
 \begin{column}{0.5\textwidth}
-  \[ f(x_1, x_2, x_3) = x_1x_2 + x_1x_3 \textcolor{red}{ \pm g(x)}\]
+  \[ f(x_1, x_2, x_3) = x_1x_2 + x_1x_3 \: \textcolor{red}{ \pm \: g(x)}\]
   \[ x_1 \in [0,10], x_2 \sim x_1 + \epsilon, x_3 \sim \mathcal{N}(0, \sigma^2) \]
   \[ f_{\mathtt{ALE}}(x_1) = \frac{x_1^2}{2} \]
   \begin{itemize}
-  \item but the estimation is noisy \((x_1x_3)\)
-  \item the samples are few
+  \item point effects affected by \((x_1x_3)\) (\(\sigma\) is large)
+  \item bin estimation is noisy (samples are few)
   \end{itemize}
 \end{column}
-\begin{column}{0.5\textwidth}  %%<--- here
+\begin{column}{0.5\textwidth}
     \begin{center}
      \includegraphics[width=\textwidth]{./figures/f_plot.pdf}
      \end{center}
 \end{column}
 \end{columns}
-
 \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-Intution: we need wider bins (more samples per bin)
+Intuition: we need wider bins (more samples per bin)
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{DALE vs ALE - 3 Bins}
-  \begin{figure}[ht]
+  \frametitle{DALE vs ALE - 40 Bins}
+  \begin{figure}
     \centering
-    \includegraphics[width=0.4\textwidth]{./figures/bin_splitting_3_bins.png}\\
-    \includegraphics[width=0.4\textwidth]{./figures/dale_3_bins.png}
-    \includegraphics[width=0.4\textwidth]{./figures/ale_3_bins.png}
-    \label{}
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_40_bins.pdf}
+    \includegraphics<2>[width=.49\textwidth]{./figures/dale_40_bins.pdf}
+    \includegraphics<2>[width=.49\textwidth]{./figures/ale_40_bins.pdf}
   \end{figure}
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  We search for a \alert{single configuration (point-estimate) \( \hat{\thetab}\) }
+  \begin{itemize}
+  \item DALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \item ALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
 \end{frame}
 
-
-
 \begin{frame}
-  \frametitle{DALE vs ALE - 5 Bins}
+  \frametitle{DALE vs ALE - 20 Bins}
   \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.4\textwidth]{./figures/bin_splitting_5_bins.png}\\
-    \includegraphics[width=0.4\textwidth]{./figures/dale_5_bins.png}
-    \includegraphics[width=0.4\textwidth]{./figures/ale_5_bins.png}
-    \label{}
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_20_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/dale_20_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/ale_20_bins.pdf}
   \end{figure}
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  We search for a \alert{single configuration (point-estimate) \( \hat{\thetab}\) }
+  \begin{itemize}
+  \item DALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \item ALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
 \end{frame}
 
 
@@ -332,59 +345,123 @@ Intution: we need wider bins (more samples per bin)
   \frametitle{DALE vs ALE - 10 Bins}
   \begin{figure}[ht]
     \centering
-    \includegraphics[width=0.4\textwidth]{./figures/bin_splitting_10_bins.png}\\
-    \includegraphics[width=0.4\textwidth]{./figures/dale_10_bins.png}
-    \includegraphics[width=0.4\textwidth]{./figures/ale_10_bins.png}
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_10_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/dale_10_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/ale_10_bins.pdf}
     \label{}
   \end{figure}
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  We search for a \alert{single configuration (point-estimate) \( \hat{\thetab}\) }
+  \begin{itemize}
+  \item DALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \item ALE: starts being OOD, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{DALE vs ALE - 5 Bins}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_5_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/dale_5_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/ale_5_bins.pdf}
+    \label{}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{itemize}
+  \item DALE: on-distribution, robust bin effect \(\rightarrow\) \textcolor{green}{good estimation}
+  \item ALE: completely OOD, robust bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{DALE vs ALE - 3 Bins}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_3_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/dale_3_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/ale_3_bins.pdf}
+    \label{}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{itemize}
+  \item DALE: on-distribution, robust bin effect \(\rightarrow\) \textcolor{green}{good estimation}
+  \item ALE: completely OOD, robust bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{DALE vs ALE - 20 Bins}
-  \begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.4\textwidth]{./figures/bin_splitting_20_bins.png}\\
-    \includegraphics[width=0.4\textwidth]{./figures/dale_20_bins.png}
-    \includegraphics[width=0.4\textwidth]{./figures/ale_20_bins.png}
-    \label{}
-  \end{figure}
-  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  We search for a \alert{single configuration (point-estimate) \( \hat{\thetab}\) }
+  \frametitle{Real Dataset Experiments - Efficiency}
+  \begin{itemize}
+  \item Bike-sharing dataset\citep{BikeSharing}
+  \item \(y \rightarrow\) daily bike rentals
+  \item \(\bm{x}:\) 10 features, most of them characteristics of the weather
+  \end{itemize}
+
+  \begin{table} \tiny
+  \centering
+  \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c}
+    \multicolumn{12}{c}{Efficiency on Bike-Sharing Dataset (Execution Times in seconds)} \\
+    \hline\hline
+    & \multicolumn{11}{|c}{Number of Features} \\
+    \hline
+    & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
+    \hline
+    \( \mathtt{DALE} \) & 1.17 & \textbf{1.19} & \textbf{1.22} & \textbf{1.24} & \textbf{1.27} & \textbf{1.30} & \textbf{1.36} & \textbf{1.32} & \textbf{1.33} & \textbf{1.37} & \textbf{1.39} \\
+    \hline
+    \( \mathtt{ALE} \) & \textbf{0.85} & 1.78 & 2.69 & 3.66 & 4.64 & 5.64 & 6.85 & 7.73 & 8.86 & 9.9 & 10.9 \\
+    \hline
+  \end{tabular}
+\end{table}
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+DALE requires almost same time for all features
 \end{frame}
 
 
 \begin{frame}
-  \frametitle{DALE vs ALE - 40 Bins}
-  \begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.4\textwidth]{./figures/bin_splitting_40_bins.png}\\
-    \includegraphics[width=0.4\textwidth]{./figures/dale_40_bins.png}
-    \includegraphics[width=0.4\textwidth]{./figures/ale_40_bins.png}
-    \label{}
-  \end{figure}
-  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  We search for a \alert{single configuration (point-estimate) \( \hat{\thetab}\) }
-\end{frame}
+  \frametitle{Real Dataset Experiments - Accuracy}
+  \begin{itemize}
+  \item Difficult to compare in real world datasets
+   \item We do not know the ground-truth effect
+   \item In most features, DALE and ALE agree.
+   \item Only \(X_{\mathtt{hour}}\) is an interesting feature
+  \end{itemize}
 
-\section{Future Work}
+  \begin{figure}[h]
+  \centering
+    \resizebox{.3\columnwidth}{!}{\input{./../ACML-paper/images/bike-dataset-dale-comparison.tex}}
+    \resizebox{.3\columnwidth}{!}{\input{./../ACML-paper/images/bike-dataset-ale-comparison.tex}}
+    \caption{(Left) DALE (Left) and ALE (Right) plots for
+      \(K = \{25, 50, 100\}\)}
+\end{figure}
+
+\end{frame}
 
 \begin{frame}
   \frametitle{What next?}
-  \begin{figure}[ht]
-    \centering
-    \includegraphics[width=0.4\textwidth]{./figures/bin_splitting_40_bins.png}\\
-    \includegraphics[width=0.4\textwidth]{./figures/dale_40_bins.png}
-    \includegraphics[width=0.4\textwidth]{./figures/ale_40_bins.png}
-    \label{}
-  \end{figure}
+  \begin{itemize}
+  \item How to (automatically) decide the optimal bin sizes?
+    \begin{itemize}
+      \item Sometimes narrow bins are ok
+      \item Sometimes wide bins are needed
+      \end{itemize}
+    \item Can we DALE are fast to decide optimal bin splitting?
+    \item What about variable size bins?
+      \item Model the uncertainty of the estimation?
+  \end{itemize}
+
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
   DALE advantages can be a driver for future work
 \end{frame}
 
 
+\begin{frame}
+  \frametitle{Thank you}
+  \begin{itemize}
+  \item Questions?
+  \end{itemize}
+
+\end{frame}
 
 
 
