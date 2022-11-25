@@ -143,19 +143,19 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
   \begin{itemize}
   \item<1-> PDP
     \begin{itemize}
-    \item Expected outcome over \(x_c\): \(f(x_s) = \mathbb{E}_{\mathbf{x_c}}[f(x_s, \mathbf{x_c})]\)
+    \item Expected outcome over \(x_c\): \(f(x_s) = \mathbb{E}_{\bm{x_c}}[f(x_s, \bm{x_c})]\)
     \item \textbf{Unrealistic instances}
     \end{itemize}
 
   \item<2-> MPlot
     \begin{itemize}
-    \item Expected outcome over \(x_c|x_s\): \(f(x_s) = \mathbb{E}_{\mathbf{x_c}|x_s}[f(x_s, \mathbf{x_c})]\)
+    \item Expected outcome over \(x_c|x_s\): \(f(x_s) = \mathbb{E}_{\bm{x_c}|x_s}[f(x_s, \bm{x_c})]\)
     \item \textbf{Aggregated effects}
     \end{itemize}
 
   \item<3-> ALE
     \begin{itemize}
-    \item \(f(x_s) = \int_{x_{min}}^{x_s}\mathbb{E}_{\mathbf{x_c}|x_s=z}[ \frac{\partial f}{\partial x_s}(x_s, \mathbf{x_c})] \partial z\)
+    \item \(f(x_s) = \int_{x_{min}}^{x_s}\mathbb{E}_{\bm{x_c}|x_s=z}[ \frac{\partial f}{\partial x_s}(x_s, \bm{x_c})] \partial z\)
     \item \textbf{Resolves both failure modes}
     \end{itemize}
 
@@ -167,11 +167,11 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
 
 \begin{frame}
   \frametitle{ALE approximation}
-  ALE definition: \( f(x_s) = \int_{x_{min}}^{x_s}\mathbb{E}_{\mathbf{x_c}|x_s=z}[ \frac{\partial f}{\partial x_s}(x_s, \mathbf{x_c})] \partial z \)
+  ALE definition: \( f(x_s) = \int_{x_{min}}^{x_s}\mathbb{E}_{\bm{x_c}|x_s=z}[ \frac{\partial f}{\partial x_s}(x_s, \bm{x_c})] \partial z \)
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  ALE approximation from \(\mathcal{D} = { \{\mathbf{x}^i, y^i}\}_{i=1}^N\)
+  ALE approximation from \(\mathcal{D} = { \{\bm{x}^i, y^i}\}_{i=1}^N\)
 
-    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[f(z_k, \mathbf{x^i_c}) - f(z_{k-1}, \mathbf{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
+    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[f(z_k, \bm{x^i_c}) - f(z_{k-1}, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
 
     \begin{itemize}
     \item Slow \( \rightarrow \) 2 evaluations of \(f\) per point
@@ -188,11 +188,11 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
 
 \begin{frame}
   \frametitle{DALE - Differential ALE}
-  ALE definition:\(f(x_s) = \Delta x \int_{x_{min}}^{x_s}\mathbb{E}_{\mathbf{x_c}|x_s=z}[ \frac{\partial f}{\partial x_s}(x_s, \mathbf{x_c})] \partial z\)
+  ALE definition:\(f(x_s) = \Delta x \int_{x_{min}}^{x_s}\mathbb{E}_{\bm{x_c}|x_s=z}[ \frac{\partial f}{\partial x_s}(x_s, \bm{x_c})] \partial z\)
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  DALE, from the dataset \(\mathcal{D} = { \{\mathbf{x}^i, y^i}\}_{i=1}^N\)
+  DALE, from the dataset \(\mathcal{D} = { \{\bm{x}^i, y^i}\}_{i=1}^N\)
 
-    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \mathbf{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
+    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
 
     \begin{itemize}
     \item Fast \( \rightarrow \) use of auto-differentiation, all derivatives in a single pass
@@ -213,12 +213,12 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
 
 \begin{frame}
   \frametitle{DALE is faster and versatile - Theory}
-    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \mathbf{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
+    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
 
   \begin{itemize}
   \item Faster
     \begin{itemize}
-      \item gradients wrt all features \(\nabla_{\mathbf{x}} f(\mathbf{x^i})\) in a single pass
+      \item gradients wrt all features \(\nabla_{\bm{x}} f(\bm{x^i})\) in a single pass
       \item auto-differentiation must be available (deep learning)
     \end{itemize}
   \item Versatile
@@ -249,24 +249,55 @@ width=7.00ex, align=center, column sep=-\pgflinewidth }, }
 \subsection{DALE is more Accurate}
 
 \begin{frame}
-  \frametitle{DALE uses only on-distribution samples}
-    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \mathbf{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
+  \frametitle{DALE uses only on-distribution samples - Theory}
+  \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|}
+      \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial
+          f}{\partial x_s}(x_s^i, \bm{x^i_c})]}_{\text{point
+          effect}}}_{\text{bin effect}} \]
 
   \begin{itemize}
-  \item Faster
+  \item point effect \alert{independent} of bin limits
     \begin{itemize}
-      \item gradients wrt all features \(\nabla_{\mathbf{x}} f(\mathbf{x^i})\) in a single pass
-      \item auto-differentiation must be available (deep learning)
+    \item \(\frac{\partial f}{\partial x_s}(x_s^i, \bm{x^i_c})\)
+      computed on real instances \(\bm{x}^i = (x_s^i, \bm{x_c^i})\)
     \end{itemize}
-  \item Versatile
+  \item bin limits affect only the \alert{resolution} of the plot bin
+    definition
     \begin{itemize}
-    \item Change bin limits, with near zero computational cost
+    \item wide bins \(\rightarrow\) low resolution plot, bin
+      estimation from more points
+    \item narrow bins \(\rightarrow\) high resolution plot, bin
+      estimation from less points
     \end{itemize}
-
   \end{itemize}
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  DALE is faster and allows redefining bin-limits
+  Wide bins without creating out of distribution instances
 \end{frame}
+
+
+\begin{frame}
+  \frametitle{DALE uses only on-distribution samples - Experiments}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+  \[ f(x_1, x_2, x_3) = x_1x_2 + x_1x_3 \textcolor{red}{ \pm g(x)}\]
+  \[ x_1 \in [0,10], x_2 \sim x_1 + \epsilon, x_3 \sim \mathcal{N}(0, \sigma^2) \]
+  \[ f_{\mathtt{ALE}}(x_1) = \frac{x_1^2}{2} \]
+  \begin{itemize}
+  \item but the estimation is noisy \((x_1x_3)\)
+  \item the samples are few
+  \end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}  %%<--- here
+    \begin{center}
+     \includegraphics[width=\textwidth]{./figures/f_plot.pdf}
+     \end{center}
+\end{column}
+\end{columns}
+
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+Intution: we need wider bins (more samples per bin)
+\end{frame}
+
 
 \begin{frame}
   \frametitle{DALE vs ALE - 3 Bins}

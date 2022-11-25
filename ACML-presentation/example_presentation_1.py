@@ -101,7 +101,8 @@ def plot_model(model, samples, nof_points, samples_range, limits, savefig):
 N = 1000
 samples_range = 10
 X = generate_samples(N, samples_range)
-plot_model(model=model, samples=X, nof_points=15, samples_range=samples_range, limits=None, savefig=False)
+plot_model(model=model, samples=X, nof_points=15, samples_range=samples_range, limits=None, savefig="./figures/f_plot.pdf")
+plot_model(model=model, samples=X, nof_points=15, samples_range=samples_range, limits=None, savefig="./figures/f_plot.png")
 
 
 for nof_bins in [3, 5, 10, 20, 40, 100]:
