@@ -1,0 +1,139 @@
+;; -*- mode: emacs-lisp; lexical-binding:t; coding: utf-8-emacs; -*-
+;; --------------------------------------------------------------------------
+;; Desktop File for Emacs
+;; --------------------------------------------------------------------------
+;; Created Fri Nov 25 20:31:51 2022
+;; Desktop file format version 208
+;; Emacs version 27.1
+
+;; Global section:
+(setq desktop-saved-frameset [frameset 1 (25473 2583 237427 535000) (desktop . "208") "givasile@givasile-XPS-15-9570" nil nil ((((minibuffer . t) (undecorated) (override-redirect) (font . "-CYEL-Iosevka-normal-normal-normal-*-17-*-*-*-d-0-iso10646-1") (font-parameter . "Iosevka-13") (border-width . 0) (internal-border-width . 0) (right-divider-width . 0) (bottom-divider-width . 0) (vertical-scroll-bars) (horizontal-scroll-bars) (foreground-color . "#D8DEE9") (background-color . "#2E3440") (mouse-color . "black") (border-color . "#424242") (screen-gamma) (line-spacing) (left-fringe . 8) (right-fringe . 8) (no-special-glyphs) (scroll-bar-foreground) (scroll-bar-background . "#4C566A") (menu-bar-lines . 0) (tab-bar-lines . 0) (height . 46) (tool-bar-lines . 0) (title) (wait-for-wm . t) (tool-bar-position . top) (inhibit-double-buffering) (icon-type . t) (auto-raise) (auto-lower) (cursor-type . box) (scroll-bar-width . 16) (scroll-bar-height . 16) (alpha) (no-focus-on-map) (no-accept-focus) (fullscreen . fullheight) (visibility . t) (skip-taskbar) (z-group) (display-type . color) (background-mode . dark) (cursor-color . "#D8DEE9") (sticky) (environment) (last-focus-update . t) (frameset--id . "2FCB-3169-EEA0-6D6E") (frameset--mini t . t) (width . 100) (modeline . t) (unsplittable) (left . 62) (top . 19) (icon-name) (display . ":1") (explicit-name)) ((min-height . 8) (min-width . 10) (min-height-ignore . 6) (min-width-ignore . 4) (min-height-safe . 2) (min-width-safe . 2) (min-pixel-height . 176) (min-pixel-width . 90) (min-pixel-height-ignore . 92) (min-pixel-width-ignore . 34) (min-pixel-height-safe . 44) (min-pixel-width-safe . 18)) vc (pixel-width . 924) (pixel-height . 994) (total-width . 102) (total-height . 45) (normal-height . 1.0) (normal-width . 1.0) (combination-limit) (leaf (pixel-width . 924) (pixel-height . 497) (total-width . 102) (total-height . 22) (normal-height . 0.5) (normal-width . 1.0) (buffer "presentation.tex" (selected . t) (hscroll . 0) (fringes 8 8 nil nil) (margins nil) (scroll-bars nil 0 t nil 0 t nil) (vscroll . 0) (dedicated) (point . 16382) (start . 16176)) (prev-buffers ("bibliography.bib • ACML-presentation" 495 923) ("presentation.tex" 16176 16382) ("bibliography.bib • ACML-paper" 1906 2112) ("main.tex" 48389 48404) ("dale_paper_OOD.py" 1 1) ("ACML-code" 1 258) ("example_presentation_1.py" 3217 3937) ("dale.py" 4955 5337) ("*scratch*" 1 44) ("*Messages*" 1 1))) (leaf (last . t) (pixel-width . 924) (pixel-height . 497) (total-width . 102) (total-height . 23) (normal-height . 0.5) (normal-width . 1.0) (buffer "*TeX Help*" (selected) (hscroll . 0) (fringes 8 8 nil nil) (margins nil) (scroll-bars nil 0 t nil 0 t nil) (vscroll . 0) (dedicated) (point . 1) (start . 1)) (prev-buffers ("*TeX Help*" 1 1)))))])
+(setq comint-input-ring nil)
+(setq compile-history nil)
+(setq desktop-missing-file-warning nil)
+(setq dired-regexp-history nil)
+(setq extended-command-history '("query-replace" "list-packages" "package-autoremove" "list-packages" "query-replace" "unfill-region" "query-replace" "unfill-region" "query-replace" "unfill-region" "query-replace" "package-autoremove" "list-packages" "query-replace" "shell" "query-replace" "md-preview" "shell" "ispell" "md-preview" "query-replace" "unfill-region" "shell" "magit" "query-replace" "diff" "5x5" "load-theme" "dark" "light"))
+(setq face-name-history nil)
+(setq file-name-history '("~/github/papers/DALE/ACML-presentation/" "~/github/papers/DALE/ACML-presentation/presentation.log" "~/github/papers/DALE/ACML-presentation/bibliography.bib" "~/github/papers/DALE/ACML-paper/bibliography.bib" "~/github/papers/DALE/ACML-code/dale_paper_OOD.py" "~/github/papers/DALE/ACML-code/" "~/github/papers/DALE/ACML-presentation/presentation.log" "~/github/packages/mdale/pythia/dale.py" "~/github/papers/DALE/ACML-presentation/example_presentation_1.py" "~/github/papers/DALE/ACML-presentation/presentation.tex" "~/github/papers/DALE/ACML-paper/main.tex" "~/github/papers/DALE/ACML-presentation/example_presentation_1.py" "~/github/papers/DALE/ACML-presentation/presentation.tex" "~/github/papers/DALE/ACML-paper/images/case-1-plot-1.tex" "~/github/papers/DALE/ACML-paper/main.tex" "~/github/papers/DALE/ACML-presentation/presentation.log" "/usr/share/texlive/texmf-dist/tex/latex/biblatex/biblatex.sty" "~/github/papers/DALE/ACML-presentation/presentation.log" "~/github/papers/DALE/ACML-presentation/bibliography.bib" "~/github/papers/DALE/ACML-presentation/presentation.tex" "~/.emacs.d/elpa-27.1/aggressive-indent-20221009.1158/aggressive-indent-autoloads.el" "~/.emacs.d/elpa-27.1/alert-20221110.1614/alert-autoloads.el" "~/.emacs.d/elpa-27.1/async-20221103.638/async-autoloads.el" "~/.emacs.d/elpa-27.1/auctex-13.1.6/auctex-autoloads.el" "~/.emacs.d/elpa-27.1/auto-compile-20221120.1404/auto-compile-autoloads.el" "~/.emacs.d/elpa-27.1/bind-key-20221117.1610/bind-key-autoloads.el" "~/.emacs.d/elpa-27.1/caml-20220928.835/caml-autoloads.el" "~/.emacs.d/elpa-27.1/cider-20221109.2212/cider-autoloads.el" "~/.emacs.d/elpa-27.1/clojure-mode-20220928.557/clojure-mode-autoloads.el" "~/.emacs.d/elpa-27.1/closql-20221017.952/closql-autoloads.el" "~/.emacs.d/elpa-27.1/company-20221007.2145/company-autoloads.el" "~/.emacs.d/elpa-27.1/consult-20221123.1845/consult-autoloads.el" "~/.emacs.d/elpa-27.1/consult-flycheck-20221109.842/consult-flycheck-autoloads.el" "~/.emacs.d/elpa-27.1/corfu-0.33/corfu-autoloads.el" "~/.emacs.d/elpa-27.1/dash-20221013.836/dash-autoloads.el" "~/.emacs.d/elpa-27.1/diff-hl-20221007.2147/diff-hl-autoloads.el" "~/.emacs.d/elpa-27.1/docker-20221023.1201/docker-autoloads.el" "~/.emacs.d/elpa-27.1/eglot-20221020.1010/eglot-autoloads.el" "~/.emacs.d/elpa-27.1/elm-mode-20221025.1514/elm-mode-autoloads.el" "~/.emacs.d/elpa-27.1/elpy-20220922.2253/elpy-autoloads.el" "~/.emacs.d/elpa-27.1/emacsql-20221024.1455/emacsql-autoloads.el" "~/.emacs.d/elpa-27.1/emacsql-sqlite-20221024.1455/emacsql-sqlite-autoloads.el" "~/.emacs.d/elpa-27.1/embark-20221111.143/embark-autoloads.el" "~/.emacs.d/elpa-27.1/embark-consult-20221023.1636/embark-consult-autoloads.el" "~/.emacs.d/elpa-27.1/envrc-20221118.1647/envrc-autoloads.el" "~/.emacs.d/elpa-27.1/erlang-20221019.643/erlang-autoloads.el" "~/.emacs.d/elpa-27.1/flycheck-20221112.1552/flycheck-autoloads.el" "~/.emacs.d/elpa-27.1/forge-20221025.1208/forge-autoloads.el" "~/.emacs.d/elpa-27.1/git-commit-20221106.1128/git-commit-autoloads.el" "~/.emacs.d/elpa-27.1/git-timemachine-20221109.2051/git-timemachine-autoloads.el" "~/.emacs.d/elpa-27.1/gnuplot-20221112.2049/gnuplot-autoloads.el" "~/.emacs.d/elpa-27.1/haskell-mode-20221113.1425/haskell-mode-autoloads.el" "~/.emacs.d/elpa-27.1/hl-todo-20221011.1032/hl-todo-autoloads.el" "~/.emacs.d/elpa-27.1/ht-20221031.705/ht-autoloads.el" "~/.emacs.d/elpa-27.1/ibuffer-vc-20221025.1411/ibuffer-vc-autoloads.el" "~/.emacs.d/elpa-27.1/inf-ruby-20221016.2238/inf-ruby-autoloads.el" "~/.emacs.d/elpa-27.1/info-colors-20220927.1640/info-colors-autoloads.el" "~/.emacs.d/elpa-27.1/js2-mode-20221028.1819/js2-mode-autoloads.el" "~/.emacs.d/elpa-27.1/macrostep-20221026.1347/macrostep-autoloads.el" "~/.emacs.d/elpa-27.1/magit-20221120.1355/magit-autoloads.el" "~/.emacs.d/elpa-27.1/magit-section-20220929.1014/magit-section-autoloads.el" "~/.emacs.d/elpa-27.1/marginalia-20221016.1017/marginalia-autoloads.el" "~/.emacs.d/elpa-27.1/markdown-mode-20221105.236/markdown-mode-autoloads.el" "~/.emacs.d/elpa-27.1/mmm-mode-20221027.2340/mmm-mode-autoloads.el" "~/.emacs.d/elpa-27.1/nano-theme-0.3.4/nano-theme-autoloads.el" "~/.emacs.d/elpa-27.1/nix-mode-20221109.17/nix-mode-autoloads.el" "~/.emacs.d/elpa-27.1/orderless-20221113.1719/orderless-autoloads.el" "~/.emacs.d/elpa-27.1/package-lint-20221003.1636/package-lint-autoloads.el" "~/.emacs.d/elpa-27.1/packed-20221120.1407/packed-autoloads.el" "~/.emacs.d/elpa-27.1/pcre2el-20221018.1608/pcre2el-autoloads.el" "~/.emacs.d/elpa-27.1/php-mode-20221112.1616/php-mode-autoloads.el" "~/.emacs.d/elpa-27.1/project-0.8.3/project-autoloads.el" "~/.emacs.d/elpa-27.1/projectile-20221122.2032/projectile-autoloads.el" "~/.emacs.d/elpa-27.1/robe-20221115.149/robe-autoloads.el" "~/.emacs.d/elpa-27.1/rspec-mode-20221122.1311/rspec-mode-autoloads.el" "~/.emacs.d/elpa-27.1/slime-20221003.936/slime-autoloads.el" "~/.emacs.d/elpa-27.1/terraform-mode-20221117.409/terraform-mode-autoloads.el" "~/.emacs.d/elpa-27.1/transient-20221119.1503/transient-autoloads.el" "~/.emacs.d/elpa-27.1/tuareg-20220929.1327/tuareg-autoloads.el" "~/.emacs.d/elpa-27.1/use-package-20221117.1610/use-package-autoloads.el" "~/.emacs.d/elpa-27.1/vertico-0.29/vertico-autoloads.el" "~/.emacs.d/elpa-27.1/yaml-mode-20221022.920/yaml-mode-autoloads.el" "~/projects/UALE/appendix/supplement.log" "~/projects/UALE/appendix/\\ETC." "~/projects/UALE/paper/paper.tex" "~/projects/UALE/appendix/supplement.tex" "~/projects/mdale/AISTATS2023/supplement.log" "~/projects/mdale/examples/real_dataset_3.py" "~/projects/mdale/feature_effect/bin_estimation.py" "~/projects/mdale/AISTATS2023/biblio.bib" "~/projects/mdale/AISTATS2023/paper.tex" "~/projects/mdale/AISTATS2023/supplement.tex" "~/projects/mdale/AISTATS2023/biblio_supplement.bib" "~/projects/UALE/code/concept_figure.py" "~/projects/UALE/appendix/supplement.tex" "~/projects/UALE/code/example_1.py" "~/projects/UALE/code/example_2.py" "~/projects/UALE/code/example_bin_splitting_1.py" "~/projects/UALE/code/example_bin_splitting_2.py" "~/projects/UALE/code/real_dataset_3.py"))
+(setq grep-find-history nil)
+(setq grep-history nil)
+(setq minibuffer-history '("TeX-evince-sync-view" "tab:features-description" "tab:" "TeX-evince-sync-view" "fig:UALE-figure" "UALE-concept-figure" "sec:list-with-symbols" "TeX-evince-sync-view" "d" "c" "TeX-evince-sync-view" "sec:theorem-2" "sec:theorem-1" "sec:ale-approximation" "sec:quant-heter-effects" "sec:feat-effect-meth" "sec:notation" "TeX-evince-sync-view" "sec:examples-2:-bin" "sec:synthetic-example-1" "sec:simulation-examples" "TeX-evince-sync-view" "fig:ex-synth-1-1" "Figure 1" "h" "TeX-evince-sync-view" "numpy repeat" "python current working directory" "TeX-evince-sync-view" "a" "TeX-evince-sync-view" "nord" "tango-dark" "dichromacy" "tsdh-dark" "adwaita" "wombat" "leuven" "nano" "nano-dark" "nord" "nord emacs" "a" "d"))
+(setq query-replace-history '("pdf" "png" "\\bm" "\\mathbf" "" ", height=4cm" "bin-" "regional-" "UALE" "ARE" "ARE" "NAME" "Accumulated" "Aggregated" "accumulated" "aggregated" ".pdf" ".jpg" ".pdf" ".png" ".pdf" ".png" " \\resizebox{.49\\columnwidth}{.49\\columnwidth}{\\input{./../examples/" #("\\includegraphics[width=.23\\textwidth]{" 0 16 (face (font-latex-sedate-face)) 26 36 (face (font-latex-sedate-face))) "rho" "var_err" "var" "mu" "rho_list" "rho_per_bin" "var_err_list" "var_err_per_bin" "mu_err_list" "mu_err_per_bin" "var_err_per_bin" "bins_var_err" "mu_err_per_bin" "bins_mu_err" "rho_per_bin" "bins_res_err" "rho_fixed_mean_list" "var" "var_auto" "mu" "mu_auto" "rho" "rho_auto" "mu" "rho" "var" "rho" "mu" "rho" "rho" "var" "dale_gt" "dale" "example_1" "example_3" "example_2"))
+(setq read-expression-history nil)
+(setq regexp-history nil)
+(setq regexp-search-ring nil)
+(setq register-alist nil)
+(setq search-ring '(#("Fried" 0 5 (isearch-regexp-function nil isearch-case-fold-search nil)) #("Frie" 0 4 (isearch-regexp-function nil isearch-case-fold-search nil)) #("Hoff" 0 4 (isearch-regexp-function nil isearch-case-fold-search nil)) #("Hofm" 0 4 (isearch-regexp-function nil isearch-case-fold-search nil)) #("Hof" 0 3 (isearch-regexp-function nil isearch-case-fold-search nil)) #("PDP" 0 3 (isearch-regexp-function nil isearch-case-fold-search nil)) #("accuracy" 0 8 (isearch-regexp-function nil isearch-case-fold-search t)) #("\\" 0 1 (isearch-regexp-function nil isearch-case-fold-search t)) #("DALE uses" 0 9 (isearch-regexp-function nil isearch-case-fold-search nil)) #("approxi" 0 7 (isearch-case-fold-search t isearch-regexp-function nil)) #("futu" 0 4 (isearch-case-fold-search t isearch-regexp-function nil)) #("In oth" 0 6 (isearch-case-fold-search nil isearch-regexp-function nil)) #("todo" 0 4 (isearch-case-fold-search t isearch-regexp-function nil)) #("bin split" 0 9 (isearch-regexp-function nil isearch-case-fold-search t)) #("Dynam" 0 5 (isearch-regexp-function nil isearch-case-fold-search nil)) #("algo" 0 4 (isearch-regexp-function nil isearch-case-fold-search t))))
+(setq shell-command-history nil)
+(setq tags-file-name nil)
+(setq tags-table-list nil)
+
+;; Buffer section -- buffers listed in same order as in buffer list:
+(desktop-create-buffer 208
+  "/home/givasile/github/papers/DALE/ACML-presentation/presentation.tex"
+  "presentation.tex"
+  'latex-mode
+  '(flymake-mode override-global-mode projectile-mode immortal-scratch-mode auto-compile-on-load-mode diff-hl-mode whitespace-cleanup-mode which-key-mode hes-mode whole-line-or-region-local-mode beacon-mode global-auto-revert-mode anzu-mode dimmer-mode TeX-PDF-mode reftex-mode)
+  16382
+  '(16381 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . t) (indent-tabs-mode) (buffer-display-time 25473 2581 793082 844000) (buffer-file-coding-system . utf-8-unix) (overwrite-mode))
+  '((mark-ring (16410 16409 16344 16316 16314 15001 13759 14865 14660 251 230 14668 16545 1244 14356 4575))))
+
+(desktop-create-buffer 208
+  "/home/givasile/github/papers/DALE/ACML-presentation/bibliography.bib"
+  "bibliography.bib"
+  'bibtex-mode
+  '(override-global-mode projectile-mode immortal-scratch-mode auto-compile-on-load-mode diff-hl-mode whitespace-cleanup-mode which-key-mode hes-mode whole-line-or-region-local-mode beacon-mode global-auto-revert-mode anzu-mode dimmer-mode TeX-PDF-mode)
+  923
+  '(1550 nil)
+  nil
+  nil
+  '((buffer-display-time 25473 2179 614392 620000) (buffer-file-coding-system . utf-8-unix) (overwrite-mode) (TeX-master . t))
+  '((mark-ring (1 303 283 1))))
+
+(desktop-create-buffer 208
+  "/home/givasile/github/papers/DALE/ACML-paper/bibliography.bib"
+  "bibliography.bib"
+  'bibtex-mode
+  '(override-global-mode projectile-mode immortal-scratch-mode auto-compile-on-load-mode diff-hl-mode whitespace-cleanup-mode which-key-mode hes-mode whole-line-or-region-local-mode beacon-mode global-auto-revert-mode anzu-mode dimmer-mode TeX-PDF-mode)
+  2112
+  '(410 nil)
+  nil
+  nil
+  '((buffer-display-time 25473 1659 27743 325000) (buffer-file-coding-system . utf-8-unix) (TeX-master . t))
+  '((mark-ring (38816 4612 4848 4613 4612 2115 9800 14269 1921))))
+
+(desktop-create-buffer 208
+  "/home/givasile/github/papers/DALE/ACML-paper/main.tex"
+  "main.tex"
+  'latex-mode
+  '(flymake-mode override-global-mode projectile-mode immortal-scratch-mode auto-compile-on-load-mode diff-hl-mode whitespace-cleanup-mode which-key-mode hes-mode whole-line-or-region-local-mode beacon-mode global-auto-revert-mode anzu-mode dimmer-mode TeX-PDF-mode reftex-mode)
+  48404
+  '(48958 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . t) (indent-tabs-mode) (buffer-display-time 25473 1262 114605 572000) (buffer-file-coding-system . utf-8-unix))
+  '((mark-ring (49637 46542 42448 40573 40123 1 45382))))
+
+(desktop-create-buffer 208
+  nil
+  "ACML-code"
+  'dired-mode
+  '(override-global-mode projectile-mode immortal-scratch-mode auto-compile-on-load-mode whitespace-cleanup-mode which-key-mode hes-mode whole-line-or-region-local-mode beacon-mode global-auto-revert-mode anzu-mode dimmer-mode TeX-PDF-mode diff-hl-dired-mode)
+  258
+  '(nil nil)
+  t
+  '("/home/givasile/github/papers/DALE/ACML-code/")
+  '((buffer-display-time 25473 980 876498 759000))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/givasile/github/papers/DALE/ACML-code/dale_paper_OOD.py"
+  "dale_paper_OOD.py"
+  'python-mode
+  '(eldoc-mode elpy-mode company-mode flymake-mode highlight-indentation-mode yas-minor-mode flycheck-mode override-global-mode projectile-mode immortal-scratch-mode auto-compile-on-load-mode diff-hl-mode whitespace-cleanup-mode which-key-mode hes-mode whole-line-or-region-local-mode beacon-mode global-auto-revert-mode anzu-mode dimmer-mode goto-address-prog-mode bug-reference-prog-mode symbol-overlay-mode rainbow-delimiters-mode TeX-PDF-mode sphinx-doc-mode)
+  1
+  '(nil nil)
+  nil
+  nil
+  '((show-trailing-whitespace . t) (tab-width . 8) (indent-tabs-mode) (buffer-display-time 25473 982 828721 127000) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/givasile/github/papers/DALE/ACML-presentation/example_presentation_1.py"
+  "example_presentation_1.py"
+  'python-mode
+  '(eldoc-mode elpy-mode company-mode flymake-mode highlight-indentation-mode yas-minor-mode flycheck-mode override-global-mode projectile-mode immortal-scratch-mode auto-compile-on-load-mode diff-hl-mode whitespace-cleanup-mode which-key-mode hes-mode whole-line-or-region-local-mode beacon-mode global-auto-revert-mode anzu-mode dimmer-mode goto-address-prog-mode bug-reference-prog-mode symbol-overlay-mode rainbow-delimiters-mode TeX-PDF-mode sphinx-doc-mode)
+  3937
+  '(3937 nil)
+  nil
+  nil
+  '((show-trailing-whitespace . t) (tab-width . 8) (indent-tabs-mode) (buffer-display-time 25472 46141 275369 979000) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring (104 1 3636 2776 2781 2731 2729 3937 104 1 3097 3937 3448 3707 3606 3448))))
+
+(desktop-create-buffer 208
+  "/home/givasile/github/packages/mdale/pythia/dale.py"
+  "dale.py"
+  'python-mode
+  '(eldoc-mode elpy-mode company-mode flymake-mode highlight-indentation-mode yas-minor-mode flycheck-mode override-global-mode projectile-mode immortal-scratch-mode auto-compile-on-load-mode diff-hl-mode whitespace-cleanup-mode which-key-mode hes-mode whole-line-or-region-local-mode beacon-mode global-auto-revert-mode anzu-mode dimmer-mode goto-address-prog-mode bug-reference-prog-mode symbol-overlay-mode rainbow-delimiters-mode TeX-PDF-mode sphinx-doc-mode)
+  5337
+  '(nil nil)
+  nil
+  nil
+  '((show-trailing-whitespace . t) (tab-width . 8) (indent-tabs-mode) (buffer-display-time 25472 43415 797328 748000) (buffer-file-coding-system . undecided-unix))
+  '((mark-ring nil)))
+
+(desktop-create-buffer 208
+  "/home/givasile/github/papers/DALE/ACML-presentation/presentation.log"
+  "presentation.log"
+  'fundamental-mode
+  '(override-global-mode projectile-mode immortal-scratch-mode auto-compile-on-load-mode diff-hl-mode whitespace-cleanup-mode which-key-mode hes-mode whole-line-or-region-local-mode beacon-mode global-auto-revert-mode anzu-mode dimmer-mode TeX-PDF-mode)
+  56818
+  '(nil nil)
+  t
+  nil
+  '((buffer-display-time) (buffer-file-coding-system . undecided-unix) (overwrite-mode))
+  '((mark-ring nil)))
+
