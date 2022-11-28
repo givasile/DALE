@@ -82,13 +82,13 @@
 	
 	\begin{columns}[t] \separatorcolumn
 		\begin{column}{\colwidth}
-      \begin{block}{TL;DR}
+      \begin{alertblock}{TL;DR}
         \Large{\textbf{DALE} is a better approximation to ALE}, the
         SotA feature effect method. By better, we mean faster and more
         accurate.
 
         \large{\textbf{keywords:} eXplainable AI, global, model-agnostic, deep learning}
-			\end{block}
+			\end{alertblock}
 
 			\begin{block}{Motivation}{}
         Feature effect methods are simple and intuitive; they isolate
@@ -99,14 +99,14 @@
 
         The task is difficult; isolating the effect of a single
         variable is tricky when features are correlated and the
-        black-box function has learned complex. ALE is the only method
-        that manages. However, ALE estimation, i.e., the approximation
-        of ALE from the set of has efficiency and accuracy that we
-        address with DALE.
+        black-box function has learned complex. ALE~\cite{Apley2020}
+        is the only method that manages. However, ALE estimation,
+        i.e., the approximation of ALE from the set of has efficiency
+        and accuracy that we address with DALE.
 			\end{block}
 
       %%%%%% DALE vs ALE
-      \begin{block}{DALE vs ALE}{}
+      \begin{defbox}{DALE vs ALE}{}
         \begin{tcolorbox}[ams equation*, title=ALE definition]
           f(x_s) = \int_{x_{s,
               min}}^{x_s}\mathbb{E}_{\bm{x_c}|z} \underbrace{[\frac{\partial
@@ -123,7 +123,6 @@
               \bm{x^i_c}) - f(z_{k-1}, \bm{x^i_c})]}_{\text{point
                 effect}}}_{\text{bin effect}}
         \end{tcolorbox}
-
 
         ALE approximation, i.e. estimating ALE from the training set
         \(\mathcal{D}\), requires partitioning the \(s\)-th axis, i.e.
@@ -147,7 +146,7 @@ DALE approximation addresses these issues. The main difference is the
 use of automatic differentiation, instead of evaluating at the bin
 limits.
 
-  \end{block}
+  \end{defbox}
 
 \end{column}
 
@@ -165,7 +164,7 @@ limits.
             \includegraphics[width=.5\textwidth]{./../ACML-presentation/figures/bin_splitting_5_bins.pdf}
           \end{tabular}
           & \begin{tabular}{l}
-              \parbox{0.5\linewidth}{%  change the parbox width as appropiate
+              \parbox{0.4\linewidth}{%  change the parbox width as appropiate
               Consider the following case; (a) we have limited samples (b) high variance and (c) the black-box function changes abruptply outside the data manifold. For example, \( f(x_1, x_2, x_3) = x_1x_2 + x_1x_3 \: \textcolor{red}{ \pm \: g(x)}\), with \(x_1 \in [0,10]\), \(x_2=x_1 + \epsilon\) and \(x_3 \sim \mathcal{N}(0, \sigma^2)\). The term \(x_1x_3\) makes estimations from limited samples noisy, so we need to grow the bins larger (more \( \frac{\text{points}} { \text{bin}} \)). But as we grow bins, ALE creates OOD samples, 
     }
             \end{tabular}  \\
@@ -199,16 +198,14 @@ limits.
 
 	\begin{columns}[t]\separatorcolumn
 	\begin{column}{1.3\colwidth}
-	\begin{block}{A block title}
-		This poster was made by modifying the Gemini Beamer Poster Theme~\parencite{Athalye2018} and the Beamer \texttt{seagull} Color Theme.
-		Some block contents, followed by a diagram, followed by a dummy paragraph.
-		
-		Lorem ipsum dolor sit amet, consectetur adipiscing elit. Morbi ultricies
-		eget libero ac ullamcorper. Integer et euismod ante. Aenean vestibulum
-		lobortis augue, ut lobortis turpis rhoncus sed. Proin feugiat nibh a
-		lacinia dignissim. Proin scelerisque, risus eget tempor fermentum, ex
-		turpis condimentum urna, quis malesuada sapien arcu eu purus.
-	\end{block}
+    \begin{alertblock}{Conclusion}
+      In case you work with a differentiable model, as in Deep Learning, use DALE to:
+      \begin{itemize}
+      \item compute feature effect wrt all features in near the same time as to computing the
+      \item have the versatility to compute many different bin sizes, in near zero computational cost
+        \item be sure that your estimation is based on on-distribution samples, irrespectively of the bin size
+      \end{itemize}
+    \end{alertblock}
 	\end{column}
   \separatorcolumn
 	\begin{column}{0.7\colwidth}
