@@ -6,7 +6,7 @@ import random as python_random
 from tensorflow import keras
 import tensorflow as tf
 import tikzplotlib as tplt
-savefig = False
+savefig = True
 
 # make experiment deterministic
 np.random.seed(1232)
@@ -89,9 +89,9 @@ def systematic_evaluation(layers_list, D_list, N_list):
                 dale.fit(alg_params={"nof_bins":100})
                 time_dale[jj][ii].append(timeit.default_timer() - a)
 
-                # a = timeit.default_timer()
-                # ale.fit(alg_params={"nof_bins":100})
-                # time_ale[jj][ii].append(timeit.default_timer() - a)
+                a = timeit.default_timer()
+                ale.fit(alg_params={"nof_bins":100})
+                time_ale[jj][ii].append(timeit.default_timer() - a)
     print("END")
     return time_dale, time_ale, time_forward, time_backward
 
@@ -112,8 +112,9 @@ plt.ylabel("time (seconds)")
 plt.title("DALE vs ALE: Light setup")
 plt.legend()
 if savefig:
-    tplt.clean_figure()
-    tplt.save("./../paper/images/case-1-plot-1.tex")
+    plt.savefig("./../ACML-paper/images/case-1-plot-1.pdf")
+    # tplt.clean_figure()
+    # tplt.save("./../ACML-paper/images/case-1-plot-1.tex")
 plt.show(block=False)
 
 
@@ -133,8 +134,9 @@ plt.ylabel("time (seconds)")
 plt.title("DALE vs ALE: Heavy setup")
 plt.legend()
 if savefig:
-    tplt.clean_figure()
-    tplt.save("./../paper/images/case-1-plot-2.tex")
+    plt.savefig("./../ACML-paper/images/case-1-plot-2.pdf")
+    # tplt.clean_figure()
+    # tplt.save("./../ACML-paper/images/case-1-plot-2.tex")
 plt.show(block=False)
 
 
@@ -157,8 +159,9 @@ plt.ylabel("time (seconds)")
 plt.title("Execution time ALE: $L=2$")
 plt.legend()
 if savefig:
-    tplt.clean_figure()
-    tplt.save("./../paper/images/case-1-plot-3.tex")
+    plt.savefig("./../ACML-paper/images/case-1-plot-3.pdf")
+    # tplt.clean_figure()
+    # tplt.save("./../ACML-paper/images/case-1-plot-3.tex")
 plt.show(block=False)
 
 plt.figure()
@@ -171,8 +174,9 @@ plt.ylabel("time (seconds)")
 plt.title("Execution time DALE: $L=2$")
 plt.legend()
 if savefig:
-    tplt.clean_figure()
-    tplt.save("./../paper/images/case-1-plot-4.tex")
+    plt.savefig("./../ACML-paper/images/case-1-plot-4.pdf")
+    # tplt.clean_figure()
+    # tplt.save("./../ACML-paper/images/case-1-plot-4.tex")
 plt.show(block=False)
 
 # plot 5 - 6
@@ -193,8 +197,9 @@ plt.ylabel("time (seconds)")
 plt.title("Execution time ALE: $N=10^3$")
 plt.legend()
 if savefig:
-    tplt.clean_figure()
-    tplt.save("./../paper/images/case-1-plot-5.tex")
+    plt.savefig("./../ACML-paper/images/case-1-plot-5.pdf")
+    # tplt.clean_figure()
+    # tplt.save("./../ACML-paper/images/case-1-plot-5.tex")
 plt.show(block=False)
 
 plt.figure()
@@ -207,6 +212,7 @@ plt.ylabel("time (seconds)")
 plt.title("Execution time DALE: $N=10^3$")
 plt.legend()
 if savefig:
-    tplt.clean_figure()
-    tplt.save("./../paper/images/case-1-plot-6.tex")
+    plt.savefig("./../ACML-paper/images/case-1-plot-6.pdf")
+    # tplt.clean_figure()
+    # tplt.save("./../ACML-paper/images/case-1-plot-6.tex")
 plt.show(block=False)
