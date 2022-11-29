@@ -1,0 +1,190 @@
+\documentclass{beamer}
+\setbeamersize{text margin left=3mm,text margin right=3mm}
+
+
+\usepackage{natbib}
+\bibliographystyle{plain}
+
+\usepackage{amsmath, bm, amssymb}
+\usepackage{tcolorbox}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\usepackage{multirow}
+
+\usepackage{tikz}
+\usetikzlibrary{matrix,positioning,arrows.meta,arrows,fit,backgrounds,decorations.pathreplacing}
+
+\tikzset{
+  mymat/.style={ matrix of math nodes, text height=2.5ex, text
+    depth=0.75ex, text width=6.00ex, align=center, column
+    sep=-\pgflinewidth, nodes={minimum height=5.0ex}
+  },
+  mymats/.style={ mymat, nodes={draw,fill=#1}
+  },
+  mymat2/.style={
+    matrix of math nodes, text height=1.0ex, text depth=0.0ex, minimum
+    width=5ex, % text
+    width=7.00ex, align=center, column sep=-\pgflinewidth
+  },
+}
+
+\usetikzlibrary{shapes.geometric, arrows, backgrounds, scopes}
+\usepackage{pgfplots} \pgfplotsset{width=6.75cm, compat=newest}
+\usepackage[utf8]{inputenc} \DeclareUnicodeCharacter{2212}{−}
+\usepgfplotslibrary{groupplots,dateplot}
+\usetikzlibrary{patterns,shapes.arrows}
+
+
+
+\usepackage{tikzsymbols}
+\usetheme{Boadilla}
+\usecolortheme{seahorse}
+\newcommand{\thetab}{\boldsymbol{\theta}}
+\newcommand{\xb}{\boldsymbol{x}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\title[DALE]{Paper presentation at ACML 2022}
+\subtitle{DALE: Differential Accumulated Local Effects for efficient and accurate global explanations}
+\author[Gkolemis, Vasilis] % (optional)
+{Vasilis Gkolemis\inst{1,2} \and Theodore Dalamagas\inst{1} \and Christos Diou\inst{2}}
+
+\institute[ATHENA]{\inst{1}}
+\institute[HUA]{\inst{2}Harokopio University of Athens}
+
+\institute[ATH-HUA]{
+  \inst{1} ATHENA Research and Innovation Center
+  \and %
+  \inst{2} Harokopio University of Athens
+}
+
+\date{December 2022}
+
+
+% Use a simple TikZ graphic to show where the logo is positioned
+% \logo{\begin{tikzpicture}
+% \filldraw[color=red!50, fill=red!25, very thick](0,0) circle (0.5);
+% \node[draw,color=white] at (0,0) {LOGO HERE};
+% \end{tikzpicture}}
+
+%End of title page configuration block
+%------------------------------------------------------------
+%The next block of commands puts the table of contents at the
+%beginning of each section and highlights the current section:
+
+% \AtBeginSection[]
+% {
+%   \begin{frame}
+%     \frametitle{Program}
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+% ------------------------------------------------------------
+\begin{document}
+\frame{\titlepage}
+%---------------------------------------------------------
+
+
+\section{Feature Effect}
+
+\begin{frame}
+  \frametitle{Feature Effect}
+  \(y = f(x_s) \rightarrow\) plot showing the effect of \(x_s\) on the output \(y\)
+  \vspace{2mm}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./figures/pdp-cervical-1.jpeg}
+    \caption{Image taken from Interpretable ML book.}
+  \end{figure}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  Feature Effect is simple and intuitive.
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Feature Effect Methods}
+  \begin{itemize}
+  \item \(x_s \rightarrow \) feature of interest, \(\bm{x_c} \rightarrow\) other features
+  \item FE methods take \((f, \mathcal{D}, s)\) and return \(y = f_{\mathtt{<name>}}(x_s)\)
+  \end{itemize}
+
+  \begin{itemize}
+  \item PDP
+    \begin{itemize}
+    \item Expected outcome over \(\bm{x_c}\): \(f(x_s) = \mathbb{E}_{\bm{x_c}}[f(x_s, \bm{x_c})]\)
+    \item \textbf{Unrealistic instances}
+    \end{itemize}
+
+  \item MPlot
+    \begin{itemize}
+    \item Expected outcome over \(\bm{x_c}|x_s\): \(f(x_s) = \mathbb{E}_{\bm{x_c}|x_s}[f(x_s, \bm{x_c})]\)
+    \item \textbf{Aggregated effects}
+    \end{itemize}
+
+  \item ALE
+    \begin{itemize}
+    \item \(f(x_s) = \int_{x_{min}}^{x_s}\mathbb{E}_{\bm{x_c}|z}[ \frac{\partial f}{\partial x_s}(z, \bm{x_c})] \partial z\)
+    \item \textbf{Resolves both failure modes}
+    \end{itemize}
+
+  \end{itemize}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  PDP vs MPlot vs ALE
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{DALE - Differential ALE}
+  DALE, from the dataset \(\mathcal{D} = { \{\bm{x}^i, y^i}\}_{i=1}^N\)
+
+    \[f(x_s) = \Delta x \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \bm{x^i_c})]}_{\text{\alert{point effect}}}}_{\text{bin effect}} \]
+
+    \begin{itemize}
+    \item only change point effect computation
+    \item Fast \( \rightarrow \) use of auto-differentiation, all derivatives in a single pass
+    \item Versatile \( \rightarrow\) point effects computed once, change bins without cost
+    \item Secure \( \rightarrow\) does not create artificial instances
+    \end{itemize}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  For \alert{differentiable} models, DALE resolves ALE weaknesses
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{DALE is faster and versatile}
+  \begin{figure}[h]
+  \centering
+  \resizebox{.4\columnwidth}{!}{\input{./../ACML-paper/images/case-1-plot-1.tex}}
+  \resizebox{.43\columnwidth}{!}{\input{./../ACML-paper/images/case-1-plot-2.tex}}
+  \caption[Case-1-fig-1]{Light setup; small dataset \((N=10^2\) instances), light \(f\). Heavy setup; big dataset (\(N=10^5\) instances), heavy \(f\)}
+  \label{fig:case-1-plots-1}
+\end{figure}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE considerably accelerates the estimation
+\end{frame}
+
+
+
+\begin{frame}
+  \frametitle{DALE vs ALE - 5 Bins}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.49\textwidth]{./figures/dale_5_bins.pdf}
+    \includegraphics[width=0.49\textwidth]{./figures/ale_5_bins.pdf}
+    \label{}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{itemize}
+  \item DALE: on-distribution, robust bin effect \(\rightarrow\) \textcolor{green}{good estimation}
+  \item ALE: completely OOD, robust bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
+\end{frame}
+
+\end{document}
