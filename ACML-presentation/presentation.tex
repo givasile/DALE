@@ -166,21 +166,14 @@
   \frametitle{ALE approximation}
   ALE definition: \( f(x_s) = \int_{x_{s, min}}^{x_s}\mathbb{E}_{\bm{x_c}|z}[ \frac{\partial f}{\partial x_s}(z, \bm{x_c})] \partial z \)
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  ALE approximation from \(\mathcal{D} = { \{\bm{x}^i, y^i}\}_{i=1}^N\)
+  ALE approximation:
+  \(f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[f(z_k, \bm{x^i_c}) - f(z_{k-1}, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}}\)
 
-    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[f(z_k, \bm{x^i_c}) - f(z_{k-1}, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
-
-    \begin{itemize}
-    \item Partitions interval \([x_{s,min}, x_{s,max}]\) in \(K\) equisized bins
-    \item \(\mathcal{S}_k\) instances lying at \(k-th\) bin
-    \item \(z_{k-1}, z_k\) limits of \(k\)-th bin
-    \item Point effect \(\rightarrow [f(z_k, \bm{x^i_c}) - f(z_{k-1}, \bm{x^i_c})] \rightarrow \) evaluating at bin limits
-    \item Bin effect \(\rightarrow\) mean of point effects
-    \item ALE \(\rightarrow\) sum of bin effects until \(k_x\)-th bin
-    \end{itemize}
-
-  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  Bin splitting (parameter \(K\)) is crucial!
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\textwidth]{./figures/ale_bins_iml.png}
+    \caption{Image taken from Interpretable ML book~\citep{molnar2022}}
+  \end{figure}
 \end{frame}
 
 
