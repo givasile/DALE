@@ -197,15 +197,17 @@
 
 
 \begin{frame}
-  \frametitle{ALE approximation}
-  ALE approximation from \(\mathcal{D} = { \{\bm{x}^i, y^i}\}_{i=1}^N\)
+  \frametitle{ALE approximation - weaknesses}
 
     \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[f(z_k, \bm{x^i_c}) - f(z_{k-1}, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
 
     \begin{itemize}
+      \item Point Effect \(\Rightarrow\) evaluation \alert{at bin limits}
+    \begin{itemize}
     \item 2 evaluations of \(f\) per point \( \rightarrow \) slow
     \item change bin limits, pay again \(2*N\) evaluations of \(f\) \( \rightarrow\) restrictive
     \item broad bins may create out of distribution (OOD) samples \( \rightarrow\) not-robust in wide bins
+    \end{itemize}
     \end{itemize}
 
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
@@ -214,16 +216,16 @@
 
 
 \begin{frame}
-  \frametitle{DALE - Differential ALE}
-  DALE, from the dataset \(\mathcal{D} = { \{\bm{x}^i, y^i}\}_{i=1}^N\)
-
+  \frametitle{Our proposal: Differential ALE}
     \[f(x_s) = \Delta x \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \bm{x^i_c})]}_{\text{\alert{point effect}}}}_{\text{bin effect}} \]
 
     \begin{itemize}
-    \item only change point effect computation
+      \item Point Effect \(\Rightarrow\) evaluation \alert{on instances}
+    \begin{itemize}
     \item Fast \( \rightarrow \) use of auto-differentiation, all derivatives in a single pass
     \item Versatile \( \rightarrow\) point effects computed once, change bins without cost
     \item Secure \( \rightarrow\) does not create artificial instances
+    \end{itemize}
     \end{itemize}
 
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
@@ -453,18 +455,17 @@ DALE requires almost same time for all features
 \begin{frame}
   \frametitle{What next?}
   \begin{itemize}
-  \item How to (automatically) decide the optimal bin sizes?
+  \item Could we automatically decide the optimal bin sizes?
     \begin{itemize}
       \item Sometimes narrow bins are ok
       \item Sometimes wide bins are needed
       \end{itemize}
-    \item Can we DALE are fast to decide optimal bin splitting?
     \item What about variable size bins?
       \item Model the uncertainty of the estimation?
   \end{itemize}
 
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  DALE advantages can be a driver for future work
+  DALE can be a driver for future work
 \end{frame}
 
 
