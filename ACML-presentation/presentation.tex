@@ -2,14 +2,23 @@
 \setbeamersize{text margin left=3mm,text margin right=3mm}
 
 
-\usepackage{natbib}
-\bibliographystyle{plain}
+\usepackage[backend=bibtex, natbib=true, style=authoryear]{biblatex}% \usepackage[style=authoryear]{natbib}
+% \bibliographystyle{plain}
+\addbibresource{bibliography}
 
 \usepackage{amsmath, bm, amssymb}
 \usepackage{tcolorbox}
 \usepackage{graphicx}
 \usepackage{xcolor}
 \usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
 \usepackage{multirow}
 
 \usepackage{tikz}
@@ -45,13 +54,10 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}
 
-\title[DALE]{Paper presentation at ACML 2022}
+\title[ACML 2022]{Paper presentation at ACML 2022}
 \subtitle{DALE: Differential Accumulated Local Effects for efficient and accurate global explanations}
 \author[Gkolemis, Vasilis] % (optional)
 {Vasilis Gkolemis\inst{1,2} \and Theodore Dalamagas\inst{1} \and Christos Diou\inst{2}}
-
-\institute[ATHENA]{\inst{1}}
-\institute[HUA]{\inst{2}Harokopio University of Athens}
 
 \institute[ATH-HUA]{
   \inst{1} ATHENA Research and Innovation Center
@@ -96,9 +102,9 @@
 
     \item XAI extracts interpretable properties:
     \begin{itemize}
-    \item[\(\rightarrow\)] Which features are important (in general)?
-    \item[\(\rightarrow\)] Which features favor a prediction?
-
+    \item[\(\rightarrow\)] Tabular data - Which features favor a prediction?
+    \item[\(\rightarrow\)] Computer Vision - Which image areas confuse the model?
+    \item[\(\rightarrow\)] NLP - Which words classified the comment as offensive?
     \end{itemize}
 
   \vspace{3mm}
@@ -129,25 +135,36 @@
   Feature Effect is simple and intuitive.
 \end{frame}
 
-
 \begin{frame}
   \frametitle{Feature Effect Methods}
   \begin{itemize}
   \item \(x_s \rightarrow \) feature of interest, \(\bm{x_c} \rightarrow\) other features
-  \item FE methods take \((f, \mathcal{D}, s)\) and return \(y = f_{\mathtt{<name>}}(x_s)\)
+  \item How to isolate \(x_s\)??
+  \item Difficult task:
+    \begin{itemize}
+    \item features are correlated
+      \item \(f\) has learned complex interactions
+    \end{itemize}
   \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Feature Effect Methods}
 
   \begin{itemize}
-  \item<1-> PDP\citep{Friedman2001}
+  \item<1-> PDP~\citep{Friedman2001}
     \begin{itemize}
-    \item Expected outcome over \(\bm{x_c}\): \(f(x_s) = \mathbb{E}_{\bm{x_c}}[f(x_s, \bm{x_c})]\)
+    \item \(f(x_s) = \mathbb{E}_{\bm{x_c}}[f(x_s, \bm{x_c})]\)
     \item \textbf{Unrealistic instances}
+    \item e.g. \(f(x_{\mathtt{age}} = 20, x_{\mathtt{years\_contraceptives}} = 20) = \) ??
     \end{itemize}
 
-  \item<2-> MPlot\citep{Apley2020}
+  \item<2-> MPlot~\citep{Apley2020}
     \begin{itemize}
-    \item Expected outcome over \(\bm{x_c}|x_s\): \(f(x_s) = \mathbb{E}_{\bm{x_c}|x_s}[f(x_s, \bm{x_c})]\)
+    \item \(\bm{x_c}|x_s\): \(f(x_s) = \mathbb{E}_{\bm{x_c}|x_s}[f(x_s, \bm{x_c})]\)
     \item \textbf{Aggregated effects}
+    \item Real effect: \(x_{\mathtt{age}} = 20 \rightarrow 10\), \(x_{\mathtt{years\_contraceptives}} = 20 \rightarrow 10\)
+    \item MPlot may assing 17 to both
     \end{itemize}
 
   \item<3-> ALE\citep{Apley2020}
@@ -468,7 +485,7 @@ DALE requires almost same time for all features
 
 \begin{frame}[allowframebreaks]
   \frametitle{References}
-  \bibliography{bibliography.bib}
+  \printbibliography
 \end{frame}
 
 
