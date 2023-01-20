@@ -1,0 +1,641 @@
+\documentclass{beamer}
+\setbeamersize{text margin left=3mm,text margin right=3mm}
+
+
+\usepackage[backend=bibtex, natbib=true, style=authoryear]{biblatex}% \usepackage[style=authoryear]{natbib}
+% \bibliographystyle{plain}
+\addbibresource{bibliography}
+
+\usepackage{amsmath, bm, amssymb}
+\usepackage{tcolorbox}
+\usepackage{graphicx}
+\usepackage{xcolor}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=cyan,
+    pdftitle={Overleaf Example},
+    pdfpagemode=FullScreen,
+    }
+\usepackage{multirow}
+
+\usepackage{tikz}
+\usetikzlibrary{matrix,positioning,arrows.meta,arrows,fit,backgrounds,decorations.pathreplacing}
+
+\tikzset{
+  mymat/.style={ matrix of math nodes, text height=2.5ex, text
+    depth=0.75ex, text width=6.00ex, align=center, column
+    sep=-\pgflinewidth, nodes={minimum height=5.0ex}
+  },
+  mymats/.style={ mymat, nodes={draw,fill=#1}
+  },
+  mymat2/.style={
+    matrix of math nodes, text height=1.0ex, text depth=0.0ex, minimum
+    width=5ex, % text
+    width=7.00ex, align=center, column sep=-\pgflinewidth
+  },
+}
+
+\usetikzlibrary{shapes.geometric, arrows, backgrounds, scopes}
+\usepackage{pgfplots} \pgfplotsset{width=6.75cm, compat=newest}
+\usepackage[utf8]{inputenc} \DeclareUnicodeCharacter{2212}{−}
+\usepgfplotslibrary{groupplots,dateplot}
+\usetikzlibrary{patterns,shapes.arrows}
+
+
+\newcommand{\obf}[1]{{\color{orange} \textbf{#1}}}
+\newcommand{\orange}[1]{{\color{orange} #1}}
+\newcommand{\rbf}[1]{{\color{red} \textbf{#1}}}
+\newcommand{\red}[1]{{\color{red} #1}}
+
+% Frequently used vectors
+\newcommand{\Vu}{\mathbf{u}}
+\newcommand{\Vh}{\mathbf{h}}
+\newcommand{\Vv}{\mathbf{v}}
+\newcommand{\Vw}{\mathbf{w}}
+\newcommand{\Vb}{\mathbf{b}}
+\newcommand{\Vx}{\mathbf{x}}
+\newcommand{\Vy}{\mathbf{y}}
+\newcommand{\Vz}{\mathbf{z}}
+\newcommand{\Vf}{\mathbf{f}}
+\newcommand{\VC}{\mathbf{C}}
+\newcommand{\VD}{\mathbf{D}}
+\newcommand{\VX}{\mathbf{X}}
+\newcommand{\VS}{\mathbf{S}}
+\newcommand{\VW}{\mathbf{W}}
+\newcommand{\VV}{\mathbf{V}}
+\newcommand{\VU}{\mathbf{U}}
+\newcommand{\Vth}{\bm{\theta}}
+\newcommand{\pmodel}{p_{\text{model}}}
+\newcommand{\pdata}{\hat{p}_{\text{data}}}
+
+
+
+\usepackage{tikzsymbols}
+\usetheme{Boadilla}
+\usecolortheme{seahorse}
+\newcommand{\thetab}{\boldsymbol{\theta}}
+\newcommand{\xb}{\boldsymbol{x}}
+\DeclareMathOperator*{\argmin}{arg\,min}
+\DeclareMathOperator*{\argmax}{arg\,max}
+
+\title[L3S Research Seminar]{Presentation at L3S Research Seminar}
+\subtitle{DALE: Differential Accumulated Local Effects for efficient and accurate global explanations}
+\author[Gkolemis, Vasilis] % (optional)
+{Vasilis Gkolemis\inst{1,2} \and Theodore Dalamagas\inst{1} \and Christos Diou\inst{2}}
+
+\institute[ATH-HUA]{
+  \inst{1} ATHENA Research and Innovation Center
+  \and %
+  \inst{2} Harokopio University of Athens
+}
+
+\date{January 2023}
+
+% Use a simple TikZ graphic to show where the logo is positioned
+% \logo{\begin{tikzpicture}
+% \filldraw[color=red!50, fill=red!25, very thick](0,0) circle (0.5);
+% \node[draw,color=white] at (0,0) {LOGO HERE};
+% \end{tikzpicture}}
+
+%End of title page configuration block
+%------------------------------------------------------------
+%The next block of commands puts the table of contents at the
+%beginning of each section and highlights the current section:
+
+% \AtBeginSection[]
+% {
+%   \begin{frame}
+%     \frametitle{Program}
+%     \tableofcontents[currentsection]
+%   \end{frame}
+% }
+
+% ------------------------------------------------------------
+\begin{document}
+\frame{\titlepage}
+%---------------------------------------------------------
+
+
+\begin{frame}
+  \frametitle{Who we are}
+  \begin{itemize}
+  \item \href{https://givasile.github.io/}{Vasilis Gkolemis}:
+    \begin{itemize}
+      \item Research Assistant at ATHENA Research Center (\href{https://www.athenarc.gr/en/home}{ATHENA RC})
+      \item First-year PhD at Harokopio University of Athens
+        (\href{https://dit.hua.gr/index.php/en/}{HUA})
+      \item Main focus: Explainability under uncertainty
+      \end{itemize}
+
+    \item Supervisors:
+      \begin{itemize}
+      \item \href{https://diou.github.io/}{Christos Diou} (HUA) \(\rightarrow\) Generalization under few-shot
+      \item \href{https://aiml-research.github.io/}{Eirini Ntoutsi} (UniBw-M) \(\rightarrow\) Explainability, Fairness
+        \item \href{https://scholar.google.gr/citations?user=WJOLNAYAAAAJ&hl=en}{Theodore Dalamagas} (ATHENA) \(\rightarrow\) Databases, data semantics
+      \end{itemize}
+
+    \item Paper I will present
+      \begin{itemize}
+      \item \href{https://givasile.github.io/assets/pdf/gkolemis22_dale.pdf}{DALE: Differential Accumulated Local Effects for efficient and accurate global explanations}
+      \item Accepted at \href{https://www.acml-conf.org/2022/}{Asian Conference Machine Learning (ACML) 2022}
+      \end{itemize}
+    \end{itemize}
+
+\end{frame}
+
+
+\section{Feature Effect}
+\begin{frame}
+  \frametitle{eXplainable AI (XAI)}
+  \begin{itemize}
+  \item Black-box model \(f(\cdot): \mathcal{X} \rightarrow \mathcal{Y} \), trained on \(\mathcal{D}\)
+    \vspace{3mm}
+
+    \item XAI extracts interpretable properties:
+    \begin{itemize}
+    \item[\(\rightarrow\)] Tabular data - Which features favor a prediction?
+    \item[\(\rightarrow\)] Computer Vision - Which image areas confuse the model?
+    \item[\(\rightarrow\)] NLP - Which words classified the comment as offensive?
+    \end{itemize}
+
+  \vspace{3mm}
+
+    \item Categories:
+      \begin{itemize}
+        \item[\(\rightarrow\)] Global vs local
+        \item[\(\rightarrow\)] Model-agnostic vs Model-specific
+        \item[\(\rightarrow\)] Output? number, plot, instance etc.
+      \end{itemize}
+  \end{itemize}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  Feature Effect: global, model-agnostic, outputs plot
+\end{frame}
+
+\begin{frame}
+  \frametitle{Feature Effect}
+  \(y = f(x_s) \rightarrow\) plot showing the effect of \(x_s\) on the output \(y\)
+  \vspace{2mm}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.7\textwidth]{./figures/pdp-cervical-1.jpeg}
+    \caption{Image taken from Interpretable ML book~\citep{molnar2022}}
+  \end{figure}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  Feature Effect is simple and intuitive.
+\end{frame}
+
+\begin{frame}
+  \frametitle{Feature Effect Methods}
+  \begin{itemize}
+  \item \(x_s \rightarrow \) feature of interest, \(\bm{x_c} \rightarrow\) other features
+  \item Isolating the effect of \(x_s\) is a difficult task:
+    \begin{itemize}
+    \item features are correlated
+      \item \(f\) has learned complex interactions
+      \end{itemize}
+
+    \item Three well-known methods:
+      \begin{itemize}
+      \item Partial Dependence Plots (PDP)
+      \item M-Plots
+      \item Accumulated Local Effects (ALE)
+      \end{itemize}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Partial Dependence Plots (PDP)}
+  \begin{onlyenv}<1>
+    \begin{itemize}
+    \item Proposed by J. Friedman on 2001\footnote{J. Friedman. ``Greedy
+    function approximation: A gradient boosting machine.'' Annals of statistics
+    (2001): 1189-1232} and is the marginal \obf{effect} of a feature to the
+      model output:
+      \begin{equation*}
+        f_s(x_s) = \mathbb{E}_{\bm{x_c}}\left[f(x_s, \bm{x_c})\right] =
+        \int f(x_s, \bm{x_c}) p(\bm{x_c})d\bm{x_c}
+      \end{equation*}
+      where:
+
+      \begin{itemize}
+      \item $x_s$ is the feature whose effect we wish to compute
+      \item $\bm{x_c}$ are the rest of the features
+      \end{itemize}
+
+    \item Approximation:
+      \begin{equation*}
+        \hat{f}_s(x_s) = \frac{1}{n}\sum\limits_{i=1}^{n}f(x_s, \Vx_c^{(i)})
+      \end{equation*}
+    \end{itemize}
+  \end{onlyenv}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Issues with PDPs}
+  \begin{onlyenv}<1>
+    \begin{figure}
+      \includegraphics[width=.6\textwidth]{./figures/aleplot-motivation1-1}
+      \caption{\footnotesize C. Molnar, IML book}
+    \end{figure}
+  \end{onlyenv}
+  \begin{onlyenv}<2>
+    \begin{itemize}
+    \item Correlated features
+      \begin{itemize}
+      \item Example: $\text{price} = f(\text{num\_rooms}, \text{area})$
+      \item To compute the effect of \(x_{\mathtt{age}} = 20\) on the
+        output (cancer probability) it will integrate over all
+        \(x_{\mathtt{years\_contraceptives}}\) values
+      \item \(f\) can have weird behaviour when
+        \(x_{\mathtt{age}} = 20, x_{\mathtt{years\_contraceptives}}=
+        20\) (out of distribution)
+      \item As a result, we have a wrong estimation of the feature effect
+      \end{itemize}
+      \end{itemize}
+  \end{onlyenv}
+\end{frame}
+
+\begin{frame}
+  \frametitle{MPlots}
+
+  \begin{onlyenv}<1>
+    \begin{itemize}
+    \item We use the value of $x_s$ as a condition, so we integrade over \(\Vx_c|x_s\)
+
+      \[f(x_s) = \mathbb{E}_{\Vx_c|x_s}[f(x_s, \Vx_c)] = \int f(x_s, \Vx_c) p(\bm{x_c}|x_s) d\bm{x_c} \]
+      where:
+
+      \begin{itemize}
+      \item $x_s$ is the feature whose effect we wish to compute
+      \item $\bm{x_c}$ the rest of the features
+      \end{itemize}
+
+    \item Computation:
+      \begin{equation*}
+        f_s(x_s) = \frac{1}{n}\sum\limits_{i \text{:} x_s^{(i)} \approx x_s} f(x_s, \Vx_c^{(i)})
+      \end{equation*}
+
+    \end{itemize}
+  \end{onlyenv}
+  \begin{onlyenv}<2>
+    In the previous example
+    \begin{figure}
+      \includegraphics[width=.6\textwidth]{./figures/aleplot-motivation2-1}
+      \caption{\footnotesize C. Molnar, IML book}
+    \end{figure}
+  \end{onlyenv}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Issues with M-Plots}
+  \begin{itemize}
+  \item Aggregated effect symbtom \(\rightarrow\) the calculated
+    effects result from the combination of all (correlated) features
+  \item Real effect:
+    \begin{itemize}
+    \item \(x_{\mathtt{age}} = 50 \rightarrow 10\)
+    \item  \(x_{\mathtt{years\_contraceptives}} = 20 \rightarrow 10\)
+    \item  aggregated effect close to \(20\)
+    \end{itemize}
+  \item Because \(x_{\mathtt{age}}, x_{\mathtt{years\_contraceptives}}\) are correlated, MPlot may assign:
+    \begin{itemize}
+    \item \(x_{\mathtt{age}} = 50 \rightarrow 17 \approx \) aggregated effect
+    \item  \(x_{\mathtt{years\_contraceptives}} = 20 \rightarrow 17 \approx \) aggregated effect
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Accumulated Local Effects (ALE)\footnote{D. Apley and
+    J. Zhu. ``Visualizing the effects of predictor variables in black box
+    supervised learning models.'' Journal of the Royal Statistical Society:
+    Series B (Statistical Methodology) 82.4 (2020): 1059-1086.}}
+
+  \begin{itemize}
+  \item Resolves problems that result from the feature correlation by computing
+    differences over a (small) window
+  \end{itemize}
+
+  \[f(x_s) = \int_{x_{min}}^{x_s} \mathbb{E}_{\underbrace{\Vx_c|z}_{realistic}} [ \underbrace{\frac{\partial f}{\partial x_s}(z, \Vx_c)}_{isolates} ] \partial z\]
+
+\end{frame}
+
+
+
+
+
+
+\begin{frame}
+  \frametitle{ALE approximation}
+  ALE definition: \( f(x_s) = \int_{x_{s, min}}^{x_s}\mathbb{E}_{\bm{x_c}|z}[ \frac{\partial f}{\partial x_s}(z, \bm{x_c})] \partial z \)
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  ALE approximation: \(f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[f(z_k, \bm{x^i_c}) - f(z_{k-1}, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \)
+
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\textwidth]{./figures/ale_bins_iml.png}
+    \caption{Image taken from Interpretable ML book~\citep{molnar2022}}
+  \end{figure}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  Bin splitting (parameter \(K\)) is crucial!
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{ALE approximation - weaknesses}
+
+    \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[f(z_k, \bm{x^i_c}) - f(z_{k-1}, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
+
+    \begin{itemize}
+      \item Point Effect \(\Rightarrow\) evaluation \alert{at bin limits}
+    \begin{itemize}
+    \item 2 evaluations of \(f\) per point \( \rightarrow \) slow
+    \item change bin limits, pay again \(2*N\) evaluations of \(f\) \( \rightarrow\) restrictive
+    \item broad bins may create out of distribution (OOD) samples \( \rightarrow\) not-robust in wide bins
+    \end{itemize}
+    \end{itemize}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  ALE approximation has some weaknesses
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Our proposal: Differential ALE}
+    \[f(x_s) = \Delta x \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \bm{x^i_c})]}_{\text{\alert{point effect}}}}_{\text{bin effect}} \]
+
+    \begin{itemize}
+      \item Point Effect \(\Rightarrow\) evaluation \alert{on instances}
+    \begin{itemize}
+    \item Fast \( \rightarrow \) use of auto-differentiation, all derivatives in a single pass
+    \item Versatile \( \rightarrow\) point effects computed once, change bins without cost
+    \item Secure \( \rightarrow\) does not create artificial instances
+    \end{itemize}
+    \end{itemize}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  For \alert{differentiable} models, DALE resolves ALE weaknesses
+\end{frame}
+
+
+
+% chapter 1
+\section{DALE vs ALE}
+
+\subsection{Dale is faster and versatile}
+
+\begin{frame}
+  \frametitle{DALE is faster and versatile - theory}
+    \[f(x_s) = \Delta x \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \bm{x^i_c})]}_{\text{point effect}}}_{\text{bin effect}} \]
+
+  \begin{itemize}
+  \item Faster
+    \begin{itemize}
+      \item gradients wrt all features \(\nabla_{\bm{x}} f(\bm{x^i})\) in a single pass
+      \item auto-differentiation must be available (deep learning)
+    \end{itemize}
+  \item Versatile
+    \begin{itemize}
+    \item Change bin limits, with near zero computational cost
+    \end{itemize}
+
+  \end{itemize}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE is faster and allows redefining bin-limits
+\end{frame}
+
+\begin{frame}
+  \frametitle{DALE is faster and versatile - Experiments}
+  \begin{figure}[h]
+  \centering
+  \resizebox{.4\columnwidth}{!}{\input{./../../ACML-paper/images/case-1-plot-1.tex}}
+  \resizebox{.43\columnwidth}{!}{\input{./../../ACML-paper/images/case-1-plot-2.tex}}
+  \caption[Case-1-fig-1]{Light setup; small dataset \((N=10^2\) instances), light \(f\). Heavy setup; big dataset (\(N=10^5\) instances), heavy \(f\)}
+  \label{fig:case-1-plots-1}
+\end{figure}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE considerably accelerates the estimation
+\end{frame}
+
+
+\subsection{DALE is more Accurate}
+
+\begin{frame}
+  \frametitle{DALE uses on-distribution samples - Theory}
+  \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|}
+      \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial
+          f}{\partial x_s}(x_s^i, \bm{x^i_c})]}_{\text{point
+          effect}}}_{\text{bin effect}} \]
+
+  \begin{itemize}
+  \item point effect \alert{independent} of bin limits
+    \begin{itemize}
+    \item \(\frac{\partial f}{\partial x_s}(x_s^i, \bm{x^i_c})\)
+      computed on real instances \(\bm{x}^i = (x_s^i, \bm{x_c^i})\)
+    \end{itemize}
+  \item bin limits affect only the \alert{resolution} of the plot
+    \begin{itemize}
+    \item wide bins \(\rightarrow\) low resolution plot, bin
+      estimation from more points
+    \item narrow bins \(\rightarrow\) high resolution plot, bin
+      estimation from less points
+    \end{itemize}
+  \end{itemize}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE enables wide bins without creating out of distribution instances
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{DALE uses on-distribution samples - Experiments}
+\begin{columns}
+\begin{column}{0.5\textwidth}
+  \[ f(x_1, x_2, x_3) = x_1x_2 + x_1x_3 \: \textcolor{red}{ \pm \: g(x)}\]
+  \[ x_1 \in [0,10], x_2 \sim x_1 + \epsilon, x_3 \sim \mathcal{N}(0, \sigma^2) \]
+  \[ f_{\mathtt{ALE}}(x_1) = \frac{x_1^2}{2} \]
+  \begin{itemize}
+  \item point effects affected by \((x_1x_3)\) (\(\sigma\) is large)
+  \item bin estimation is noisy (samples are few)
+  \end{itemize}
+\end{column}
+\begin{column}{0.5\textwidth}
+    \begin{center}
+     \includegraphics[width=\textwidth]{./figures/f_plot.pdf}
+     \end{center}
+\end{column}
+\end{columns}
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+Intuition: we need wider bins (more samples per bin)
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{DALE vs ALE - 40 Bins}
+  \begin{figure}
+    \centering
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_40_bins.pdf}
+    \includegraphics<2>[width=.49\textwidth]{./figures/dale_40_bins.pdf}
+    \includegraphics<2>[width=.49\textwidth]{./figures/ale_40_bins.pdf}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{itemize}
+  \item DALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \item ALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{DALE vs ALE - 20 Bins}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_20_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/dale_20_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/ale_20_bins.pdf}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{itemize}
+  \item DALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \item ALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{DALE vs ALE - 10 Bins}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_10_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/dale_10_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/ale_10_bins.pdf}
+    \label{}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{itemize}
+  \item DALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \item ALE: starts being OOD, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{DALE vs ALE - 5 Bins}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_5_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/dale_5_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/ale_5_bins.pdf}
+    \label{}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{itemize}
+  \item DALE: on-distribution, robust bin effect \(\rightarrow\) \textcolor{green}{good estimation}
+  \item ALE: completely OOD, robust bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{DALE vs ALE - 3 Bins}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_3_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/dale_3_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/ale_3_bins.pdf}
+    \label{}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{itemize}
+  \item DALE: on-distribution, robust bin effect \(\rightarrow\) \textcolor{green}{good estimation}
+  \item ALE: completely OOD, robust bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Real Dataset Experiments - Efficiency}
+  \begin{itemize}
+  \item Bike-sharing dataset\citep{BikeSharing}
+  \item \(y \rightarrow\) daily bike rentals
+  \item \(\bm{x}:\) 10 features, most of them characteristics of the weather
+  \end{itemize}
+
+  \begin{table} \tiny
+  \centering
+  \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c}
+    \multicolumn{12}{c}{Efficiency on Bike-Sharing Dataset (Execution Times in seconds)} \\
+    \hline\hline
+    & \multicolumn{11}{|c}{Number of Features} \\
+    \hline
+    & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
+    \hline
+    \( \mathtt{DALE} \) & 1.17 & \textbf{1.19} & \textbf{1.22} & \textbf{1.24} & \textbf{1.27} & \textbf{1.30} & \textbf{1.36} & \textbf{1.32} & \textbf{1.33} & \textbf{1.37} & \textbf{1.39} \\
+    \hline
+    \( \mathtt{ALE} \) & \textbf{0.85} & 1.78 & 2.69 & 3.66 & 4.64 & 5.64 & 6.85 & 7.73 & 8.86 & 9.9 & 10.9 \\
+    \hline
+  \end{tabular}
+\end{table}
+\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+DALE requires almost same time for all features
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Real Dataset Experiments - Accuracy}
+  \begin{itemize}
+  \item Difficult to compare in real world datasets
+   \item We do not know the ground-truth effect
+   \item In most features, DALE and ALE agree.
+   \item Only \(X_{\mathtt{hour}}\) is an interesting feature
+  \end{itemize}
+
+  \begin{figure}[h]
+  \centering
+    \resizebox{.3\columnwidth}{!}{\input{./../../ACML-paper/images/bike-dataset-dale-comparison.tex}}
+    \resizebox{.3\columnwidth}{!}{\input{./../../ACML-paper/images/bike-dataset-ale-comparison.tex}}
+    \caption{(Left) DALE (Left) and ALE (Right) plots for
+      \(K = \{25, 50, 100\}\)}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{What next?}
+  \begin{itemize}
+  \item Could we automatically decide the optimal bin sizes?
+    \begin{itemize}
+      \item Sometimes narrow bins are ok
+      \item Sometimes wide bins are needed
+      \end{itemize}
+    \item What about variable size bins?
+      \item Model the uncertainty of the estimation?
+  \end{itemize}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE can be a driver for future work
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Thank you}
+  \begin{itemize}
+  \item Questions?
+  \end{itemize}
+
+\end{frame}
+
+
+
+\begin{frame}[allowframebreaks]
+  \frametitle{References}
+  \printbibliography
+\end{frame}
+
+
+\end{document}
