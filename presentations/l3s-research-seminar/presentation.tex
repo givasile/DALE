@@ -249,11 +249,10 @@
     \begin{itemize}
     \item Correlated features
       \begin{itemize}
-      \item Example: $\text{price} = f(\text{num\_rooms}, \text{area})$
       \item To compute the effect of \(x_{\mathtt{age}} = 20\) on the
         output (cancer probability) it will integrate over all
-        \(x_{\mathtt{years\_contraceptives}}\) values
-      \item \(f\) can have weird behaviour when
+        \(x_{\mathtt{years\_contraceptives}}\) values, e.g., \([0, 50]\)
+      \item \(f\) can have weird behavior when
         \(x_{\mathtt{age}} = 20, x_{\mathtt{years\_contraceptives}}=
         20\) (out of distribution)
       \item As a result, we have a wrong estimation of the feature effect
@@ -267,7 +266,7 @@
 
   \begin{onlyenv}<1>
     \begin{itemize}
-    \item We use the value of $x_s$ as a condition, so we integrade over \(\Vx_c|x_s\)
+    \item We use the value of $x_s$ as a condition, so we integrate over \(\Vx_c|x_s\)
 
       \[f(x_s) = \mathbb{E}_{\Vx_c|x_s}[f(x_s, \Vx_c)] = \int f(x_s, \Vx_c) p(\bm{x_c}|x_s) d\bm{x_c} \]
       where:
@@ -277,7 +276,7 @@
       \item $\bm{x_c}$ the rest of the features
       \end{itemize}
 
-    \item Computation:
+    \item Approximation:
       \begin{equation*}
         f_s(x_s) = \frac{1}{n}\sum\limits_{i \text{:} x_s^{(i)} \approx x_s} f(x_s, \Vx_c^{(i)})
       \end{equation*}
@@ -296,7 +295,7 @@
 \begin{frame}
   \frametitle{Issues with M-Plots}
   \begin{itemize}
-  \item Aggregated effect symbtom \(\rightarrow\) the calculated
+  \item Aggregated effect symptom \(\rightarrow\) the calculated
     effects result from the combination of all (correlated) features
   \item Real effect:
     \begin{itemize}
@@ -366,6 +365,23 @@
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
   ALE approximation has some weaknesses
 \end{frame}
+
+
+\begin{frame}
+  \frametitle{Recap!}
+  \begin{itemize}
+  \item PDP \(\rightarrow\) problems with correlated features \(\rightarrow\) Unrealistic instances
+  \item MPlot \(\rightarrow\) problems with correlated features \(\rightarrow\) Aggregated effects
+  \item ALE \(\rightarrow\) resolves both issues! But:
+
+  \item ALE approximation (estimation of ALE from the training set)
+    \begin{itemize}
+    \item slow when there are many features
+      \item unrealistic instances when bins become bigger
+      \end{itemize}
+      \item Differential ALE (DALE)!
+  \end{itemize}
+  \end{frame}
 
 
 \begin{frame}
