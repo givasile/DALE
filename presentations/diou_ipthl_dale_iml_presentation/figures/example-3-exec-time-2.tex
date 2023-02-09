@@ -1,0 +1,70 @@
+% This file was created with tikzplotlib v0.9.16.
+\begin{tikzpicture}
+
+\definecolor{color0}{rgb}{0.117647058823529,0.564705882352941,1}
+
+\begin{axis}[
+legend cell align={left},
+legend style={
+  fill opacity=0.8,
+  draw opacity=1,
+  text opacity=1,
+  at={(0.03,0.97)},
+  anchor=north west,
+  draw=white!80!black
+},
+tick align=outside,
+tick pos=left,
+title={Execution time vs Network Size},
+x grid style={white!69.0196078431373!black},
+xlabel={\(\displaystyle layers\)},
+xmin=-0.95, xmax=41.95,
+xtick style={color=black},
+y grid style={white!69.0196078431373!black},
+ylabel={time (seconds)},
+ymin=-0.274392254855411, ymax=6.60736534985444,
+ytick style={color=black}
+]
+\addplot [semithick, red, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+1 0.131660223007202
+5 0.441267251968384
+10 0.857374668121338
+20 1.54965913295746
+30 2.24762296676636
+40 3.04877352714539
+};
+\addlegendentry{$f(x)$}
+\addplot [semithick, blue, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+1 0.0384149551391602
+5 0.3424471616745
+10 0.654837846755981
+20 1.403151512146
+30 2.35073781013489
+40 3.14404726028442
+};
+\addlegendentry{$\mathbf{J}$}
+\addplot [semithick, color0, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+1 0.311196088790894
+5 0.969846963882446
+10 1.81082510948181
+20 3.2956805229187
+30 4.56906318664551
+40 6.29455804824829
+};
+\addlegendentry{$\hat{f}_{\mathtt{ALE}}$}
+\addplot [semithick, black, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+1 0.0483081340789795
+5 0.310225248336792
+10 0.661530256271362
+20 1.52030599117279
+30 2.4185528755188
+40 3.15430045127869
+};
+\addlegendentry{$f_{\mathtt{DALE}}$}
+\end{axis}
+
+\end{tikzpicture}

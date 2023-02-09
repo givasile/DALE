@@ -1,0 +1,4 @@
+IML and DALE: Introduction to Interpretable Machine Learning and Differential Accumulated Local Effects
+
+
+Modern machine learning algorithms use multidimensional inputs and complex, non-linear models with a large number of parameters. Understanding the behavior and decisions of such "black box" models has become a necessity for their deployment and use in practical applications, especially in high-stakes scenarios. The first part of this talk will offer an introductory overview of methods for Interpretable Machine Learning (IML) including explainable models, local methods for black-box models, local methods specifically designed for deep convolutional neural networks, as well as global, model-agnostic methods. We will then present a method called "Differential Accumulated Local Effects" (DALE) that describes model behavior in a highly efficient manner, while at the same time avoiding certain failure modes of ALE plots.

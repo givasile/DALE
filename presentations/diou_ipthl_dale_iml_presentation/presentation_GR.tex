@@ -1,0 +1,960 @@
+%%
+%% Slides for Applications of Artificial Intelligence course
+%% Department of Informatics and Telematics,
+%% Harokopio University of Athens, Greece.
+%%
+%% Author: Christos Diou
+
+\input{preamble}
+
+  %% \Large IML and DALE: Introduction to Interpretable Machine
+  %% Learning \footnote{Some ideas and content from  Christoph Molnar's book, ``Interpretable Machine Learning book'',
+  %% \url{https://christophm.github.io/interpretable-ml-book/}} and Differential
+  %% Accumulated Local Effects\footnote{based on work with colleagues V. Gkolemis
+  %% and T. Dalamagas, \url{https://arxiv.org/abs/2210.04542}}
+
+\title{\Large{IML and DALE: Introduction to Interpretable Machine
+  Learning and Differential Accumulated Local Effects}}
+
+\AtBeginSection[]{
+  \begin{frame}{Περιεχόμενα}
+    \small \tableofcontents[currentsection, hideothersubsections]
+  \end{frame} 
+}
+
+\begin{document}
+
+\frame{\titlepage}
+
+% Use label=current to render only one slide
+
+\section{Εισαγωγή}
+
+\begin{frame}[plain,c]
+  \Large Σύντομη εισαγωγή στην Ερμηνεύσιμη Μηχανική Μάθηση \footnote{Ορισμένες ιδέες και περιεχόμενο από το βιβλίο του
+  Christoph Molnar, ``Interpretable Machine Learning'' (IML book),
+  \url{https://christophm.github.io/interpretable-ml-book/}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Υποθετικά σενάρια}
+
+  \begin{itemize}
+  \item<1-> Το υποσύστημα υπολογιστικής όρασης ενός αυτόνομου οχήματος αποφασίζει
+    να στρίψει αριστερά, μπαίνοντας μπροστα σε αυτοκίνητο που κινείται στο
+    αντίθετο
+    ρεύμα\footnote{\url{https://www.theguardian.com/technology/2022/dec/22/tesla-crash-full-self-driving-mode-san-francisco}}
+  \item<2-> Ένα σύστημα αξιολόγησης πιστοληπτικής ικανότητας προτείνει την
+    απόρριψη της αίτησης δανειοδότησης ενός υποψήφιου
+    δανειολήπτη - αυτός ισχυρίζεται ότι έπαιξε ρόλο η φυλετική καταγωγή του\footnote{\url{https://www.technologyreview.com/2021/06/17/1026519/racial-bias-noisy-data-credit-scores-mortgage-loans-fairness-machine-learning/}}
+  \item<3-> Ένα μοντέλο που υποστηρίζει αποφάσεις σχετικά με την αναστολή ποινής
+    μεροληπτεί κατά των μαύρων
+    κρατουμένων\footnote{\url{https://www.propublica.org/article/machine-bias-risk-assessments-in-criminal-sentencing}}
+  \end{itemize}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Ερωτήσεις}
+  \begin{itemize}
+  \item Γιατί ένα μοντέλο πήρε μια συγκεκριμένη απόφαση;
+  \item Τι θα μπορούσε να αλλάξει ώστε το μοντέλο να πάρει διαφορετική απόφαση;
+  \item Μπορούμε να συνοψίσουμε τη ``συμπεριφορά'' του μοντέλου ως προς τις
+    εισόδους του;
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Ερμηνεία μοντέλων μηχανικής μάθησης}
+  Ποιοτικά:
+  \begin{itemize}
+  \item ``Interpretability is the degree to which a human can understand the
+    cause of a decision'' \footnote{Miller, Tim. ``Explanation in artificial
+    intelligence: Insights from the social sciences.'' arXiv Preprint
+    arXiv:1706.07269. (2017)}
+  \item ``Interpretability is the degree to which a human can consistently
+    predict the model’s result''\footnote{Kim, Been, Rajiv Khanna, and
+    Oluwasanmi O. Koyejo. ``Examples are not enough, learn to criticize!
+    Criticism for interpretability.'' Advances in Neural Information Processing
+    Systems (2016).} 
+  \item ``Extraction of relevant knowledge from a machine-learning model
+    concerning relationships either contained in data or learned by the
+    model''\footnote{Murdoch, W. J., Singh, C., Kumbier, K., Abbasi-Asl, R. and
+    Yu, B. ``Definitions, methods, and applications in interpretable machine
+    learning.'' Proceedings of the National Academy of Sciences, 116(44),
+    22071-22080. (2019)} 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Γενίκευση μοντέλων μηχανικής μάθησης}
+  \begin{onlyenv}<1>
+    Έστω διαδικασία που παράγει έξοδο $y$ για βαθμωτή είσοδο $x$
+    \begin{center}
+      \scalebox{0.5}{
+        \input{figures/ovf_1_reality.pgf}
+      }
+    \end{center}
+  \end{onlyenv}
+  \begin{onlyenv}<2>
+    Δυστυχώς η διαδικασία αυτή μας είναι άγνωστη, αλλά μπορούμε να
+    δειγματοληπτήσουμε ένα μικρό σύνολο ζευγών εισόδου - εξόδου. Κατά τη
+    δειγματοληψία εισάγεται μικρός θόρυβος μέτρησης.
+    \begin{center}
+      \scalebox{0.5}{
+        \input{figures/ovf_2_sampling.pgf}
+      }
+    \end{center}
+  \end{onlyenv}
+  \begin{onlyenv}<3>
+    Στόχος μας είναι να μοντελοποιήσουμε τη διαδικασία χρησιμοποιώντας τα
+    δεδομένα που δειγματοληπτήσαμε (παλινδρόμηση - regression).
+    \vspace{1cm}\\
+  \end{onlyenv}
+  \begin{onlyenv}<4>
+    Μοντελοποίηση με γραμμικό μοντέλο:
+    \begin{equation*}
+      y = w_1\cdot x + w_0
+    \end{equation*}
+    \begin{center}
+      \scalebox{0.5}{
+        \input{figures/ovf_3_linear.pgf}
+      }
+    \end{center}
+  \end{onlyenv}
+  \begin{onlyenv}<5>
+    Μοντελοποίηση με πολυωνυμικό μοντέλο 2ου βαθμού:
+    \begin{equation*}
+      y = w_2\cdot x^2 + w_1\cdot x + w_0
+    \end{equation*}
+    \begin{center}
+      \scalebox{0.5}{
+        \input{figures/ovf_4_quadratic.pgf}
+      }
+    \end{center}
+  \end{onlyenv}
+  \begin{onlyenv}<6>
+    Μοντελοποίηση με πολυωνυμικό μοντέλο 3ου βαθμού:
+    \begin{equation*}
+      y = w_3\cdot x^3 + w_2\cdot x^2 + w_1\cdot x + w_0
+    \end{equation*}
+    \begin{center}
+      \scalebox{0.5}{
+        \input{figures/ovf_5_3d.pgf}
+      }
+    \end{center}
+  \end{onlyenv}
+  \begin{onlyenv}<7>
+    Μοντελοποίηση με πολυωνυμικό μοντέλο 9ου βαθμού:
+    \begin{equation*}
+      y = \sum_{i=0}^{9}w_i\cdot x^{i}
+    \end{equation*}
+    \begin{center}
+      \scalebox{0.5}{
+        \input{figures/ovf_6_9d.pgf}
+      }
+    \end{center}
+  \end{onlyenv}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Διάγνωση του προβλήματος}
+
+  \begin{itemize}
+  \item Η συμπεριφορά του κάθε μοντέλου γίνεται άμεσα αντιληπτή από
+    το σχήμα της συνάρτησης
+  \item Το πρόβλημα της υπερεκπαίδευσης εντοπίζεται άμεσα
+  \item Τι γίνεται όμως αν έχουμε πολλές διαστάσεις, $p$, όπου η οπτικοποίηση δεν
+    είναι άμεση;
+    \begin{itemize}
+    \item Σε πολλά προβλήματα έχουμε δεκάδες ή εκατοντάδες χαρακτηριστικά
+    \item Σε εικόνες και σήματα συχνά έχουμε χιλιάδες διαστάσεις στην είσοδο
+    \end{itemize}
+  \end{itemize}
+  %\vspace{1cm}
+  %\uncover<2>{\obf{Γιατί μας ενδιαφέρει να καταλάβουμε τη συμπεριφορά ενός μοντέλου;}}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Ταξινόμηση μεθόδων ερμηνείας}
+  \begin{figure}
+    \includegraphics[width=.8\textwidth]{taxonomy_speith}
+    \caption{\footnotesize Timo Speith, ``A Review of Taxonomies of Explainable
+      Artificial Intelligence (XAI) Methods''. In 2022 ACM Conference on
+      Fairness, Accountability, and Transparency (FAccT '22), 2022}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Άμεσα επεξηγήσιμα μοντέλα}
+  \begin{onlyenv}<1>
+    \begin{itemize}
+    \item Ορισμένα μοντέλα επιδέχονται επεξηγήσεων άμεσα
+    \item Απλούστερο παράδειγμα: Μοντέλο γραμμικής παλινδρόμησης
+      \begin{equation*}
+        \hat{y} = w_1x_1 + \dotsc + w_px_p + b
+      \end{equation*}
+    \end{itemize}
+  \end{onlyenv}
+  \begin{onlyenv}<2>
+    \begin{itemize}
+    \item Αποτέλεσμα στο bike sharing dataset (βάρη μοντέλου)
+      \begin{equation*}
+        \hat{y} = w_1x_1 + \dotsc + w_px_p + b
+      \end{equation*}
+    \end{itemize}
+    \begin{center}
+      \begin{figure}
+        \includegraphics[width=.6\textwidth]{lr_weights}
+        \caption{\footnotesize C. Molnar, IML book}
+      \end{figure}
+    \end{center}
+  \end{onlyenv}
+  \begin{onlyenv}<3>
+    \begin{itemize}
+    \item Επίδραση χαρ/κών (οπτικοποίηση)
+      \begin{equation}
+        effect_j^{(i)} = w_jx_j^{(i)}
+      \end{equation}
+    \end{itemize}
+    \begin{center}
+      \begin{figure}
+        \includegraphics[width=.5\textwidth]{lr_effects}
+        \caption{\footnotesize C. Molnar, IML book}
+      \end{figure}
+    \end{center}
+  \end{onlyenv}
+\end{frame}
+
+\section{Τοπικές (local) μέθοδοι για την ερμηνεία ανεξαρτήτως μοντέλου}
+
+\begin{frame}
+  \frametitle{Local, model agnostic methods}
+  \begin{figure}
+    \includegraphics[width=.8\textwidth]{taxonomy_speith}
+    \caption{\footnotesize Timo Speith, ``A Review of Taxonomies of Explainable
+      Artificial Intelligence (XAI) Methods''. In 2022 ACM Conference on
+      Fairness, Accountability, and Transparency (FAccT '22), 2022}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Στόχος}
+  \begin{itemize}
+  \item Τα περισσότερα μοντέλα δεν επιδέχονται άμεσης ερμηνείας
+    \begin{itemize}
+    \item \orange{Τα χειριζόμαστε σαν ``μαύρα κουτιά''}
+    \end{itemize}
+  \item Στην περίπτωση αυτή εφαρμόζουμε γενικές μεθόδους για την ερμηνεία τους
+  \item \obf{Local}: Ερμηνεύουμε την απόφαση του μοντέλου για ένα συγκεκριμένο
+    δείγμα εισόδου
+  \item \obf{Global}: Ερμηνεύουμε τη συμπεριφορά του μοντέλου γενικά
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{LIME - Local Interpretable Model-agnostic
+    Explanations\footnote{Ribeiro, Marco Tulio, Sameer Singh, and Carlos
+    Guestrin. ``Why should I trust you?: Explaining the predictions of any
+    classifier.'' Proceedings of the 22nd ACM SIGKDD international conference
+    on knowledge discovery and data mining. ACM (2016)}} 
+  \begin{itemize}
+  \item Ιδέα:
+    \begin{itemize}
+    \item Δειγματοληπτούμε με τυχαία κανονική κατανομή στη γειτονιά ενός
+      δείγματος και λαμβάνουμε την έξοδο του μοντέλου
+    \item Στα δείγματα που λαμβάνουμε, εκπαιδεύουμε ένα ερμηνεύσιμο μοντέλο,
+      με βάρη που εξαρτώνται και από την απόσταση του τυχαίου δείγματος από
+      το αρχικό
+    \end{itemize}
+    \begin{equation*}
+    \text{explanation(x)} = \arg\min\limits_{g\in G}L(f, g, \pi_x) + \Omega(g)
+    \end{equation*}
+  \item Παράδειγμα για $g$: LASSO (γραμμικό μοντέλο με $L_1$ ομαλοποίηση)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{LIME σε εικόνες}
+  \begin{itemize}
+  \item Αντί για χαρ/κά, χρησιμοποιούμε superpixels (πχ μέσω quick shift)
+  \item Παράγουμε δείγματα ``αφαιρώντας'' superpixels (πχ τα αντικαθιστούμε με το
+    μέσο γκρι)
+  \end{itemize}
+  \begin{figure}
+    \includegraphics[width=.8\textwidth]{LIME}
+    \caption{\footnotesize Ribeiro et al., 2016}
+  \end{figure}
+\end{frame}
+
+% TODO
+\begin{frame}
+  \frametitle{SHAP}
+  \begin{itemize}
+  \item Παρόμοια λογική με τον LIME, διαφορετικός μηχανισμός επιλογής βαρών
+  \item Αρκετή θεωρία δε θα μπούμε σε λεπτομέρειες
+    \begin{figure}
+      \includegraphics[width=.6\textwidth]{shap-superpixel}
+      \caption{\footnotesize C. Molnar, IML book}
+    \end{figure}
+  \end{itemize}
+\end{frame}
+
+\section{Μέθοδοι ερμηνείας CNN}
+
+\begin{frame}
+  \frametitle{Οπτικοποίηση των εξαγόμενων χαρ/κών}
+  \begin{figure}
+    \includegraphics[width=\textwidth]{features}
+    \caption{\footnotesize \url{https://distill.pub/2017/feature-visualization/}}
+  \end{figure}
+  \begin{itemize}
+  \item Οι εικόνες μεγιστοποιούν την ενεργοποίηση συγκεκριμένων φίλτρων ενός Inception-V1 σε
+    διαφορετικό βάθος
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Pixel attribution / Saliency maps}
+  Μέθοδοι που οπτικοποιούν τη συνεισφορά διαφορετικών περιοχών της εικόνας στην απόφαση
+  \begin{itemize}
+  \item Μέθοδοι βασισμένες σε απόκρυψη ή διατάρραξη (Occlusion- / Perturbation-based)
+    \begin{itemize}
+    \item SHAP / LIME ανήκουν σ' αυτή την κατηγορία
+    \end{itemize}
+  \item Μέθοδοι βασισμένες στην παράγωγο (Gradient-based)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Saliency maps (vanilla gradient)}
+  \begin{enumerate}
+  \item Forward pass της εικόνας εισόδου, $I_0$
+  \item Υπολογίζουμε την παράγωγο της εξόδου/κλάσης που μας ενδιαφέρει, $S_c$, ως
+    προς την είσοδο
+    \begin{equation*}
+      E_{grad}(I_0) = \frac{\partial S_c}{\partial I}\Bigr|_{I=I_0}
+    \end{equation*}
+  \item Οπτικοποιούμε την παραγόμενη εικονα
+  \end{enumerate}
+  Πως χειριζόμαστε τη $ReLU$;
+  \begin{align*}
+    X_{n+1} &= \max(0, X_n)\\
+    \frac{\partial f}{\partial X_n} &= \frac{\partial f}{\partial X_{n+1}}\mathbf{I}(X_n > 0)
+  \end{align*}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Κορεσμός}
+  \begin{figure}
+    \includegraphics[width=.6\textwidth]{saturation}
+    \caption{\footnotesize A. Shrikumar, P. Greenside, and A.
+      Kundaje. ``Learning important features through propagating activation
+      differences.'' Proceedings of the 34th International Conference on
+      Machine Learning-Volume 70. JMLR. org, (2017).}
+  \end{figure}
+  \begin{itemize}
+  \item Παραλλαγές των Saliency Maps: DeconvNets, Guided Backpropagation
+    \begin{itemize}
+    \item επί της ουσίας διαφορετικός χειρισμός του $ReLU$, δε λύνουν όμως το
+      πρόβλημα του κορεσμού
+    \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{GradCAM}
+  Διαφορετική προσέγγιση, ξεκινώντας από την έξοδο του προτελευταίου layer
+  (πριν το softmax) για την κλάση $c$ και για τις ενεργοποιήσεις $A^{k}$ του
+  $k$ layer
+  \begin{enumerate}
+  \item Υπολογίζουμε το global average pooling των παραγώγων
+    \begin{equation*}
+      a_{k}^{c} = \frac{1}{Z}\sum\limits_i\sum\limits_j\frac{\partial
+        y^{c}}{\partial A^{k}_{i, j}}
+    \end{equation*}
+    \begin{itemize}
+    \item Οι συντελεστές $a_{k}^{c}$ ποσοτικοποιούν τη σημασία του layer $k$ στον
+      εντοπισμό της κλάσης $c$
+    \end{itemize}
+  \item Οπτικοποιούμε το αποτέλεσμα χρησιμοποιώντας το βεβαρυμένο άθροισμα
+    των ενεργοποιήσεων:
+    \begin{equation*}
+      L_{GradCAM}^{c} = ReLU\left(\sum\limits_ka_kA^{k}\right)
+    \end{equation*}
+  \end{enumerate}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Παράδειγμα - αρχικές εικόνες}
+  \begin{figure}
+    \includegraphics[width=.6\textwidth]{original-images}
+    \caption{\footnotesize C. Molnar, IML book}
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{Παράδειγμα - ερμηνεία βάσει παραγώγων}
+  \begin{figure}
+    \includegraphics[width=.6\textwidth]{grad}
+    \caption{\footnotesize C. Molnar, IML book}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Προβλήματα - μειονεκτήματα}
+  \begin{itemize}
+  \item Η αξιολόγηση είναι συνήθως ποιοτική - δε γνωρίζουμε αν η ερμηνεία
+    είναι σωστή
+  \item Έχει δειχθεί ότι οι μέθοδοι αυτές είναι πολύ
+    ευαίσθητες\footnote{A. Ghorbani, A. Abid, and J. Zou. ``Interpretation of
+    neural networks is fragile.'' Proceedings of the AAAI Conference on
+    Artificial Intelligence. Vol. 33. 2019.}
+    \begin{itemize}
+    \item \orange{Πολύ μικρές αλλαγές στην είσοδο μπορούν να οδηγήσουν στην ίδια
+      πρόβλεψη αλλά εντελώς διαφορετική ερμηνεία}
+    \end{itemize}
+  \item Επίσης έχει δειχθεί ότι οι μέθοδοι αυτές είναι πολύ
+    αναξιόπιστες\footnote{P-J Kindermans, S. Hooker, J. Adebayo, M. Alber,
+    K. T. Sch\"{u}tt,  S. D\"{a}hne, D. Erhan and B. Kim. ``The (un)
+    reliability of saliency methods.'' In Explainable AI: Interpreting,
+    Explaining and Visualizing Deep Learning, pp. 267-280. Springer, Cham
+    (2019)}
+    \begin{itemize}
+    \item \orange{Εισάγοντας σταθερή μετατόπιση της φωτεινότητας και
+      αλλάζοντας αντίστοιχα τον όρο μεροληψίας του πρώτου επιπέδου οδηγεί
+      στις ίδιες προβλέψεις και στις ίδιες παραγώγους, αλλά σε διαφορετικές
+      ερμηνείες}
+    \end{itemize}
+  \item Τέλος έχει δειχθεί ότι συχνά οι μέθοδοι αυτές συχνά δεν εξαρτώνται
+    από το μοντέλο ή τα δεδομένα, όπως πχ ένα φίλτρο ανίχνευσης
+    ακμών\footnote{J. Adebayo, J. Gilmer, M. Muelly, I. Goodfellow, M. Hardt
+    and B. Kim. ``Sanity checks for saliency maps.'' arXiv preprint
+    arXiv:1810.03292 (2018)} 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Παράδειγμα - ομοιότητα με edge detectors}
+  \begin{figure}
+    \includegraphics[width=.8\textwidth]{edge_detectors}
+    \caption{\footnotesize Adebayo et al, 2018}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Παράδειγμα - τεστ τυχαιοποίησης}
+  \begin{figure}
+    \includegraphics[width=.8\textwidth]{randomization_test}
+    \caption{\footnotesize Adebayo et al, 2018}
+  \end{figure}
+\end{frame}
+
+\section{Ολικές μέθοδοι χωρίς γνώση του μοντέλου}
+
+\begin{frame}
+  \frametitle{Στόχος}
+  \begin{itemize}
+  \item Στόχος είναι η δημιουργία ερμηνειών οι οποίες περιγράφουν τη συμπεριφορά
+    ενός μοντέλου συνολικά.
+  \item Εστιάζουμε σε δεδομένα πίνακα και συνήθως το αποτέλεσμα είναι ένα
+    διάγραμμα.
+  \end{itemize}
+  \begin{figure}
+    \includegraphics[width=.6\textwidth]{taxonomy_speith}
+  \end{figure}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Μέθοδοι επίδρασης χαρ/κών (feature effect)}
+  \begin{itemize}
+  \item \(x_s \rightarrow \) feature of interest, \(\Vx_c \rightarrow\) other features
+  \item Πως απομονώνουμε την επίδραση του \(x_s\);
+  %% \item Προβλήματα:
+  %%   \begin{itemize}
+  %%   \item Συσχετισμένα χαρ/κά
+  %%   \item Η \(f\) έχει μάθει σύνθετες αλληλεπιδράσεις 
+  %%   \end{itemize}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Partial Dependence Plots (PDP)}
+  \begin{onlyenv}<1>
+    \begin{itemize}
+    \item Προτάθηκε από τον J. Friedman το 2001\footnote{J. Friedman. ``Greedy
+    function approximation: A gradient boosting machine.'' Annals of statistics
+    (2001): 1189-1232} και είναι η οριακή (marginal) \obf{επίδραση} ενός χαρ/κού
+      στην έξοδο του μοντέλου:
+      \begin{equation*}
+        \hat{f_s(x_s)} = E_{X_c}\left[\hat{f}(x_s, X_c)\right] =
+        \int\hat{f}(x_s, X_c)d\mathbb{P}(X_c)
+      \end{equation*}
+      όπου $x_s$ είναι η τιμή του χαρ/κού (ή των χαρ/κών) του οποίου θέλουμε να
+      υπολογίσουμε την επίδραση και $X_c$ τυχαία μεταβλητή που αντιστοιχεί σε
+      όλα τα άλλα χαρ/κά του μοντέλου.
+    \item Υπολογισμός:
+      \begin{equation*}
+        \hat{f}_s(x_s) = \frac{1}{n}\sum\limits_{i=1}^{n}\hat{f}(x_s, \Vx_c^{(i)})
+      \end{equation*}
+    \end{itemize}
+  \end{onlyenv}
+  \begin{onlyenv}<2>
+    \obf{Παράδειγμα 1 (συνεχή χαρ/κα):}
+    \begin{figure}
+      \includegraphics[width=.6\textwidth]{pdp-bike-1}
+      \caption{\footnotesize C. Molnar, IML book}
+    \end{figure}
+  \end{onlyenv}
+  \begin{onlyenv}<3>
+    \obf{Παράδειγμα 2 (κατηγορικά χαρ/κα):}
+    \begin{figure}
+      \includegraphics[width=.6\textwidth]{pdp-bike-cat-1}
+      \caption{\footnotesize C. Molnar, IML book}
+    \end{figure}
+  \end{onlyenv}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Προβλήματα των PDPs}
+  \begin{onlyenv}<1>
+    \begin{itemize}
+    \item Συσχετισμένα χαρακτηριστικά
+      \begin{itemize}
+      \item Παράδειγμα: $\text{price} = f(\text{num\_rooms}, \text{area})$
+      \item Για τον υπολογισμό της επίδρασης του εμβαδού για τιμή 40 τμ θα χρησιμοποιήσουμε και
+        τιμή 10 για τον αριθμό δωματίων (μη ρεαλιστική)
+      \item Ως αποτέλεσμα έχουμε λανθασμένη εκτίμηση της επίδρασης των χαρακτηριστικών
+      \end{itemize}
+    \item Οι ετερογενείς επιδράσεις των χαρ/κών μπορεί να αποκρύπτονται από τη
+      μέση τιμή
+    \end{itemize}
+  \end{onlyenv}
+  \begin{onlyenv}<2>
+    \begin{figure}
+      \includegraphics[width=.6\textwidth]{aleplot-motivation1-1}
+      \caption{\footnotesize C. Molnar, IML book}
+    \end{figure}
+  \end{onlyenv}
+\end{frame}
+
+\begin{frame}
+  \frametitle{MPlots}
+
+  \begin{onlyenv}<1>
+    Βάζουμε την τιμή του $x_s$ ως συνθήκη:
+    \begin{itemize}
+    \item \(\Vx_c|x_s\): \(f(x_s) = \mathbb{E}_{\Vx_c|x_s}[f(x_s, \Vx_c)]\)
+    \end{itemize}
+  \end{onlyenv}
+  \begin{onlyenv}<2>
+    Στο προηγούμενο παράδειγμα:
+    \begin{figure}
+      \includegraphics[width=.6\textwidth]{aleplot-motivation2-1}
+      \caption{\footnotesize C. Molnar, IML book}
+    \end{figure}
+  \end{onlyenv}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Πρόβλημα των M-Plots}
+  \begin{itemize}
+  \item Η επίδραση που εκτιμούν προκύπτει από το συνδυασμό επιδράσεων όλων των
+    (συσχετισμένων) χαρ/κών
+  \item Real effect: \(x_{\mathtt{age}} = 50 \rightarrow 10\), \(x_{\mathtt{years\_contraceptives}} = 20 \rightarrow 10\)
+  \item Το MPlot μπορεί να αποδώσει επίδραση 17 και στα δύο
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Accumulated Local Effects (ALE)\footnote{D. Apley and
+    J. Zhu. ``Visualizing the effects of predictor variables in black box
+    supervised learning models.'' Journal of the Royal Statistical Society:
+    Series B (Statistical Methodology) 82.4 (2020): 1059-1086.}}
+
+  \begin{itemize}
+  \item Λύνει τα προβλήματα που οφείλονται στη συσχέτιση των χαρ/κών
+    λαμβάνοντας διαφορές σε ένα μικρό παράθυρο
+  \item \(f(x_s) = \int_{x_{min}}^{x_s}\mathbb{E}_{\Vx_c|z}[ \frac{\partial f}{\partial x_s}(z, \Vx_c)] \partial z\)
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{Προσέγγιση του ALE}
+  ALE definition: \( f(x_s) = \int_{x_{s, min}}^{x_s}\mathbb{E}_{\Vx_c|z}[ \frac{\partial f}{\partial x_s}(z, \Vx_c)] \partial z \)
+  % \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  ALE approximation: \(f(x_s) = \sum_k^{k_x}
+  \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\Vx^i \in \mathcal{S}_k}
+    \underbrace{[f(z_k, \Vx^i_c) - f(z_{k-1}, \Vx^i_c)]}_{\text{point
+        effect}}}_{\text{bin effect}} \) 
+
+  \begin{figure}[ht]
+    \centering
+    \includegraphics[width=0.5\textwidth]{./figures/ale_bins_iml.png}
+    \caption{\footnotesize C. Molnar, IML book}
+  \end{figure}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  Το πλήθος των bins (παράμετρος \(K\)) είναι κρίσιμο!
+\end{frame}
+
+\begin{frame}
+  \frametitle{ALE plots - παραδείγματα}
+  \begin{onlyenv}<1>
+    \begin{figure}
+      \includegraphics[width=.6\textwidth]{ale-bike-1}
+      \caption{\footnotesize C. Molnar, IML book}
+    \end{figure}
+  \end{onlyenv}
+  \begin{onlyenv}<2>
+    \begin{figure}
+      \includegraphics[width=.6\textwidth]{ale-bike-cat-1}
+      \caption{\footnotesize C. Molnar, IML book}
+    \end{figure}
+  \end{onlyenv}
+\end{frame}
+
+\section{DALE}
+
+\begin{frame}[plain,c]
+  \Large V. Gkolemis, T. Dalamagas, C. Diou, ``DALE: Differential Accumulated
+  Local Effects for efficient and accurate global explanations'', ACML, 2022
+  \\
+  \normalsize{οι διαφάνειες από εδώ και πέρα στα αγγλικά}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{ALE approximation - weaknesses}
+
+  \begin{equation*}
+    f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i
+        \in \mathcal{S}_k} \underbrace{[f(z_k, \Vx^i_c) - f(z_{k-1},
+          \Vx^i_c)]}_{\text{point effect}}}_{\text{bin effect}}
+  \end{equation*}
+
+  \begin{itemize}
+  \item Point Effect \(\Rightarrow\) evaluation \alert{at bin limits}
+    \begin{itemize}
+    \item 2 evaluations of \(f\) per point \( \rightarrow \) slow
+    \item change bin limits, pay again \(2*N\) evaluations of \(f\) \( \rightarrow\) restrictive
+    \item broad bins may create out of distribution (OOD) samples \( \rightarrow\) not-robust in wide bins
+    \end{itemize}
+  \end{itemize}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  ALE approximation has some weaknesses
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Our proposal: Differential ALE}
+  \begin{equation*}
+    f(x_s) = \Delta x \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|}
+      \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial
+            x_s}(x_s^i, \Vx^i_c)]}_{\text{\alert{point effect}}}}_{\text{bin effect}}
+  \end{equation*}
+
+  \begin{itemize}
+  \item Point Effect \(\Rightarrow\) evaluation \alert{on instances}
+    \begin{itemize}
+    \item Fast \( \rightarrow \) use of auto-differentiation, all derivatives in a single pass
+    \item Versatile \( \rightarrow\) point effects computed once, change bins without cost
+    \item Secure \( \rightarrow\) does not create artificial instances
+    \end{itemize}
+  \end{itemize}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  For \alert{differentiable} models, DALE resolves ALE weaknesses
+\end{frame}
+
+
+
+% chapter 1
+\section{DALE vs ALE}
+
+\subsection{Dale is faster and versatile}
+
+\begin{frame}
+  \frametitle{DALE is faster and versatile - theory}
+  \[f(x_s) = \Delta x \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|} \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial f}{\partial x_s}(x_s^i, \Vx^i_c)]}_{\text{point effect}}}_{\text{bin effect}} \]
+
+  \begin{itemize}
+  \item Faster
+    \begin{itemize}
+    \item gradients wrt all features \(\nabla_{\Vx} f(\Vx^i)\) in a single pass
+    \item auto-differentiation must be available (deep learning)
+    \end{itemize}
+  \item Versatile
+    \begin{itemize}
+    \item Change bin limits, with near zero computational cost
+    \end{itemize}
+
+  \end{itemize}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE is faster and allows redefining bin-limits
+\end{frame}
+
+\begin{frame}
+  \frametitle{DALE is faster and versatile - Experiments}
+  \begin{figure}[h]
+    \centering
+    \resizebox{.4\columnwidth}{!}{\input{figures/case-1-plot-1.tex}}
+    \resizebox{.43\columnwidth}{!}{\input{figures/case-1-plot-2.tex}}
+    \caption[Case-1-fig-1]{Light setup; small dataset \((N=10^2\) instances), light \(f\). Heavy setup; big dataset (\(N=10^5\) instances), heavy \(f\)}
+    \label{fig:case-1-plots-1}
+  \end{figure}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE considerably accelerates the estimation
+\end{frame}
+
+
+\subsection{DALE is more Accurate}
+
+\begin{frame}
+  \frametitle{DALE uses on-distribution samples - Theory}
+  \[f(x_s) = \sum_k^{k_x} \underbrace{\frac{1}{|\mathcal{S}_k|}
+    \sum_{i:\xb^i \in \mathcal{S}_k} \underbrace{[\frac{\partial
+          f}{\partial x_s}(x_s^i, \Vx^i_c)]}_{\text{point
+        effect}}}_{\text{bin effect}} \]
+
+  \begin{itemize}
+  \item point effect \alert{independent} of bin limits
+    \begin{itemize}
+    \item \(\frac{\partial f}{\partial x_s}(x_s^i, \Vx^i_c)\)
+      computed on real instances \(\Vx^i = (x_s^i, \Vx_c^i)\)
+    \end{itemize}
+  \item bin limits affect only the \alert{resolution} of the plot
+    \begin{itemize}
+    \item wide bins \(\rightarrow\) low resolution plot, bin
+      estimation from more points
+    \item narrow bins \(\rightarrow\) high resolution plot, bin
+      estimation from less points
+    \end{itemize}
+  \end{itemize}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE enables wide bins without creating out of distribution instances
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{DALE uses on-distribution samples - Experiments}
+  \begin{columns}
+    \begin{column}{0.5\textwidth}
+      \[ f(x_1, x_2, x_3) = x_1x_2 + x_1x_3 \: \textcolor{red}{ \pm \: g(x)}\]
+      \[ x_1 \in [0,10], x_2 \sim x_1 + \epsilon, x_3 \sim \mathcal{N}(0, \sigma^2) \]
+      \[ f_{\mathtt{ALE}}(x_1) = \frac{x_1^2}{2} \]
+      \begin{itemize}
+      \item point effects affected by \((x_1x_3)\) (\(\sigma\) is large)
+      \item bin estimation is noisy (samples are few)
+      \end{itemize}
+    \end{column}
+    \begin{column}{0.5\textwidth}
+      \begin{center}
+        \includegraphics[width=\textwidth]{./figures/f_plot.pdf}
+      \end{center}
+    \end{column}
+  \end{columns}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  Intuition: we need wider bins (more samples per bin)
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{DALE vs ALE - 40 Bins}
+  \begin{figure}
+    \centering
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_40_bins.pdf}
+    \includegraphics<2>[width=.49\textwidth]{./figures/dale_40_bins.pdf}
+    \includegraphics<2>[width=.49\textwidth]{./figures/ale_40_bins.pdf}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{itemize}
+  \item DALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \item ALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{DALE vs ALE - 20 Bins}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_20_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/dale_20_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/ale_20_bins.pdf}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{itemize}
+  \item DALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \item ALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{DALE vs ALE - 10 Bins}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_10_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/dale_10_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/ale_10_bins.pdf}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{itemize}
+  \item DALE: on-distribution, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \item ALE: starts being OOD, noisy bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{DALE vs ALE - 5 Bins}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_5_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/dale_5_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/ale_5_bins.pdf}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{itemize}
+  \item DALE: on-distribution, robust bin effect \(\rightarrow\) \textcolor{green}{good estimation}
+  \item ALE: completely OOD, robust bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+  \frametitle{DALE vs ALE - 3 Bins}
+  \begin{figure}[ht]
+    \centering
+    \includegraphics<1>[width=0.6\textwidth]{./figures/bin_splitting_3_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/dale_3_bins.pdf}
+    \includegraphics<2>[width=0.49\textwidth]{./figures/ale_3_bins.pdf}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  \begin{itemize}
+  \item DALE: on-distribution, robust bin effect \(\rightarrow\) \textcolor{green}{good estimation}
+  \item ALE: completely OOD, robust bin effect \(\rightarrow\) \textcolor{red}{poor estimation}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Real Dataset Experiments - Efficiency}
+  \begin{itemize}
+  \item Bike-sharing dataset
+  \item \(y \rightarrow\) daily bike rentals
+  \item \(\Vx:\) 10 features, most of them characteristics of the weather
+  \end{itemize}
+
+  \begin{table} \tiny
+    \centering
+    \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c}
+      \multicolumn{12}{c}{Efficiency on Bike-Sharing Dataset (Execution Times in seconds)} \\
+      \hline\hline
+      & \multicolumn{11}{|c}{Number of Features} \\
+      \hline
+      & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
+      \hline
+      \( \mathtt{DALE} \) & 1.17 & \textbf{1.19} & \textbf{1.22} & \textbf{1.24} & \textbf{1.27} & \textbf{1.30} & \textbf{1.36} & \textbf{1.32} & \textbf{1.33} & \textbf{1.37} & \textbf{1.39} \\
+      \hline
+      \( \mathtt{ALE} \) & \textbf{0.85} & 1.78 & 2.69 & 3.66 & 4.64 & 5.64 & 6.85 & 7.73 & 8.86 & 9.9 & 10.9 \\
+      \hline
+    \end{tabular}
+  \end{table}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE requires almost same time for all features
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Real Dataset Experiments - Accuracy}
+  \begin{itemize}
+  \item Difficult to compare in real world datasets
+  \item We do not know the ground-truth effect
+  \item In most features, DALE and ALE agree.
+  \item Only \(X_{\mathtt{hour}}\) is an interesting feature
+  \end{itemize}
+
+  \begin{figure}[h]
+    \centering
+    \resizebox{.3\columnwidth}{!}{\input{figures/bike-dataset-dale-comparison.tex}}
+    \resizebox{.3\columnwidth}{!}{\input{figures/bike-dataset-ale-comparison.tex}}
+    \caption{(Left) DALE (Left) and ALE (Right) plots for
+      \(K = \{25, 50, 100\}\)}
+  \end{figure}
+
+\end{frame}
+
+\begin{frame}
+  \frametitle{What next?}
+  \begin{itemize}
+  \item Could we automatically decide the optimal bin sizes?
+    \begin{itemize}
+    \item Sometimes narrow bins are ok
+    \item Sometimes wide bins are needed
+    \end{itemize}
+  \item What about variable size bins?
+  \item Model the uncertainty of the estimation?
+  \end{itemize}
+
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  DALE can be a driver for future work
+\end{frame}
+
+
+\begin{frame}[plain,c]
+  \Large Ευχαριστώ για την προσοχή σας!
+\end{frame}
+
+\begin{frame}[plain,c]
+  \Large Συμπληρωματικές διαφάνειες
+\end{frame}
+
+\begin{frame}
+  \frametitle{Τι είναι μια καλή εξήγηση;}
+  \begin{itemize}
+  \item Συχνά δε θέλουμε όλη την πληροφορία αλλά επιλεγμένες σημαντικές
+    πληροφορίες
+    \begin{itemize}
+    \item \orange{Οι εξηγήσεις πρέπει να είναι σύντομες}
+    \item \orange{Εξαίρεση: Ερμηνεία για νομικούς σκοπούς}
+    \end{itemize}
+  \item Άλλες φορές θέλουμε αντιπαραδείγματα
+    \begin{itemize}
+    \item \orange{τι έπρεπε να έχω κάνει ώστε να εγκριθεί το δάνειό μου;}
+    \item \orange{Ποια θα ήταν η απόφαση του μοντέλου αν άλλαζα την τιμή ενός
+      συγκεκριμένου χαρ/κού;}
+    \end{itemize}
+  \item Οι εξηγήσεις εξαρτώνται από την εφαρμογή και τις γνώσεις του παραλήπτη
+  \item Οι εξηγήσεις συχνά εστιάζουν σε ασυνήθιστες τιμές/χαρακτηριστικά
+    \begin{itemize}
+    \item $\text{abnormal} \Rightarrow \text{interesting}$
+    \end{itemize}
+  \item Αν δεν υπάρχουν ασυνήθιστες τιμές, τότε οι εξηγήσεις πρέπει να είναι
+    γενικές και να έχουν υψηλή πιθανότητα (δηλ. να εφαρμόζονται σε μεγάλο
+    ποσοστό δειγμάτων)
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Ταξινόμηση μεθόδων ερμηνείας (απλούστερη)}
+  \begin{figure}
+    \includegraphics[width=.6\textwidth]{taxonomy}
+    \caption{\footnotesize Singh et al, Explainable Deep Learning Models in Medical Image
+      Analysis, Journal of Imaging 6(6):52, 2020}
+  \end{figure}
+  %% \begin{itemize}
+  %% \item Εγγενής (intrisic) ερμηνευσιμότητα ή Post-hoc ερμηνεία;
+  %% \item Τύπος ερμηνείας;
+  %%   \begin{itemize}
+  %%     \item Περιγραφικά στατιστικά για κάθε χαρ/κό, διάγραμμα επίδρασης
+  %%       χαρ/κών, βάρη μοντέλου, δείγμα εισόδου (counterfactual), κλπ
+  %%   \end{itemize}
+  %% \item Γενική μέθοδος ή για συγκεκριμένο μοντέλο;
+  %% \item Τοπική (local) ή ολική (global);
+  %% \end{itemize}
+\end{frame}
+
+\end{document}

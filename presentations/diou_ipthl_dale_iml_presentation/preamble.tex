@@ -1,0 +1,187 @@
+%%
+%% Beamer presentation preamble template for Applications of Artificial
+%% Intelligence course
+%% Department of Informatics and Telematics,
+%% Harokopio University of Athens, Greece.
+%%
+%% Author: Christos Diou
+
+\documentclass[article,aspectratio=169]{beamer}
+
+%%%%%%%%%%%% Preamble %%%%%%%%%%%%
+
+\usefonttheme[onlysmall]{structurebold}
+
+%% Math stuff
+\usepackage{amssymb}
+\usepackage{amsmath}
+\usepackage{amsfonts}
+\usepackage{amsthm}
+\usepackage{bm}
+\usepackage{bbold}
+\newcommand{\mathbbm}[1]{\text{\usefont{U}{bbm}{m}{n}#1}} % from mathbbm.sty
+
+
+% Frequently used vectors
+\newcommand{\Vu}{\mathbf{u}}
+\newcommand{\Vh}{\mathbf{h}}
+\newcommand{\Vv}{\mathbf{v}}
+\newcommand{\Vw}{\mathbf{w}}
+\newcommand{\Vb}{\mathbf{b}}
+\newcommand{\Vx}{\mathbf{x}}
+\newcommand{\Vy}{\mathbf{y}}
+\newcommand{\Vz}{\mathbf{z}}
+\newcommand{\Vf}{\mathbf{f}}
+\newcommand{\VC}{\mathbf{C}}
+\newcommand{\VD}{\mathbf{D}}
+\newcommand{\VX}{\mathbf{X}}
+\newcommand{\VS}{\mathbf{S}}
+\newcommand{\VW}{\mathbf{W}}
+\newcommand{\VV}{\mathbf{V}}
+\newcommand{\VU}{\mathbf{U}}
+\newcommand{\Vth}{\bm{\theta}}
+\newcommand{\pmodel}{p_{\text{model}}}
+\newcommand{\pdata}{\hat{p}_{\text{data}}}
+\newcommand{\thetab}{\boldsymbol{\theta}}
+\newcommand{\xb}{\boldsymbol{x}}
+
+% argmin and argmax
+\DeclareMathOperator*{\argmax}{arg\,max}
+\DeclareMathOperator*{\argmin}{arg\,min}
+
+%% Graphics
+\usepackage{graphicx}
+\graphicspath{{logos/}{figures/}}
+\DeclareGraphicsExtensions{.jpg,.png,.jpeg,.pdf,.tiff}
+\usepackage{tikz}
+\usetikzlibrary{matrix,positioning,arrows.meta,arrows,fit,backgrounds,decorations.pathreplacing}
+
+\tikzset{
+  mymat/.style={ matrix of math nodes, text height=2.5ex, text
+    depth=0.75ex, text width=6.00ex, align=center, column
+    sep=-\pgflinewidth, nodes={minimum height=5.0ex}
+  },
+  mymats/.style={ mymat, nodes={draw,fill=#1}
+  },
+  mymat2/.style={
+    matrix of math nodes, text height=1.0ex, text depth=0.0ex, minimum
+    width=5ex, % text
+    width=7.00ex, align=center, column sep=-\pgflinewidth
+  },
+}
+\usepackage{tikzsymbols}
+\usepackage{pgfpages}
+\usepackage{pgfplots}
+%\usepackage[active,tightpage,pdftex]{preview}
+%\PreviewEnvironment{tikzpicture}
+\usepackage{multimedia}
+
+% \usetikzlibrary{arrows,shapes}
+% \tikzstyle{every picture}+=[remember picture]
+
+\usepackage{xcolor}
+
+%% Fonts
+\usepackage[cm-default,no-math]{fontspec}
+\setmonofont{FreeMono}
+% \setmainfont[Mapping=tex-text,ItalicFont={Minion Pro Italic},BoldFont={Minion
+% Pro Bold},BoldItalicFont={Minion Pro Bold Italic}]{GFS Elpis}
+\setmainfont{PF Square Sans Pro}
+\setsansfont{PF Square Sans Pro}
+% \setsansfont[Mapping=tex-text,ItalicFont={Minion Pro Italic},BoldFont={Minion Pro Bold},BoldItalicFont={Minion Pro Bold Italic}]{GFS Elpis}
+\usepackage{xgreek}
+\usepackage{xunicode}
+\usepackage{xltxtra}
+
+%% Algorithms
+\usepackage{algorithm}
+\floatname{algorithm}{Αλγόριθμος}
+%\usepackage[ruled]{algorithm2e}
+%\usepackage{algpseudocode}
+%\usepackage{algc}
+\usepackage{algorithmic}
+%\algsetup{linenosize=\tiny}
+
+% Code
+\definecolor{bg}{rgb}{0.95,0.95,0.95}
+\definecolor{lightred}{rgb}{0.95,0.85,0.85}
+\makeatletter
+\newcommand{\currentfontsize}{\fontsize{\f@size}{\f@baselineskip}\selectfont}
+\makeatother
+
+%% Others
+\usepackage{multirow}
+\usepackage{hyperref}
+\hypersetup{
+  colorlinks=true,
+  linkcolor=blue,
+  filecolor=magenta,      
+  urlcolor=cyan,
+}
+\urlstyle{same}
+\usepackage[absolute,overlay]{textpos}
+\usepackage{array}
+
+\newcommand{\obf}[1]{{\color{orange} \textbf{#1}}}
+\newcommand{\orange}[1]{{\color{orange} #1}}
+\newcommand{\rbf}[1]{{\color{red} \textbf{#1}}}
+\newcommand{\red}[1]{{\color{red} #1}}
+
+%\usepackage{concmath}
+
+%% Beamer options
+
+%\usefonttheme[onlymath]{serif}
+\usefonttheme{professionalfonts}
+%\usepackage[texcoord,grid,gridunit=mm,gridcolor=red!10,subgridcolor=green!10]{eso-pic}
+%\usepackage[texcoord,gridunit=mm,gridcolor=red!10,subgridcolor=green!10]{eso-pic}
+\setbeamertemplate{navigation symbols}{}%remove navigation symbols
+\setbeamertemplate{page number in head/foot}[pagenumber]
+\setbeamercolor{page number in head/foot}{fg=gray}
+\setbeamertemplate{footline}[frame number]
+\setbeamertemplate{frametitle}[default][center]
+%\setbeameroption{show notes on second screen}
+%\setbeameroption{show notes}
+\setbeamerfont{note page}{size=\scriptsize}
+\setbeamertemplate{note page}[plain]
+\setbeamertemplate{itemize items}[circle]
+\setbeamertemplate{enumerate items}[default]
+
+% For faster compile on development
+% \includeonlyframes{current}
+
+%% New commands
+\newcommand\FrameText[1]{%
+  \begin{textblock*}{\paperwidth}(0pt,.95\textheight)
+    \hfill #1 \hspace{2em}
+    % \raggedright #1\hspace{.5em}
+\end{textblock*}}
+
+\newcommand\FrameTextTop[1]{%
+  \begin{textblock*}{\paperwidth}(0pt,.05\textheight)
+    \hfill #1 \hspace{2em}
+    % \raggedright #1\hspace{.5em}
+\end{textblock*}}
+
+%% \titlegraphic{
+%%   \begin{textblock*}{0.95\paperwidth}(2mm,1mm)
+%%     \adjustbox{valign=c}{\includegraphics[width=0.31\linewidth,keepaspectratio]{hua_logo}}
+%%     \hfill
+%%     \adjustbox{valign=c}{\includegraphics[width=0.15\linewidth,keepaspectratio]{dit_hua_logo}}
+%%   \end{textblock*}
+%% }
+\titlegraphic{
+  \begin{textblock*}{0.95\paperwidth}(2mm,1mm)
+    \includegraphics[width=0.31\linewidth,keepaspectratio]{hua_logo}
+    \hfill
+    \includegraphics[width=0.15\linewidth,keepaspectratio]{dit_hua_logo}
+  \end{textblock*}
+}
+
+\author{Χρήστος Δίου}
+\institute{Τμήμα Πληροφορικής και Τηλεματικής\\
+  Χαροκόπειο Πανεπιστήμιο}
+\date{\small ΕΚΕΤΑ-ΙΠΤΗΛ 4/1/2022}
+
+
+%%%%%%%%%%%% Main content start %%%%%%%%%%%%

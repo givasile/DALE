@@ -1,0 +1,66 @@
+% This file was created with tikzplotlib v0.9.16.
+\begin{tikzpicture}
+
+\definecolor{color0}{rgb}{0.75,0.75,0}
+
+\begin{axis}[
+legend cell align={left},
+legend style={
+  fill opacity=0.8,
+  draw opacity=1,
+  text opacity=1,
+  at={(0.03,0.97)},
+  anchor=north west,
+  draw=white!80!black
+},
+tick align=outside,
+tick pos=left,
+title={Execution time},
+x grid style={white!69.0196078431373!black},
+xlabel={\(\displaystyle D\)},
+xmin=-14.75, xmax=419.75,
+xtick style={color=black},
+y grid style={white!69.0196078431373!black},
+ylabel={time (seconds)},
+ymin=-2.92848115925053, ymax=61.6359788282506,
+ytick style={color=black}
+]
+\addplot [semithick, red, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+5 1.42833173274994
+50 0.00626707077026367
+100 0.0063169002532959
+200 0.00649118423461914
+400 0.00713527202606201
+};
+\addlegendentry{$f(x)$}
+\addplot [semithick, blue, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+5 0.139054417610168
+50 0.0159751176834106
+100 0.0162965059280396
+200 0.0170460939407349
+400 0.0186780691146851
+};
+\addlegendentry{$\partial f / \partial x $}
+\addplot [semithick, color0, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+5 0.719573020935059
+50 6.64802551269531
+100 13.3791656494141
+200 28.1389636993408
+400 58.701229095459
+};
+\addlegendentry{$f_{ALE}$}
+\addplot [semithick, green!50!black, dashed, mark=*, mark size=3, mark options={solid}]
+table {%
+5 0.0721933841705322
+50 0.35551643371582
+100 0.69619345664978
+200 1.37003910541534
+400 2.82023906707764
+};
+\addlegendentry{$f_{DALE}$}
+\end{axis}
+
+\end{tikzpicture}
