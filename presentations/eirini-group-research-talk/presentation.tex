@@ -81,18 +81,18 @@
 \DeclareMathOperator*{\argmin}{arg\,min}
 \DeclareMathOperator*{\argmax}{arg\,max}
 
-\title[L3S Research Seminar]{Presentation at L3S Research Seminar}
+\title[Research Group]{Presentation at Research Group}
 \subtitle{DALE: Differential Accumulated Local Effects for efficient and accurate global explanations}
 \author[Gkolemis, Vasilis] % (optional)
-{Vasilis Gkolemis\inst{1,2} \and Theodore Dalamagas\inst{1} \and Christos Diou\inst{2}}
+{Vasilis Gkolemis\inst{!,*}}
 
 \institute[ATH-HUA]{
-  \inst{1} ATHENA Research and Innovation Center
+  \inst{!} ATHENA Research and Innovation Center
   \and %
-  \inst{2} Harokopio University of Athens
+  \inst{*} Harokopio University of Athens
 }
 
-\date{January 2023}
+\date{March 2023}
 
 % Use a simple TikZ graphic to show where the logo is positioned
 % \logo{\begin{tikzpicture}
@@ -147,30 +147,15 @@
 \end{frame}
 
 \begin{frame}
-  \frametitle{eXplainable AI (XAI)}
+  \frametitle{Questions}
   \begin{itemize}
-  \item Black-box model \(f(\cdot): \mathcal{X} \rightarrow \mathcal{Y} \), trained on \(\mathcal{D}\)
-    \vspace{3mm}
-
-    \item XAI extracts interpretable properties:
-    \begin{itemize}
-    \item[\(\rightarrow\)] Tabular data - Which features favor a prediction?
-    \item[\(\rightarrow\)] Computer Vision - Which image areas confuse the model?
-    \item[\(\rightarrow\)] NLP - Which words classified the comment as offensive?
-    \end{itemize}
-
-  \vspace{3mm}
-
-    \item Categories:
-      \begin{itemize}
-        \item[\(\rightarrow\)] Global vs local
-        \item[\(\rightarrow\)] Model-agnostic vs Model-specific
-        \item[\(\rightarrow\)] Output? number, plot, instance etc.
-      \end{itemize}
+  \item Why did the model make a specific decision? \textcolor{red}{local XAI}
+  \item What could we change so that the model will make a different decision? \textcolor{red}{counterfactual}
+  \item Can we summarize the model's behavior? \textcolor{red}{global XAI}
+  \item If models are knowledge extractors, what have they learned? \textcolor{red}{global XAI}
   \end{itemize}
-
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  Feature Effect: global, model-agnostic, outputs plot
+  Feature Effect: global, model-agnostic, outputs a \(1D\) plot
 \end{frame}
 
 
@@ -253,7 +238,15 @@
     \item We often have tens or hundreds of features
     \item Images and signals: Several thousands of input dimensions
     \end{itemize}
+  \item Example: \href{https://link.springer.com/chapter/10.1007/978-3-319-58838-4_27}{Risk Factors for Cervical Cancer Dataset}
+    \begin{itemize}
+    \item input: 15 features (smoker, years of hormonal contraceptives, age)
+    \item output: predict whether a woman will get cervical cancer
+    \end{itemize}
+
   \end{itemize}
+
+
 \end{frame}
 
 
@@ -658,68 +651,110 @@ Intuition: we need wider bins (more samples per bin)
 \end{frame}
 
 
+% \begin{frame}
+%   \frametitle{Real Dataset Experiments - Efficiency}
+%   \begin{itemize}
+%   \item Bike-sharing dataset\citep{BikeSharing}
+%   \item \(y \rightarrow\) daily bike rentals
+%   \item \(\bm{x}:\) 10 features, most of them characteristics of the weather
+%   \end{itemize}
+
+%   \begin{table} \tiny
+%   \centering
+%   \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c}
+%     \multicolumn{12}{c}{Efficiency on Bike-Sharing Dataset (Execution Times in seconds)} \\
+%     \hline\hline
+%     & \multicolumn{11}{|c}{Number of Features} \\
+%     \hline
+%     & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
+%     \hline
+%     \( \mathtt{DALE} \) & 1.17 & \textbf{1.19} & \textbf{1.22} & \textbf{1.24} & \textbf{1.27} & \textbf{1.30} & \textbf{1.36} & \textbf{1.32} & \textbf{1.33} & \textbf{1.37} & \textbf{1.39} \\
+%     \hline
+%     \( \mathtt{ALE} \) & \textbf{0.85} & 1.78 & 2.69 & 3.66 & 4.64 & 5.64 & 6.85 & 7.73 & 8.86 & 9.9 & 10.9 \\
+%     \hline
+%   \end{tabular}
+% \end{table}
+% \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+% DALE requires almost same time for all features
+% \end{frame}
+
+
+% \begin{frame}
+%   \frametitle{Real Dataset Experiments - Accuracy}
+%   \begin{itemize}
+%   \item Difficult to compare in real world datasets
+%    \item We do not know the ground-truth effect
+%    \item In most features, DALE and ALE agree.
+%    \item Only \(X_{\mathtt{hour}}\) is an interesting feature
+%   \end{itemize}
+
+%   \begin{figure}[h]
+%   \centering
+%     \resizebox{.3\columnwidth}{!}{\input{./../../ACML-paper/images/bike-dataset-dale-comparison.tex}}
+%     \resizebox{.3\columnwidth}{!}{\input{./../../ACML-paper/images/bike-dataset-ale-comparison.tex}}
+%     \caption{(Left) DALE (Left) and ALE (Right) plots for
+%       \(K = \{25, 50, 100\}\)}
+% \end{figure}
+
+% \end{frame}
+
+
+
 \begin{frame}
-  \frametitle{Real Dataset Experiments - Efficiency}
-  \begin{itemize}
-  \item Bike-sharing dataset\citep{BikeSharing}
-  \item \(y \rightarrow\) daily bike rentals
-  \item \(\bm{x}:\) 10 features, most of them characteristics of the weather
-  \end{itemize}
-
-  \begin{table} \tiny
-  \centering
-  \begin{tabular}{c|c|c|c|c|c|c|c|c|c|c|c}
-    \multicolumn{12}{c}{Efficiency on Bike-Sharing Dataset (Execution Times in seconds)} \\
-    \hline\hline
-    & \multicolumn{11}{|c}{Number of Features} \\
-    \hline
-    & 1 & 2 & 3 & 4 & 5 & 6 & 7 & 8 & 9 & 10 & 11 \\
-    \hline
-    \( \mathtt{DALE} \) & 1.17 & \textbf{1.19} & \textbf{1.22} & \textbf{1.24} & \textbf{1.27} & \textbf{1.30} & \textbf{1.36} & \textbf{1.32} & \textbf{1.33} & \textbf{1.37} & \textbf{1.39} \\
-    \hline
-    \( \mathtt{ALE} \) & \textbf{0.85} & 1.78 & 2.69 & 3.66 & 4.64 & 5.64 & 6.85 & 7.73 & 8.86 & 9.9 & 10.9 \\
-    \hline
-  \end{tabular}
-\end{table}
-\noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-DALE requires almost same time for all features
-\end{frame}
-
-
-\begin{frame}
-  \frametitle{Real Dataset Experiments - Accuracy}
-  \begin{itemize}
-  \item Difficult to compare in real world datasets
-   \item We do not know the ground-truth effect
-   \item In most features, DALE and ALE agree.
-   \item Only \(X_{\mathtt{hour}}\) is an interesting feature
-  \end{itemize}
-
-  \begin{figure}[h]
-  \centering
-    \resizebox{.3\columnwidth}{!}{\input{./../../ACML-paper/images/bike-dataset-dale-comparison.tex}}
-    \resizebox{.3\columnwidth}{!}{\input{./../../ACML-paper/images/bike-dataset-ale-comparison.tex}}
-    \caption{(Left) DALE (Left) and ALE (Right) plots for
-      \(K = \{25, 50, 100\}\)}
-\end{figure}
-
-\end{frame}
-
-\begin{frame}
-  \frametitle{What next?}
-  \begin{itemize}
-  \item Could we automatically decide the optimal bin sizes?
-    \begin{itemize}
-      \item Sometimes narrow bins are ok
-      \item Sometimes wide bins are needed
-      \end{itemize}
-    \item What about variable size bins?
-      \item Model the uncertainty of the estimation?
-  \end{itemize}
-
+  \frametitle{Future Ideas (1)}
+  PDPs use ICE plots, for exhibiting heterogeneity
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{figures/pdp}
+    \caption{PDP plot, taken from \href{https://arxiv.org/abs/1309.6392}{Goldstein et. al}}
+  \end{figure}
   \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
-  DALE can be a driver for future work
+  Interpretation?
+  Maybe $y \perp\!\!\!\!\perp x_2$
 \end{frame}
+
+\begin{frame}
+  \frametitle{Future Ideas (2)}
+  PDPs use ICE plots, for exhibiting heterogeneity
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.4\textwidth]{figures/pdp_ice}
+    \caption{PDP-ICE plot, taken from \href{https://arxiv.org/abs/1309.6392}{Goldstein et. al}}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  Interpretation now? Maybe $y \approx \pm 6 x_2 $ depending on a condition
+\end{frame}
+
+\begin{frame}
+  \frametitle{Future Ideas (3)}
+  \begin{itemize}
+  \item Could ALE plots do the same?
+  \item Variance inside each bin?
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.8\textwidth]{figures/rhale}
+    \caption{(Left) PDP-ICE (Right) ALE with heterogeneity}
+  \end{figure}
+  \end{itemize}
+\end{frame}
+
+
+\begin{frame}
+  \frametitle{Future Ideas (4) - Regional Effect plots}
+  \begin{itemize}
+    \item Heterogeneity $\rightarrow$ subspaces with homogeneous effects
+  \end{itemize}
+
+  \begin{figure}
+    \centering
+    \includegraphics[width=0.7\textwidth]{figures/repid}
+    \caption{REPID: Regional Effect plots, taken from \href{https://arxiv.org/abs/2202.07254}{Herbinger et. al}}
+  \end{figure}
+  \noindent\makebox[\linewidth]{\rule{\paperwidth}{0.4pt}}
+  Same idea on ALE?
+\end{frame}
+
+
 
 
 \begin{frame}
